@@ -10,8 +10,7 @@ Self-hosted, AI-first project tracker. Short name `heph` (CLI, Docker image/cont
 
 ## Work state
 
-- Until Heph itself is running, work state (current phase, done, next step) is tracked in `PROGRESS.md`. Update it as you work.
-- Once Heph is running, track work state through Heph's MCP server instead and **delete `PROGRESS.md`**.
+- Work state (phases, tasks, next step, diary, open questions) is tracked in Heph itself, project `hephaestus`, through the `heph` MCP server (D47). Start with `get_briefing` (repo `Undermix96/heph`); there is no `PROGRESS.md`.
 
 ## Rules
 

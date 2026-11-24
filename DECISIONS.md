@@ -2,7 +2,7 @@
 
 Durable architectural and technical decisions for Hephaestus (heph), numbered `D<n>`, newest at the bottom.
 Entries are never renumbered or rewritten (the one-time conversion to `D<n>` numbering on 2026-11-24 kept every entry and its order); superseded ones are marked. Cite them in code as `D14`, spec sections as `§4.2` (spec: `docs/HANDOFF.md`).
-Work state lives in [`PROGRESS.md`](PROGRESS.md), not here.
+Work state lives in Heph itself (project `hephaestus`, via the MCP server; D47), not here.
 
 ---
 
@@ -393,3 +393,12 @@ Alternatives rejected:
 - Unbounded per-address memory: memory exhaustion.
 - Per-address limits only: unbounded guesses with enough addresses.
 - Account lockout until reset by CLI: too easy to turn into a permanent denial of service.
+
+## D47 — Work state tracked in Heph, PROGRESS.md removed (2026-11-24)
+
+Decision: From release `2026.11.24-b1` the work state of this repository (roadmap, tasks, next step, diary, open questions) lives in Heph's own project `hephaestus`, written through the `heph` MCP server; `PROGRESS.md` is deleted and its content moved into Heph (phases 1–3 as done, phases 4–8 per §12, open questions as a diary note). Decisions stay in this file.
+Why: The project CLAUDE.md planned the switch once Heph runs; Heph tracking itself dogfoods the product (user decision, 2026-11-24).
+Alternatives rejected:
+
+- Keeping `PROGRESS.md` alongside Heph: two sources of truth that drift.
+- Waiting for the web UI (phase 4): the MCP server already covers reading and writing work state.

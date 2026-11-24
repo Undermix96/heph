@@ -80,7 +80,7 @@ Layout: `packages/schema` (shared Zod schemas and types), `packages/core` (datab
 
 - [`docs/HANDOFF.md`](docs/HANDOFF.md): product spec and scope.
 - [`DECISIONS.md`](DECISIONS.md): architectural and technical decisions (D1…).
-- [`PROGRESS.md`](PROGRESS.md): work state, phases and open questions.
+- Work state (roadmap, next step, diary, open questions): tracked in Heph itself through its MCP server (D47).
 - [`SECURITY.md`](SECURITY.md): security posture and how to report a vulnerability.
 - Package READMEs: [`packages/schema`](packages/schema/README.md), [`packages/core`](packages/core/README.md), [`apps/server`](apps/server/README.md), [`apps/web`](apps/web/README.md), [`scripts`](scripts/README.md).
 - [`docs/design/`](docs/design/): approved UI design (mockups, tokens).

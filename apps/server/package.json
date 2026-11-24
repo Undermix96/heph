@@ -1,0 +1,25 @@
+{
+  "name": "@heph/server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/main.ts",
+    "build": "tsdown"
+  },
+  "dependencies": {
+    "@heph/core": "*",
+    "@heph/schema": "*",
+    "@hono/node-server": "*",
+    "@hono/zod-validator": "*",
+    "busboy": "*",
+    "hono": "*",
+    "pino": "*",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/busboy": "*",
+    "tsdown": "*",
+    "tsx": "*"
+  }
+}

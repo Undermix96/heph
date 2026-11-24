@@ -1,0 +1,23 @@
+# Hephaestus (heph). Start with: docker compose up -d --build
+services:
+  heph:
+    build: .
+    image: heph:latest
+    container_name: heph # lets you run `docker exec -it heph heph reset-password`
+    init: true
+    restart: unless-stopped
+    ports:
+      # UI + REST API. Point the Cloudflare Tunnel at this port.
+      - "${HEPH_UI_PORT:-8080}:8080"
+      # MCP + hooks + agent uploads. LAN only: never route it through the tunnel.
+      - "${HEPH_AGENT_PORT:-8081}:8081"
+    environment:
+      TZ: ${TZ:-Europe/Rome}
+    volumes:
+      # Must be local volumes (not NFS/SMB): SQLite needs working file locks.
+      - heph-db:/data/db
+      - heph-files:/data/files
+
+volumes:
+  heph-db:
+  heph-files:

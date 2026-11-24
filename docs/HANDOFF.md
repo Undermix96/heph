@@ -13,6 +13,7 @@ This document is the source of truth for scope and design decisions agreed so fa
 The user runs many parallel projects (software and DIY) and loses track of where each one stands. The core job of the app is: **resume any project after weeks without having to reconstruct context.**
 
 Goals:
+
 - Dashboard with the state of every project, ordered by what needs attention.
 - Per-project page: roadmap (macro-phases → tasks), where I am, what's left, next step.
 - Diary (progress log) that fills itself automatically while working with Claude Code.
@@ -69,6 +70,7 @@ Why SQLite: single user, small data, one container, backup = copy files. The DB 
 All entities have `id`, `created_at`, `updated_at`. Changes write to the diary/events with a `source`.
 
 **Project**
+
 - `name`, `slug`, `description` (md), `tags[]` (e.g. `software`, `diy`, `3d-print`, free-form)
 - `lifecycle_status` (see §6) + `status_note` (md; e.g. what to test, what we're waiting for)
 - `cover_file_id?`
@@ -79,22 +81,27 @@ All entities have `id`, `created_at`, `updated_at`. Changes write to the diary/e
 - computed: `progress`, `last_activity_at`, `activity_state`, `next_task`
 
 **Phase** (macro-phase) — ordered within project
+
 - `title`, `description` (md), `order`, `status` (`todo` / `in_progress` / `done`), computed progress from tasks.
 
 **Task** — ordered within phase (exactly two levels: phase → task; no subtasks)
+
 - `title`, `notes` (md), `order`, `done` (bool), `done_at`, optional `link` (e.g. GitHub issue/PR URL).
 
 **Next task**: default = first open task of the first non-done phase; can be overridden. There should always be one; if none exists, the project is flagged "no next step defined".
 
 **Diary entry** (append-only)
+
 - `project_id`, `type` (`note`, `session`, `event`), `body` (md), `source`, `session_id?`, `files[]`, `timestamp`.
 - Events are generated automatically: task completed, status changed, next step changed, file uploaded, commits/releases from GitHub, manual test outcome.
 - Entries sharing a Claude Code `session_id` are grouped and shown as one "session" block.
 
 **Material** (BOM / shopping list) — per project, optionally linked to a phase
+
 - `name`, `quantity`, `link?`, `price?`, `notes?`, `status` (`to_buy` / `ordered` / `arrived` / `used`).
 
 **File / attachment**
+
 - Any file type. Attachable to project, phase, task or diary entry.
 - Images: thumbnails generated, EXIF stripped (GPS!), orientation fixed.
 - Other files: downloadable; configurable max size.
@@ -102,9 +109,11 @@ All entities have `id`, `created_at`, `updated_at`. Changes write to the diary/e
 - Retention for Claude Code screenshots: keep last N per task/entry unless pinned (configurable).
 
 **Claude session** (live activity)
+
 - `session_id`, `project_id`, `repo`, `started_at`, `last_heartbeat_at`, `ended_at?`, `is_testing`, `testing_since?`.
 
 **Proposal** (pending destructive agent change)
+
 - `project_id`, `kind`, `payload`, `created_by`, `state` (`pending` / `approved` / `rejected`).
 
 **Settings**: language (UI), activity thresholds, test-command patterns, retention, GitHub token, poll interval.
@@ -116,13 +125,15 @@ All entities have `id`, `created_at`, `updated_at`. Changes write to the diary/e
 Two independent layers, combined into one displayed badge.
 
 **Lifecycle status** (set by user or Claude):
+
 - `in_development` — default for an open project
-- `awaiting_manual_test` — Claude finished something and needs the user to test. `status_note` says *what* to test. The UI offers "test passed / test failed + notes"; the outcome goes to the diary and status returns to `in_development`.
+- `awaiting_manual_test` — Claude finished something and needs the user to test. `status_note` says _what_ to test. The UI offers "test passed / test failed + notes"; the outcome goes to the diary and status returns to `in_development`.
 - `on_hold` — waiting for something external (parts, decision); reason in `status_note`
 - `completed`
 - `abandoned` (distinct from deletion)
 
 **Activity state** (computed, never set):
+
 - `claude_working` — an open Claude Code session on a linked repo (heartbeats from hooks; auto-expires after N minutes without events)
 - `claude_testing` — sub-state: a hook detected a test command running (configurable patterns: `npm test`, `pnpm test`, `pytest`, `playwright`, `vitest`, `go test`, …)
 - `recently_active` — last activity < X days (default 7)
@@ -132,6 +143,7 @@ Two independent layers, combined into one displayed badge.
 Badge precedence: live activity → lifecycle → recency. An `in_development` project with no activity for 60 days shows as **inactive**.
 
 **Dashboard default ordering ("needs attention"):**
+
 1. `awaiting_manual_test`
 2. Live (`claude_working` / `claude_testing`)
 3. `in_development` but inactive or without a next step
@@ -159,6 +171,7 @@ Badge precedence: live activity → lifecycle → recency. An `in_development` p
 Streamable HTTP, bearer token auth, LAN port. Tools (indicative signatures; refine during implementation):
 
 Read:
+
 - `get_briefing(project?)` → compact markdown: status, activity, current phase, next task, what's left (open phases/tasks summary), blockers/status note, last N diary entries, materials pending, docs pointer, language rules. If `project` omitted, resolved from repo (see hooks). **Most important tool.**
 - `list_projects(filter?)` → name, status, activity, progress, next task.
 - `needs_attention()` → dashboard ordering as a list.
@@ -168,6 +181,7 @@ Read:
 - `get_docs(project)`.
 
 Write (free):
+
 - `create_project(name, description?, tags?, repos?, phases?)`
 - `link_repo(project, owner/name)`
 - `log_progress(project, body, session_id?, file_ids?)`
@@ -180,6 +194,7 @@ Write (free):
 - `update_docs(project, body)` (internal docs only)
 
 Write (confirmation / proposal):
+
 - `set_status` to `completed` / `abandoned`, `delete_phase`, `delete_task`, `restructure_roadmap(...)` → create a Proposal unless the call includes an explicit user-confirmed flag; UI shows pending proposals.
 
 Optional MCP prompts (show as `/` commands in Claude Code): e.g. "overview of all projects". Not used for bootstrap.
@@ -193,6 +208,7 @@ A **Claude Code plugin versioned in this repository** bundles: MCP server config
 **Config:** the plugin's MCP config reads env vars `HEPH_URL`, `HEPH_TOKEN` (set once in shell profile or `~/.claude/settings.json` → `env`).
 
 **Hooks** (scripts should depend only on `git` + `curl` where possible):
+
 - `SessionStart`: read `git remote` from cwd → call `/hooks/session-start` with repo + session_id → stdout injects into context: the **project briefing** + **global rules** (docs/comments/commits in English, track state via MCP, decisions in `DECISIONS.md`, current session_id to pass to `log_progress`). If the repo is not linked to any project, the injected text tells Claude to propose registering it.
 - `Stop` (end of every turn): heartbeat. Then decide whether a diary entry is due: changed files or new commits since last entry, or N turns / X minutes of work without one. If due, return a block decision with instructions ("update the project diary: what was done, where you stopped, next step"); respect `stop_hook_active` to avoid loops. Also: if `DECISIONS.md` hash changed, upload its content.
 - `PreToolUse` / `PostToolUse` on Bash: match test command patterns → mark session `is_testing` on/off.
@@ -202,13 +218,14 @@ A **Claude Code plugin versioned in this repository** bundles: MCP server config
 **Global rules are injected by the hook**, not via `~/.claude/CLAUDE.md` (plugins can't install it). The user's own CLAUDE.md stays free.
 
 **Skill: new project bootstrap** (auto-triggered by e.g. "start a new project…", also invocable manually):
+
 1. Ask only what's missing: folder, name, public/private, stack, optional design-docs folder, tags, short description.
 2. Deterministic script (inside the skill): `git init`, stack-appropriate `.gitignore`, `README.md`, `LICENSE` (public only), `DECISIONS.md` template, minimal project `CLAUDE.md`, initial commit.
 3. `gh repo create` (public/private), push. (Requires `gh` installed + authenticated; if missing, skip with a clear message.)
 4. Copy design docs into the repo (e.g. `docs/design/`), commit, push.
 5. Register on tracker via MCP: create project, link repo, tags, propose initial macro-phases from the description.
 6. Final summary.
-DIY variant: no repo, tracker registration only.
+   DIY variant: no repo, tracker registration only.
 
 ---
 
@@ -225,6 +242,7 @@ DIY variant: no repo, tracker registration only.
 ## 11. REST API
 
 Same domain operations as MCP, consumed by the UI. Plus:
+
 - `/hooks/*` endpoints for the plugin (token auth).
 - `/upload/:one_time_token` for agent uploads.
 - `/setup` (only before first user exists).

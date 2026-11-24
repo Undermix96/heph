@@ -16,7 +16,7 @@ import type { Ctx } from './context.js';
 import { phases, projects, tasks } from './db/schema.js';
 import type { Domain } from './domain.js';
 import { DomainError, notFound } from './errors.js';
-import { parse, reorder } from './util.js';
+import { iso, parse, reorder } from './util.js';
 
 type PhaseRow = typeof phases.$inferSelect;
 type TaskRow = typeof tasks.$inferSelect;
@@ -36,10 +36,10 @@ export function toTaskView(t: TaskRow): TaskView {
     notes: t.notes,
     position: t.position,
     done: t.done,
-    doneAt: t.doneAt,
+    doneAt: iso(t.doneAt),
     link: t.link,
-    createdAt: t.createdAt,
-    updatedAt: t.updatedAt,
+    createdAt: iso(t.createdAt),
+    updatedAt: iso(t.updatedAt),
   };
 }
 
@@ -61,11 +61,11 @@ export function buildPhaseViews(phaseRows: PhaseRow[], taskRows: TaskRow[]): Pha
         description: p.description,
         position: p.position,
         status: p.status,
-        completedAt: p.completedAt,
+        completedAt: iso(p.completedAt),
         progress: progressOf(ts),
         tasks: ts,
-        createdAt: p.createdAt,
-        updatedAt: p.updatedAt,
+        createdAt: iso(p.createdAt),
+        updatedAt: iso(p.updatedAt),
       };
     });
 }

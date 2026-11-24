@@ -285,9 +285,9 @@ describe('get_diary', () => {
       if (text === 'No diary entries.') break;
       const ids = [...text.matchAll(/ #(\d+): /g)].map((x) => Number(x[1]));
       seen.push(...ids);
-      const more = /More: call again with before=(\d+), before_id=(\d+)\./.exec(text);
+      const more = /More: call again with before=(\S+), before_id=(\d+)\./.exec(text);
       if (!more) break;
-      args = { project: s.id, limit: 3, before: Number(more[1]), before_id: Number(more[2]) };
+      args = { project: s.id, limit: 3, before: more[1], before_id: Number(more[2]) };
     }
     expect(new Set(seen).size).toBe(seen.length);
     expect(seen.length).toBe(total);

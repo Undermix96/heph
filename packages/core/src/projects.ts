@@ -29,7 +29,7 @@ import {
 import type { Domain } from './domain.js';
 import { DomainError, notFound } from './errors.js';
 import { computeNextTask, confirmedFlag, currentPhaseOf, progressOf } from './roadmap.js';
-import { parse, slugify } from './util.js';
+import { iso, parse, slugify } from './util.js';
 
 export type ProjectRow = typeof projects.$inferSelect;
 type RepoRow = typeof projectRepos.$inferSelect;
@@ -96,7 +96,9 @@ export class ProjectsService {
     const summaries = this.summarize(rows);
     return summaries.sort(
       (a, b) =>
-        a.attentionGroup - b.attentionGroup || b.lastActivityAt - a.lastActivityAt || a.id - b.id,
+        a.attentionGroup - b.attentionGroup ||
+        b.lastActivityAt.localeCompare(a.lastActivityAt) ||
+        a.id - b.id,
     );
   }
 
@@ -169,21 +171,21 @@ export class ProjectsService {
         tags: tagsBy.get(r.id) ?? [],
         lifecycleStatus: r.lifecycleStatus,
         statusNote: r.statusNote,
-        statusChangedAt: r.statusChangedAt,
+        statusChangedAt: iso(r.statusChangedAt),
         coverFileId: r.coverFileId,
         progress: progressOf(allTasks),
         currentPhase: current
           ? { id: current.id, title: current.title, position: current.position }
           : null,
         nextTask,
-        lastActivityAt: r.lastActivityAt,
+        lastActivityAt: iso(r.lastActivityAt),
         activityState: st.activityState,
         badge: st.badge,
         attentionGroup: st.attentionGroup,
         pendingProposals: pendingBy.get(r.id) ?? 0,
         repos: reposBy.get(r.id) ?? [],
-        createdAt: r.createdAt,
-        updatedAt: r.updatedAt,
+        createdAt: iso(r.createdAt),
+        updatedAt: iso(r.updatedAt),
       };
     });
   }
@@ -508,7 +510,8 @@ export class ProjectsService {
   touch(projectId: number, at: number = this.d.now()): void {
     this.d.db
       .update(projects)
-      .set({ lastActivityAt: sql`max(${projects.lastActivityAt}, ${at})` })
+      // Stored as ISO text: max() on fixed-width ISO strings is the later time.
+      .set({ lastActivityAt: sql`max(${projects.lastActivityAt}, ${new Date(at).toISOString()})` })
       .where(eq(projects.id, projectId))
       .run();
   }
@@ -636,7 +639,7 @@ function toRepoView(r: RepoRow) {
     name: r.name,
     docsPath: r.docsPath,
     showCommits: r.showCommits,
-    docsUpdatedAt: r.docsUpdatedAt,
+    docsUpdatedAt: iso(r.docsUpdatedAt),
     docsOrigin: r.docsOrigin,
   };
 }

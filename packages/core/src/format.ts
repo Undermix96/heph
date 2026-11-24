@@ -1,18 +1,18 @@
 /** Small Markdown/text helpers shared by the briefing and the MCP adapter (English, agent-facing). */
 import type { Badge, DiaryEntryView, Progress, Source } from '@heph/schema';
-import { DAY_MS } from './util.js';
+import { DAY_MS, toMs } from './util.js';
 
-export function isoMinute(ms: number): string {
-  return new Date(ms).toISOString().slice(0, 16).replace('T', ' ');
+export function isoMinute(t: string | number): string {
+  return new Date(toMs(t)).toISOString().slice(0, 16).replace('T', ' ');
 }
 
-export function isoDay(ms: number): string {
-  return new Date(ms).toISOString().slice(0, 10);
+export function isoDay(t: string | number): string {
+  return new Date(toMs(t)).toISOString().slice(0, 10);
 }
 
 /** "just now", "5 min ago", "3 h ago", "12 days ago". */
-export function relTime(ms: number, now: number): string {
-  const d = Math.max(0, now - ms);
+export function relTime(t: string | number, now: number): string {
+  const d = Math.max(0, now - toMs(t));
   if (d < 60_000) return 'just now';
   if (d < 3_600_000) return `${Math.floor(d / 60_000)} min ago`;
   if (d < DAY_MS) return `${Math.floor(d / 3_600_000)} h ago`;

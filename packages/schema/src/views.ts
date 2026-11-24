@@ -1,4 +1,8 @@
 /** Shapes returned by the domain layer (and therefore by REST/MCP). Types only. */
+
+/** UTC ISO 8601 timestamp with milliseconds, e.g. "2026-11-24T12:00:00.000Z". */
+export type IsoTime = string;
+
 import type {
   ActivityState,
   DiaryType,
@@ -49,10 +53,10 @@ export interface TaskView {
   notes: string;
   position: number;
   done: boolean;
-  doneAt: number | null;
+  doneAt: IsoTime | null;
   link: string | null;
-  createdAt: number;
-  updatedAt: number;
+  createdAt: IsoTime;
+  updatedAt: IsoTime;
 }
 
 export interface PhaseView {
@@ -62,11 +66,11 @@ export interface PhaseView {
   description: string;
   position: number;
   status: PhaseStatus;
-  completedAt: number | null;
+  completedAt: IsoTime | null;
   progress: Progress;
   tasks: TaskView[];
-  createdAt: number;
-  updatedAt: number;
+  createdAt: IsoTime;
+  updatedAt: IsoTime;
 }
 
 export interface LinkView {
@@ -82,7 +86,7 @@ export interface RepoView {
   name: string;
   docsPath: string;
   showCommits: boolean;
-  docsUpdatedAt: number | null;
+  docsUpdatedAt: IsoTime | null;
   docsOrigin: 'github' | 'hook' | null;
 }
 
@@ -98,10 +102,10 @@ export interface NextTaskRef {
 export interface LiveSessionView {
   sessionId: string;
   repo: string | null;
-  startedAt: number;
-  lastHeartbeatAt: number;
+  startedAt: IsoTime;
+  lastHeartbeatAt: IsoTime;
   isTesting: boolean;
-  testingSince: number | null;
+  testingSince: IsoTime | null;
 }
 
 export interface ProjectSummary {
@@ -112,19 +116,19 @@ export interface ProjectSummary {
   tags: string[];
   lifecycleStatus: LifecycleStatus;
   statusNote: string;
-  statusChangedAt: number;
+  statusChangedAt: IsoTime;
   coverFileId: number | null;
   progress: Progress;
   currentPhase: { id: number; title: string; position: number } | null;
   nextTask: NextTaskRef | null;
-  lastActivityAt: number;
+  lastActivityAt: IsoTime;
   activityState: ActivityState;
   badge: Badge;
   attentionGroup: AttentionGroup;
   pendingProposals: number;
   repos: string[];
-  createdAt: number;
-  updatedAt: number;
+  createdAt: IsoTime;
+  updatedAt: IsoTime;
 }
 
 export interface ProjectDetail extends ProjectSummary {
@@ -154,7 +158,7 @@ export interface FileView {
   pinned: boolean;
   source: Source;
   sessionId: string | null;
-  createdAt: number;
+  createdAt: IsoTime;
 }
 
 export interface DiaryEntryView {
@@ -166,7 +170,7 @@ export interface DiaryEntryView {
   data: Record<string, unknown> | null;
   source: Source;
   sessionId: string | null;
-  occurredAt: number;
+  occurredAt: IsoTime;
   files: FileView[];
 }
 
@@ -184,8 +188,8 @@ export interface MaterialView {
   notes: string;
   status: MaterialStatus;
   position: number;
-  createdAt: number;
-  updatedAt: number;
+  createdAt: IsoTime;
+  updatedAt: IsoTime;
 }
 
 export interface ProposalView {
@@ -198,8 +202,8 @@ export interface ProposalView {
   sessionId: string | null;
   state: ProposalState;
   decisionNote: string | null;
-  decidedAt: number | null;
-  createdAt: number;
+  decidedAt: IsoTime | null;
+  createdAt: IsoTime;
 }
 
 export interface SearchHit {

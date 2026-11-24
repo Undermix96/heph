@@ -6,7 +6,7 @@ import { claudeSessions } from './db/schema.js';
 import { activityStateOf, attentionGroupOf, badgeOf } from './status.js';
 import { insertLiveSession, seedProject } from './test/fixtures.js';
 import { makeDomain, type TestDomain } from './test/helpers.js';
-import { DAY_MS } from './util.js';
+import { DAY_MS, iso } from './util.js';
 
 let t: TestDomain;
 afterEach(() => t?.cleanup());
@@ -144,7 +144,13 @@ describe('pure status functions', () => {
     now: 100 * DAY_MS,
     ...over,
   });
-  const live = { sessionId: 's', repo: null, startedAt: 0, lastHeartbeatAt: 0, testingSince: null };
+  const live = {
+    sessionId: 's',
+    repo: null,
+    startedAt: iso(0),
+    lastHeartbeatAt: iso(0),
+    testingSince: null,
+  };
 
   it('computes activity, badge and group consistently', () => {
     const p = { lifecycleStatus: 'in_development' as const, lastActivityAt: 100 * DAY_MS };

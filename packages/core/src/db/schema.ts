@@ -2,7 +2,9 @@
  * Drizzle schema for the whole data model (spec §5), including tables only
  * used by later phases (sessions, proposals, GitHub sync) so migrations stay linear.
  *
- * Conventions: integer autoincrement ids, timestamps as unix milliseconds,
+ * Conventions: integer autoincrement ids, timestamps stored as UTC ISO 8601
+ * strings with milliseconds (`2026-11-24T12:00:00.000Z`, fixed width so text
+ * order is time order) and handled as unix milliseconds in TypeScript,
  * booleans as 0/1 integers, JSON as text. Every mutation also writes a
  * `change_log` row (see domain layer).
  */
@@ -20,6 +22,7 @@ import {
 import { sql } from 'drizzle-orm';
 import {
   check,
+  customType,
   index,
   integer,
   primaryKey,
@@ -28,11 +31,23 @@ import {
   text,
 } from 'drizzle-orm/sqlite-core';
 
-const now = sql`(cast(unixepoch('subsec') * 1000 as integer))`;
+/**
+ * Timestamp column: UTC ISO 8601 text in the database, unix ms in TypeScript.
+ * Do not break: the stored format must stay fixed-width (always milliseconds and `Z`),
+ * because comparisons and ORDER BY on these columns are text comparisons.
+ */
+export const isoTime = customType<{ data: number; driverData: string }>({
+  dataType: () => 'text',
+  toDriver: (ms) => new Date(ms).toISOString(),
+  fromDriver: (iso) => Date.parse(iso),
+});
+
+/** SQLite default with the same format as Date.prototype.toISOString(). */
+const now = sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`;
 
 const id = () => integer('id').primaryKey({ autoIncrement: true });
-const createdAt = () => integer('created_at').notNull().default(now);
-const updatedAt = () => integer('updated_at').notNull().default(now);
+const createdAt = () => isoTime('created_at').notNull().default(now);
+const updatedAt = () => isoTime('updated_at').notNull().default(now);
 const bool = (name: string) => integer(name, { mode: 'boolean' });
 
 // ---------------------------------------------------------------- auth & settings
@@ -55,8 +70,8 @@ export const authSessions = sqliteTable(
       .references(() => users.id, { onDelete: 'cascade' }),
     userAgent: text('user_agent'),
     createdAt: createdAt(),
-    lastSeenAt: integer('last_seen_at').notNull().default(now),
-    expiresAt: integer('expires_at').notNull(),
+    lastSeenAt: isoTime('last_seen_at').notNull().default(now),
+    expiresAt: isoTime('expires_at').notNull(),
   },
   (t) => [index('auth_sessions_expires_idx').on(t.expiresAt)],
 );
@@ -81,13 +96,13 @@ export const projects = sqliteTable(
       .notNull()
       .default('in_development'),
     statusNote: text('status_note').notNull().default(''),
-    statusChangedAt: integer('status_changed_at').notNull().default(now),
+    statusChangedAt: isoTime('status_changed_at').notNull().default(now),
     coverFileId: integer('cover_file_id'),
     docsSource: text('docs_source', { enum: DOCS_SOURCES }).notNull().default('repo'),
     /** Markdown docs when docs_source = 'internal'. */
     internalDocs: text('internal_docs').notNull().default(''),
     nextTaskOverrideId: integer('next_task_override_id'),
-    lastActivityAt: integer('last_activity_at').notNull().default(now),
+    lastActivityAt: isoTime('last_activity_at').notNull().default(now),
     /** Per-project switch; when false, agent writes are refused. */
     claudeWriteEnabled: bool('claude_write_enabled').notNull().default(true),
     /** Free-form origin marker for imported projects (spec §13). */
@@ -154,8 +169,8 @@ export const projectRepos = sqliteTable(
     docsHash: text('docs_hash'),
     /** Where the cached docs came from: GitHub polling or the end-of-turn hook. */
     docsOrigin: text('docs_origin', { enum: ['github', 'hook'] }),
-    docsUpdatedAt: integer('docs_updated_at'),
-    lastPolledAt: integer('last_polled_at'),
+    docsUpdatedAt: isoTime('docs_updated_at'),
+    lastPolledAt: isoTime('last_polled_at'),
     lastSeenCommitSha: text('last_seen_commit_sha'),
     lastReleaseId: text('last_release_id'),
     createdAt: createdAt(),
@@ -177,7 +192,7 @@ export const phases = sqliteTable(
     description: text('description').notNull().default(''),
     position: integer('position').notNull(),
     status: text('status', { enum: PHASE_STATUSES }).notNull().default('todo'),
-    completedAt: integer('completed_at'),
+    completedAt: isoTime('completed_at'),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
   },
@@ -199,7 +214,7 @@ export const tasks = sqliteTable(
     notes: text('notes').notNull().default(''),
     position: integer('position').notNull(),
     done: bool('done').notNull().default(false),
-    doneAt: integer('done_at'),
+    doneAt: isoTime('done_at'),
     link: text('link'),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
@@ -228,7 +243,7 @@ export const diaryEntries = sqliteTable(
     source: text('source', { enum: SOURCES }).notNull(),
     sessionId: text('session_id'),
     /** When it happened (may differ from created_at for imports/GitHub events). */
-    occurredAt: integer('occurred_at').notNull().default(now),
+    occurredAt: isoTime('occurred_at').notNull().default(now),
     origin: text('origin'),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
@@ -318,8 +333,8 @@ export const uploadTokens = sqliteTable('upload_tokens', {
   source: text('source', { enum: SOURCES }).notNull(),
   sessionId: text('session_id'),
   createdAt: createdAt(),
-  expiresAt: integer('expires_at').notNull(),
-  usedAt: integer('used_at'),
+  expiresAt: isoTime('expires_at').notNull(),
+  usedAt: isoTime('used_at'),
 });
 
 // ---------------------------------------------------------------- agent
@@ -332,14 +347,14 @@ export const claudeSessions = sqliteTable(
     projectId: integer('project_id').references(() => projects.id, { onDelete: 'set null' }),
     repo: text('repo'),
     cwd: text('cwd'),
-    startedAt: integer('started_at').notNull().default(now),
-    lastHeartbeatAt: integer('last_heartbeat_at').notNull().default(now),
-    endedAt: integer('ended_at'),
+    startedAt: isoTime('started_at').notNull().default(now),
+    lastHeartbeatAt: isoTime('last_heartbeat_at').notNull().default(now),
+    endedAt: isoTime('ended_at'),
     endReason: text('end_reason'),
     isTesting: bool('is_testing').notNull().default(false),
     testingSince: integer('testing_since'),
     /** Auto-diary bookkeeping for the Stop hook (phase 5). */
-    lastDiaryAt: integer('last_diary_at'),
+    lastDiaryAt: isoTime('last_diary_at'),
     turnsSinceDiary: integer('turns_since_diary').notNull().default(0),
     lastHeadSha: text('last_head_sha'),
     decisionsHash: text('decisions_hash'),
@@ -364,7 +379,7 @@ export const proposals = sqliteTable(
     state: text('state', { enum: PROPOSAL_STATES }).notNull().default('pending'),
     /** Optional note from the user on approval/rejection; Claude can read it. */
     decisionNote: text('decision_note'),
-    decidedAt: integer('decided_at'),
+    decidedAt: isoTime('decided_at'),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
   },
@@ -388,7 +403,7 @@ export const changeLog = sqliteTable(
     sessionId: text('session_id'),
     /** The agent's call carried confirmed: true (it says the user confirmed in chat). */
     confirmed: bool('confirmed').notNull().default(false),
-    revertedAt: integer('reverted_at'),
+    revertedAt: isoTime('reverted_at'),
     createdAt: createdAt(),
   },
   (t) => [

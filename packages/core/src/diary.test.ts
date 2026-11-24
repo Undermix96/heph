@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { SYSTEM, UI } from './context.js';
 import { CLAUDE, expectDomainError, seedProject } from './test/fixtures.js';
 import { makeDomain, type TestDomain } from './test/helpers.js';
+import { iso } from './util.js';
 
 let t: TestDomain;
 afterEach(() => t?.cleanup());
@@ -114,7 +115,7 @@ describe('diary', () => {
     d.diary.append(p.id, { type: 'event', eventKind: 'commits', body: 'sys' }, SYSTEM);
     expect(d.projects.get(p.id).lastActivityAt).toBe(p.lastActivityAt);
     d.diary.addNote(p.id, { body: 'user' }, UI);
-    expect(d.projects.get(p.id).lastActivityAt).toBe(clock.now);
+    expect(d.projects.get(p.id).lastActivityAt).toBe(iso(clock.now));
   });
 
   it('attaching files of another project is rejected', () => {

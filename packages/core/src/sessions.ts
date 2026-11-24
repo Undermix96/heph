@@ -2,6 +2,7 @@ import type { LiveSessionView } from '@heph/schema';
 import { and, eq, gt, inArray, isNull, lte } from 'drizzle-orm';
 import { claudeSessions } from './db/schema.js';
 import type { Domain } from './domain.js';
+import { iso } from './util.js';
 
 /**
  * Live Claude Code sessions. Phase 2 only reads them (activity state) and
@@ -33,10 +34,10 @@ export class SessionsService {
         {
           sessionId: r.sessionId,
           repo: r.repo,
-          startedAt: r.startedAt,
-          lastHeartbeatAt: r.lastHeartbeatAt,
+          startedAt: iso(r.startedAt),
+          lastHeartbeatAt: iso(r.lastHeartbeatAt),
           isTesting: r.isTesting,
-          testingSince: r.testingSince,
+          testingSince: iso(r.testingSince),
         },
       ]);
     }

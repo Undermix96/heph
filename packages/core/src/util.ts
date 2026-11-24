@@ -53,3 +53,15 @@ export function reorder<T>(items: T[], item: T, position: number): T[] {
 }
 
 export const DAY_MS = 86_400_000;
+
+/** Unix ms → UTC ISO 8601 string (the format used in views and the database). */
+export function iso(ms: number): string;
+export function iso(ms: number | null): string | null;
+export function iso(ms: number | null): string | null {
+  return ms === null ? null : new Date(ms).toISOString();
+}
+
+/** ISO string or unix ms → unix ms. */
+export function toMs(t: string | number): number {
+  return typeof t === 'number' ? t : Date.parse(t);
+}

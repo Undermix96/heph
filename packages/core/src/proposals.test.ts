@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { SYSTEM, UI } from './context.js';
 import { CLAUDE, CLAUDE_CONFIRMED, expectDomainError, seedProject } from './test/fixtures.js';
 import { makeDomain, type TestDomain } from './test/helpers.js';
+import { iso } from './util.js';
 
 let t: TestDomain;
 afterEach(() => t?.cleanup());
@@ -22,7 +23,7 @@ describe('proposals', () => {
     expect(decided).toMatchObject({
       state: 'approved',
       decisionNote: 'Agreed',
-      decidedAt: clock.now,
+      decidedAt: iso(clock.now),
     });
     const proj = d.projects.get(p.id);
     expect(proj.lifecycleStatus).toBe('abandoned');

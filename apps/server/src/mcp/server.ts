@@ -298,7 +298,10 @@ export function createHephMcpServer(domain: Domain, opts: McpServerOptions): Mcp
       input: z.object({
         project: projectArg,
         limit: z.number().int().min(1).max(200).optional(),
-        before: z.number().int().optional().describe('occurredAt of the last entry already read'),
+        before: z.iso
+          .datetime()
+          .optional()
+          .describe('occurredAt (ISO time) of the last entry already read'),
         before_id: z.number().int().optional().describe('id of the last entry already read'),
         source: z.enum(['ui', 'claude_code', 'github', 'system']).optional(),
         type: z.enum(DIARY_TYPES).optional(),

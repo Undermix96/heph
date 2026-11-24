@@ -12,7 +12,7 @@ import type { Domain } from './domain.js';
 import { DomainError, notFound } from './errors.js';
 import type { ProjectRef } from './projects.js';
 import type { RestructurePayload } from './restructure.js';
-import { parse } from './util.js';
+import { iso, parse } from './util.js';
 
 type ProposalRow = typeof proposals.$inferSelect;
 
@@ -186,7 +186,7 @@ function toView(r: ProposalRow): ProposalView {
     sessionId: r.sessionId,
     state: r.state,
     decisionNote: r.decisionNote,
-    decidedAt: r.decidedAt,
-    createdAt: r.createdAt,
+    decidedAt: iso(r.decidedAt),
+    createdAt: iso(r.createdAt),
   };
 }

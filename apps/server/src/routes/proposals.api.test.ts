@@ -1,3 +1,5 @@
+const iso = (ms: number) => new Date(ms).toISOString();
+
 import { afterEach, describe, expect, it } from 'vitest';
 import { type Api, startApi } from '../test/api.js';
 
@@ -93,7 +95,7 @@ describe('proposals', () => {
     expect(ok.data).toMatchObject({
       state: 'approved',
       decisionNote: 'Well done',
-      decidedAt: t.clock.now,
+      decidedAt: iso(t.clock.now),
     });
     const proj = await t.uiReq('GET', `/api/projects/${a.slug}`);
     expect(proj.data.lifecycleStatus).toBe('completed');

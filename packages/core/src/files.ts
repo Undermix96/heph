@@ -12,7 +12,7 @@ import { diaryEntries, files, phases, projects, tasks, uploadTokens } from './db
 import type { Domain } from './domain.js';
 import { DomainError, notFound } from './errors.js';
 import type { ProjectRef } from './projects.js';
-import { parse, randomToken, sha256 } from './util.js';
+import { iso, parse, randomToken, sha256 } from './util.js';
 
 type FileRow = typeof files.$inferSelect;
 
@@ -400,7 +400,7 @@ export class FilesService {
       pinned: f.pinned,
       source: f.source,
       sessionId: f.sessionId,
-      createdAt: f.createdAt,
+      createdAt: iso(f.createdAt),
     };
   }
 

@@ -5,13 +5,13 @@ import {
   type DiaryType,
   type EventKind,
 } from '@heph/schema';
-import { and, desc, eq, inArray, isNotNull, lt, type SQL, sql } from 'drizzle-orm';
+import { and, desc, eq, inArray, isNotNull, lt, or, type SQL, sql } from 'drizzle-orm';
 import type { Ctx } from './context.js';
 import { diaryEntries, files } from './db/schema.js';
 import type { Domain } from './domain.js';
 import { DomainError, notFound } from './errors.js';
 import type { ProjectRef } from './projects.js';
-import { parse } from './util.js';
+import { iso, parse } from './util.js';
 
 type EntryRow = typeof diaryEntries.$inferSelect;
 
@@ -107,7 +107,10 @@ export class DiaryService {
       where.push(
         q.beforeId === undefined
           ? lt(diaryEntries.occurredAt, q.before)
-          : sql`(${diaryEntries.occurredAt} < ${q.before} or (${diaryEntries.occurredAt} = ${q.before} and ${diaryEntries.id} < ${q.beforeId}))`,
+          : (or(
+              lt(diaryEntries.occurredAt, q.before),
+              and(eq(diaryEntries.occurredAt, q.before), lt(diaryEntries.id, q.beforeId)),
+            ) as SQL),
       );
     }
     if (q.source) where.push(eq(diaryEntries.source, q.source));
@@ -168,7 +171,7 @@ export class DiaryService {
       data: r.data ?? null,
       source: r.source,
       sessionId: r.sessionId,
-      occurredAt: r.occurredAt,
+      occurredAt: iso(r.occurredAt),
       files: fileRows.filter((f) => f.diaryEntryId === r.id).map((f) => this.d.files.toView(f)),
     }));
   }

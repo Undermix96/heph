@@ -5,7 +5,7 @@ import { materials, phases } from './db/schema.js';
 import type { Domain } from './domain.js';
 import { DomainError, notFound } from './errors.js';
 import type { ProjectRef } from './projects.js';
-import { parse } from './util.js';
+import { iso, parse } from './util.js';
 
 type MaterialRow = typeof materials.$inferSelect;
 
@@ -144,7 +144,7 @@ function toView(m: MaterialRow, currency: string): MaterialView {
     notes: m.notes,
     status: m.status,
     position: m.position,
-    createdAt: m.createdAt,
-    updatedAt: m.updatedAt,
+    createdAt: iso(m.createdAt),
+    updatedAt: iso(m.updatedAt),
   };
 }

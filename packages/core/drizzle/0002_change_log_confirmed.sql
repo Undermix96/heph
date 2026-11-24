@@ -1,1 +1,0 @@
-ALTER TABLE `change_log` ADD `confirmed` integer DEFAULT false NOT NULL;

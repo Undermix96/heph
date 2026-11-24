@@ -1,3 +1,5 @@
+const iso = (ms: number) => new Date(ms).toISOString();
+
 import { afterEach, describe, expect, it } from 'vitest';
 import { type Api, startApi } from '../test/api.js';
 
@@ -45,7 +47,7 @@ describe('phases', () => {
       json: { status: 'done' },
     });
     expect(done.data.status).toBe('done');
-    expect(done.data.completedAt).toBe(t.clock.now);
+    expect(done.data.completedAt).toBe(iso(t.clock.now));
 
     for (const json of [{ title: '' }, { status: 'finished' }]) {
       const r = await t.agentReq('PATCH', `/api/phases/${add.data.id}`, { json });
@@ -194,7 +196,7 @@ describe('tasks', () => {
       headers: { 'x-heph-session-id': 'sess-c' },
     });
     expect(c1.status).toBe(200);
-    expect(c1.data.task).toMatchObject({ id: schematic, done: true, doneAt: t.clock.now });
+    expect(c1.data.task).toMatchObject({ id: schematic, done: true, doneAt: iso(t.clock.now) });
     expect(c1.data.nextTask).toMatchObject({ id: bom, title: 'BOM' });
     let phases = (await t.uiReq('GET', `/api/projects/${p.slug}/phases`)).data;
     expect(phases[0].status).toBe('in_progress');

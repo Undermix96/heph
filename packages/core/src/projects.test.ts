@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { SYSTEM, UI } from './context.js';
 import { CLAUDE, CLAUDE_CONFIRMED, expectDomainError, seedProject } from './test/fixtures.js';
 import { makeDomain, type TestDomain } from './test/helpers.js';
-import { DAY_MS } from './util.js';
+import { DAY_MS, iso, toMs } from './util.js';
 
 let t: TestDomain;
 afterEach(() => t?.cleanup());
@@ -373,10 +373,10 @@ describe('projects: last activity', () => {
     const created = p.lastActivityAt;
     clock.advance(DAY_MS);
     d.projects.update(p.id, { description: 'new' }, UI);
-    expect(d.projects.get(p.id).lastActivityAt).toBe(created + DAY_MS);
+    expect(d.projects.get(p.id).lastActivityAt).toBe(iso(toMs(created) + DAY_MS));
     clock.advance(DAY_MS);
     d.roadmap.addTask(p.phases[0]!.id, { title: 'More' }, CLAUDE);
-    expect(d.projects.get(p.id).lastActivityAt).toBe(created + 2 * DAY_MS);
+    expect(d.projects.get(p.id).lastActivityAt).toBe(iso(toMs(created) + 2 * DAY_MS));
   });
 
   it('is not bumped by system changes', () => {
@@ -395,8 +395,8 @@ describe('projects: last activity', () => {
     d.diary.addNote(p.id, { body: 'today' }, UI);
     const latest = d.projects.get(p.id).lastActivityAt;
     // A back-dated entry (e.g. an imported commit) does not rewind activity.
-    d.diary.append(p.id, { type: 'note', body: 'old', occurredAt: latest - 10 * DAY_MS }, UI);
-    d.projects.touch(p.id, latest - 5 * DAY_MS);
+    d.diary.append(p.id, { type: 'note', body: 'old', occurredAt: toMs(latest) - 10 * DAY_MS }, UI);
+    d.projects.touch(p.id, toMs(latest) - 5 * DAY_MS);
     expect(d.projects.get(p.id).lastActivityAt).toBe(latest);
   });
 });

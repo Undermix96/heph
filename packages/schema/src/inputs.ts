@@ -167,7 +167,10 @@ export type AddNoteInput = z.infer<typeof AddNoteInput>;
 
 export const DiaryQuery = z.object({
   /** Keyset cursor: `occurredAt` and `id` of the last entry already received. */
-  before: z.coerce.number().int().optional(),
+  before: z.iso
+    .datetime()
+    .transform((v) => Date.parse(v))
+    .optional(),
   beforeId: z.coerce.number().int().optional(),
   limit: z.coerce.number().int().min(1).max(500).default(50),
   source: z.enum(['ui', 'claude_code', 'github', 'system']).optional(),

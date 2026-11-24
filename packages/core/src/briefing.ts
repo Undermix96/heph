@@ -2,7 +2,7 @@ import { normalizeRepo, type ProjectDetail } from '@heph/schema';
 import type { Domain } from './domain.js';
 import { DomainError } from './errors.js';
 import { badgeLabel, diaryLine, isoDay, isoMinute, oneLine, pct, relTime } from './format.js';
-import { DAY_MS } from './util.js';
+import { DAY_MS, toMs } from './util.js';
 
 export interface BriefingTarget {
   /** Project id, slug or linked repo `owner/name`. */
@@ -136,7 +136,7 @@ export class BriefingService {
       (x) =>
         x.state !== 'pending' &&
         x.decidedAt !== null &&
-        now - x.decidedAt < DECIDED_PROPOSAL_DAYS * DAY_MS,
+        now - toMs(x.decidedAt) < DECIDED_PROPOSAL_DAYS * DAY_MS,
     );
     if (pending.length || decided.length) {
       out.push('', '## Proposals', '');

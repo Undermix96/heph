@@ -10,6 +10,7 @@ import {
   taskIds,
 } from './test/fixtures.js';
 import { makeDomain, type TestDomain } from './test/helpers.js';
+import { iso } from './util.js';
 
 let t: TestDomain;
 afterEach(() => t?.cleanup());
@@ -46,11 +47,11 @@ describe('computeNextTask (pure)', () => {
         done,
         doneAt: null,
         link: null,
-        createdAt: 0,
-        updatedAt: 0,
+        createdAt: iso(0),
+        updatedAt: iso(0),
       })),
-      createdAt: 0,
-      updatedAt: 0,
+      createdAt: iso(0),
+      updatedAt: iso(0),
     }) satisfies PhaseView;
 
   it('returns null with no phases or only empty phases', () => {
@@ -252,7 +253,7 @@ describe('phase status sync', () => {
     const v = s.d.roadmap.updatePhase(s.build, { status: 'in_progress', title: 'Assembly' }, UI);
     expect(v).toMatchObject({ status: 'in_progress', title: 'Assembly', completedAt: null });
     const done = s.d.roadmap.updatePhase(s.build, { status: 'done' }, UI);
-    expect(done.completedAt).toBe(s.clock.now);
+    expect(done.completedAt).toBe(iso(s.clock.now));
     s.clock.advance(1000);
     // Re-saving done keeps the original completion time.
     expect(s.d.roadmap.updatePhase(s.build, { status: 'done' }, UI).completedAt).toBe(

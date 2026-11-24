@@ -4,7 +4,7 @@ Work state of Hephaestus (heph): phases, what is done, the next step, open quest
 Decisions live in [`DECISIONS.md`](DECISIONS.md), scope in [`docs/HANDOFF.md`](docs/HANDOFF.md).
 Temporary: once Heph runs, its own MCP server tracks this project and this file is deleted (CLAUDE.md).
 
-Status: Phase 3 (MCP server) built and aligned with the global rules; first CalVer release being published; waiting for user verification of the phase 3 acceptance criteria.
+Status: Phases 1–3 done and verified by the user on release 2026.11.24-b1; next is the plan for phase 4 (web UI).
 Last updated: 2026-11-24
 
 ## Done
@@ -20,7 +20,7 @@ Last updated: 2026-11-24
 - Verification: 287 tests; Docker smoke test (`scripts/docker-smoke.sh`); CI green. User verified the setup wizard on the server (2026-11-24).
 - Outcome: 12 bugs found by the independent test suites and fixed (D34 among them). Deviations from the spec: none; ambiguities resolved in D23–D33.
 
-### Phase 3 MCP server (2026-11-24): built, awaiting user verification
+### Phase 3 MCP server (2026-11-24): done, verified by the user on 2026-11-24
 
 - Content: `POST /mcp` on the agent port (D35), 30 tools and 2 prompts (D36), briefing, roadmap restructuring as proposals (D38), "confirmed in chat" tracking (D37).
 - Commits: `b9329c1`, `b0d8948`, `e04ed75`, `b99de8d`, `dd0cb51`.
@@ -34,6 +34,7 @@ Last updated: 2026-11-24
   3. Asking Claude to delete a task creates a proposal visible through `list_proposals`; nothing is deleted.
   4. `http://<server>:8081/health` reports the CalVer version of the release.
 - Outcome: 4 bugs found by the independent suites and fixed (digit-only refs, stale payload validation, next marker, git remote URLs). Tool count 30, not the ~31 estimated in the plan.
+- User verification (2026-11-24, release `2026.11.24-b1` on the user's server, fresh volumes): all 4 acceptance criteria passed. The test left in Heph a project `hephaestus` (repo `Undermix96/heph`) with a test task "Task di prova da cancellare" and a pending `delete_task` proposal #1; it can be decided once the web UI exists (phase 4).
 
 ### Alignment with the global rules (2026-11-24)
 
@@ -42,15 +43,16 @@ Last updated: 2026-11-24
 - gitleaks pre-commit + CI and Dependabot (D43), commit `9fb3042`; full history scanned: no leaks.
 - DECISIONS.md renumbered into D1–D45 with rejected alternatives; this file in the new format; package READMEs and SECURITY.md (`dcfcc1e`, `0ba2c07`).
 - Independent verification: 6 rounds by fresh subagents given only the criteria and the diff. Found and fixed: Docker build broken by the hook setup script; `testing_since` still integer; REST upload expiry and MCP text times not ISO; years outside 0000–9999; login limiter bypassable (spoofed X-Forwarded-For, concurrency, cross-site lockout, more than 10 000 addresses → global cap D46); stale docs. Commits `be3d58f`, `54a608e`, `230ad5e`, `a6e4e03`, `6c99b84`, `62e9d0d`. Last round found no bugs.
-- Tests: 650 (45 files); lint, typecheck, build and Docker smoke test green locally on `62e9d0d`.
+- Tests: 650 (45 files); lint, typecheck, build and Docker smoke test green locally on `62e9d0d`; CI green on GitHub.
+- Release `2026.11.24-b1` (2026-11-24): multi-arch image `ghcr.io/undermix96/heph` (amd64 + arm64), git tag and GitHub release, from `abac45d`. Pulled through `compose.yaml`: `/health` and MCP report the version, the container runs read-only with all capabilities dropped and `no-new-privileges`.
 
 ## In progress
 
-- CI on `62e9d0d`, then the first CalVer release (multi-arch) with the Release workflow.
+- Nothing.
 
 ## Next step
 
-User: recreate the server volumes, deploy the first CalVer release and check the phase 3 acceptance criteria.
+Propose the phase 4 plan (functional web UI, §12.4) and wait for the user's approval.
 
 ## Open questions
 
@@ -63,3 +65,4 @@ User: recreate the server volumes, deploy the first CalVer release and check the
 - [ ] Activity thresholds, session expiry and diary trigger: tune after real use (§13).
 - [ ] Revert API on top of `change_log` (D31): which changes are revertible, and from which UI.
 - [ ] Project export (§11): Markdown + files zip, planned with the web UI.
+- [ ] Move work tracking from this file into Heph (project CLAUDE.md: "once Heph is running"): when, and whether this file is then deleted.

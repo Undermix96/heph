@@ -1,197 +1,385 @@
 # Decisions
 
-Architectural and technical decisions for Hephaestus (heph), with their rationale.
-One dated section per decision; newest at the bottom. Superseded decisions are kept and marked, never deleted.
-Work state (what's done, what's next) does **not** belong here.
+Durable architectural and technical decisions for Hephaestus (heph), numbered `D<n>`, newest at the bottom.
+Entries are never renumbered or rewritten; superseded ones are marked. Cite them in code as `D14`, spec sections as `§4.2` (spec: `docs/HANDOFF.md`).
+Work state lives in [`PROGRESS.md`](PROGRESS.md), not here.
 
 ---
 
-## 2026-11-24 — TypeScript end to end
+## D1 — TypeScript end to end (2026-11-24)
 
-**Decision:** Server, MCP server, CLI, shared schemas and web UI are all written in TypeScript.
-**Why:** One language and one type system across every layer; Zod schemas and inferred types can be shared between REST, MCP and the frontend without code generation.
+Decision: Server, MCP server, CLI, shared schemas and web UI are all written in TypeScript (§3).
+Why: One language and one type system across every layer; Zod schemas and inferred types are shared by REST, MCP and the frontend without code generation.
+Alternatives rejected:
 
-## 2026-11-24 — SQLite as the only datastore
+- Go or Rust backend: faster, but schemas would have to be duplicated or generated for the TS frontend.
+- Python backend: same duplication problem, and a second toolchain in one container.
 
-**Decision:** SQLite in WAL mode, with FTS5 for full-text search. The DB file lives on a local Docker volume (`/data/db`), never on NFS/SMB.
-**Why:** Single user, small data, one container. No separate database service to run; backup is copying files. WAL gives concurrent reads during writes. Network filesystems break SQLite locking, hence the local-volume requirement.
+## D2 — SQLite as the only datastore (2026-11-24)
 
-## 2026-11-24 — Single container, two ports
+Decision: SQLite in WAL mode with FTS5 for search; the DB file lives on a local Docker volume (`/data/db`), never on NFS/SMB (§3).
+Why: Single user, small data, one container; no database service to run; WAL allows reads during writes. Network filesystems break SQLite locking.
+Alternatives rejected:
 
-**Decision:** One Docker image, one container, exposing two ports: the **UI + REST** port (published through a Cloudflare Tunnel protected by Cloudflare Access) and the **MCP** port (LAN only, never routed through the tunnel).
-**Why:** Keeps deployment trivial while isolating the agent-facing surface from the internet. The UI is reachable remotely behind Access; the MCP endpoint, which uses a static bearer token, is never exposed outside the LAN.
+- PostgreSQL: a second service to run and back up for no benefit at this scale.
+- JSON files: no transactions, no full-text search.
 
-## 2026-11-24 — No dependency on Cloudflare Access headers
+## D3 — Single container, two ports (2026-11-24)
 
-**Decision:** The app never inspects or requires Cloudflare Access headers or JWTs. It has its own authentication (see below) and behaves identically when reached directly on the LAN or through the tunnel.
-**Why:** Access is an extra outer layer, not the app's auth. Depending on it would break LAN access and couple the app to one hosting setup.
+Decision: One image, one container, two ports: UI + REST (published through a Cloudflare Tunnel behind Access) and the agent port (LAN only) (§4).
+Why: Trivial deployment while keeping the agent surface, protected by a static token, off the internet.
+Alternatives rejected:
 
-## 2026-11-24 — Web authentication: single user, setup wizard, sessions
+- One port with path-based rules at the proxy: one misconfiguration would expose the agent endpoints.
+- Two containers: more moving parts for a single-user app.
 
-**Decision:** Username + password, no registration page. On first start a one-time setup wizard creates the only user; afterwards it is unreachable. Passwords are hashed with argon2. Login creates an httpOnly session cookie (marked `Secure` when the request came over HTTPS). Password can be changed in settings and reset from inside the container with `heph reset-password`.
-**Why:** Single-user app; this is the smallest auth that is still safe. The CLI reset guarantees recovery even if the UI is unusable. OAuth is deferred to a later phase.
+## D4 — No dependency on Cloudflare Access headers (2026-11-24)
 
-## 2026-11-24 — Static bearer token for API, MCP and hooks
+Decision: The app never inspects Cloudflare Access headers or JWTs; it has its own authentication and behaves the same on the LAN and through the tunnel (§4).
+Why: Access is an outer layer, not the app's auth (defense in depth); depending on it would break LAN access.
+Alternatives rejected:
 
-**Decision:** A static API token is generated during setup, shown in settings, and regenerable from the UI and from `heph rotate-token`. It is required by the MCP server and by the hook endpoints.
-**Why:** Claude Code hooks and the MCP config need a non-interactive credential that can live in an environment variable (`HEPH_TOKEN`). One token, one user, easy rotation.
+- Trusting the Access JWT as login: no auth on the LAN, and coupling to one hosting setup.
 
-## 2026-11-24 — The agent is a first-class user: one domain layer, thin adapters
+## D5 — Web authentication: single user, setup wizard, sessions (2026-11-24)
 
-**Decision:** Every operation lives in a single domain layer. The REST API, the MCP server and the web UI are thin adapters over it. There are no UI-only features.
-**Why:** Claude Code must be able to do everything the user can. Keeping logic in one place prevents the adapters from drifting apart.
+Decision: Username + password, no registration page. A one-time setup wizard creates the only user. Passwords hashed with argon2id; httpOnly session cookie, `Secure` when the request came over HTTPS; password change in settings; `heph reset-password` in the container (§4).
+Why: The smallest auth that is still safe for one user; the CLI guarantees recovery even if the UI is unusable.
+Alternatives rejected:
 
-## 2026-11-24 — Intent-level MCP tools, not CRUD mirrors
+- OAuth/OIDC: deferred to a later phase (§12.8); too much setup for one user now.
+- HTTP basic auth: no logout, no session control, credentials on every request.
 
-**Decision:** MCP tools express meaningful actions (`get_briefing`, `log_progress`, `complete_task`, …) rather than mirroring tables. `get_briefing` is the primary entry point.
-**Why:** An agent works better with few, purposeful tools that return compact, ready-to-use context than with many low-level ones it has to orchestrate.
+## D6 — Static bearer token for API, MCP and hooks (2026-11-24)
 
-## 2026-11-24 — No LLM inside the app
+Decision: A static API token generated during setup, shown in settings, regenerable from the UI and `heph rotate-token`; required by MCP and the hook endpoints (§4).
+Why: Claude Code hooks and MCP config need a non-interactive credential that fits in an environment variable (`HEPH_TOKEN`).
+Alternatives rejected:
 
-**Decision:** The app embeds no language model. It stores, computes and serves; all intelligence lives in the client (Claude).
-**Why:** Avoids API keys, cost, latency and non-determinism on the server. The client already has a far more capable model and the user's context.
+- OAuth for MCP: heavy for a single LAN user; revisit with D5's OAuth phase.
+- Per-session tokens: hooks have no interactive step to obtain them.
 
-## 2026-11-24 — Markdown for all free text
+## D7 — The agent is a first-class user: one domain layer, thin adapters (2026-11-24)
 
-**Decision:** Descriptions, notes, status notes, diary bodies and internal docs are stored and rendered as Markdown.
-**Why:** It is what Claude writes natively, it diffs well, and it exports cleanly.
+Decision: Every operation lives in one domain layer (`packages/core`); REST, MCP, CLI and the web UI are thin adapters; no UI-only features (§2.1).
+Why: Claude Code must be able to do everything the user can; logic in one place keeps adapters from drifting.
+Alternatives rejected:
 
-## 2026-11-24 — Append-only diary and source on every change
+- Business rules in route handlers: duplicated between REST and MCP.
+- MCP calling the REST API over HTTP: an extra hop and a second serialisation layer for no gain.
 
-**Decision:** The diary is append-only. Every change records its `source` (`ui`, `claude_code`, `github`, `system`) and is revertible where that makes sense.
-**Why:** The diary is the memory that lets the user resume a project; it must be trustworthy. Knowing who did what is essential when an agent writes alongside the user.
+## D8 — Intent-level MCP tools, not CRUD mirrors (2026-11-24)
 
-## 2026-11-24 — Graduated trust for agent writes
+Decision: MCP tools express meaningful actions (`get_briefing`, `log_progress`, `complete_task`, …); `get_briefing` is the entry point (§2.2, §8).
+Why: An agent works better with purposeful tools that return ready-to-use context than with many low-level ones it must orchestrate.
+Alternatives rejected:
 
-**Decision:** Additive agent operations are applied directly. Destructive ones (delete phase/task, restructure roadmap, set `completed`/`abandoned`) require an explicit user-confirmed flag or are stored as a **Proposal** that the user approves or rejects in the UI.
-**Why:** Lets Claude work autonomously on the common path while keeping irreversible changes under the user's control.
+- Generic CRUD tools per table: more calls, more tokens, more room for inconsistent writes.
 
-## 2026-11-24 — MCP over Streamable HTTP
+## D9 — No LLM inside the app (2026-11-24)
 
-**Decision:** The MCP server uses the official TypeScript MCP SDK with the Streamable HTTP transport, authenticated by the bearer token, served on the LAN-only port.
-**Why:** HTTP transport lets one long-running server serve any Claude Code session on the LAN; stdio would require a local process per machine.
+Decision: The app embeds no language model; it stores, computes and serves. Intelligence lives in the client (§2.3).
+Why: No API keys, cost, latency or non-determinism on the server; the client already has a better model and the user's context.
+Alternatives rejected:
 
-## 2026-11-24 — File uploads from the agent via one-time URLs
+- Server-side summaries with an LLM API: paid, slower, and duplicates what Claude does in the session.
 
-**Decision:** Claude requests a one-time upload URL (`request_upload`) and uploads with `curl -F file=@path <url>`. File content is never passed as base64 in tool arguments.
-**Why:** Base64 in tool calls wastes context tokens and breaks on large files; curl streams directly from disk.
+## D10 — Markdown for all free text (2026-11-24)
 
-## 2026-11-24 — Work state in the app, decisions in the repo
+Decision: Descriptions, notes, status notes, diary bodies and internal docs are Markdown (§2.4).
+Why: What Claude writes natively; diffs well; exports cleanly.
+Alternatives rejected:
 
-**Decision:** Where a project stands (diary, phases, next task, briefing) lives in the app, not in repo files. Architectural decisions live in each repo as `DECISIONS.md` (path configurable per repo). Projects without a repo use internal Markdown docs stored in the app.
-**Why:** Work state changes constantly and is better served by structured data; decisions are durable, belong with the code, and should be reviewable in git.
+- Rich-text JSON (ProseMirror etc.): heavier, and awkward for the agent to produce.
 
-## 2026-11-24 — English for docs, code comments and commits
+## D11 — Append-only diary and source on every change (2026-11-24)
 
-**Decision:** Documentation, code comments and commit messages are always in English. Diary content follows the app's "content language" setting. The UI is available in Italian and English.
-**Why:** Code artifacts stay readable to anyone and consistent across projects; the diary is personal and can use the user's language.
+Decision: The diary is append-only; every change records its source (`ui`, `claude_code`, `github`, `system`) and is revertible where it makes sense (§2.5).
+Why: The diary is the memory that lets the user resume; it must be trustworthy and say who did what.
+Alternatives rejected:
 
-## 2026-11-24 — GitHub integration by polling, read-only
+- Editable diary entries: history could silently change.
 
-**Decision:** GitHub is integrated by polling with a fine-grained read-only token at a configurable interval. Commits (grouped) and releases are imported as diary events; docs files are fetched from linked repos. No webhooks, no issue sync.
-**Why:** The server is LAN-only, so GitHub cannot reach it. Read-only access minimizes risk. Tasks can still link to issues/PRs by URL.
+## D12 — Graduated trust for agent writes (2026-11-24)
 
-## 2026-11-24 — Claude Code integration as a plugin in this repo
+Decision: Additive agent operations apply directly; destructive ones (delete phase/task, restructure roadmap, `completed`/`abandoned`) need an explicit user-confirmed flag or become a Proposal approved in the UI (§2.6).
+Why: The agent works autonomously on the common path; irreversible changes stay under the user's control.
+Alternatives rejected:
 
-**Decision:** A Claude Code plugin, versioned in this repository, bundles the MCP config (reading `HEPH_URL` / `HEPH_TOKEN`), hooks and skills. It is installed once at user level. Hook scripts depend only on `git` and `curl` where possible.
-**Why:** One install covers every project; versioning it with the server keeps the hook ↔ endpoint contract in sync. Minimal dependencies make hooks work on any dev machine.
+- Proposals for every agent write: too much friction.
+- No gating: one bad agent call could wipe a roadmap.
 
-## 2026-11-24 — Global rules injected by the SessionStart hook
+## D13 — MCP over Streamable HTTP (2026-11-24)
 
-**Decision:** The rules Claude must follow in every project (English for docs/comments/commits, track state via MCP, decisions in `DECISIONS.md`, current `session_id`) are injected by the `SessionStart` hook together with the project briefing, not written to `~/.claude/CLAUDE.md`.
-**Why:** Plugins cannot install a user CLAUDE.md, and the user's own CLAUDE.md must stay free for personal instructions.
+Decision: Official TypeScript MCP SDK, Streamable HTTP transport, bearer token, LAN-only port (§3, §8). Refined by D35 and D36.
+Why: One long-running server serves every Claude Code session on the LAN.
+Alternatives rejected:
 
-## 2026-11-24 — Two-level roadmap, deliberately minimal planning model
+- stdio: needs a local process per machine with database access.
 
-**Decision:** Roadmaps have exactly two levels: macro-phases → tasks. No subtasks, due dates, priorities or estimates in v1. Every project should always have one **next task** (computed by default, overridable).
-**Why:** The goal is resuming work, not project management. A single, always-visible next step matters more than planning detail.
+## D14 — Agent file uploads via one-time URLs (2026-11-24)
 
-## 2026-11-24 — Node.js 26 LTS
+Decision: Claude asks for a one-time upload URL (`request_upload`) and uploads with `curl -F file=@path <url>`; file content is never passed as base64 in tool arguments (§8).
+Why: Base64 in tool calls wastes context tokens and breaks on large files; curl streams from disk.
+Alternatives rejected:
 
-**Decision:** Target Node.js 26 (current Active LTS, "Lithium"), pinned in `.nvmrc` and in the Docker base image.
-**Why:** Latest LTS gives the longest support window and current language/runtime features.
+- Base64 in a tool argument: token cost, size limits.
+- A shared folder mount: ties the app to one dev machine.
 
-## 2026-11-24 — Dark theme only for the first UI
+## D15 — Work state in the app, decisions in the repo (2026-11-24)
 
-**Decision:** The approved design (`docs/design/`) is dark-theme only. The UI is implemented with the design tokens in `docs/design/tokens.css` so a light theme can be added later. Styling is kept isolated from functional components.
-**Why:** Matches the approved design while keeping the door open for a light variant.
+Decision: Where a project stands lives in the app (diary, phases, next task, briefing); decisions live in each repo as `DECISIONS.md` (path configurable); projects without a repo use internal Markdown docs (§7).
+Why: Work state changes constantly and fits structured data; decisions are durable and belong with the code.
+Alternatives rejected:
 
-## 2026-11-24 — Conflict rule between spec and design
+- A HANDOFF/PROGRESS file per repo: drifts, and is invisible from the dashboard.
 
-**Decision:** When `docs/HANDOFF.md` and `docs/design/` disagree, the spec wins. A design choice is adopted only where it adds something without contradicting the spec.
-**Why:** The spec is the agreed product scope; the design package is the visual layer.
+## D16 — English for docs, code comments and commits (2026-11-24)
 
-## 2026-11-24 — Hooks and agent uploads are served on the LAN agent port
+Decision: Documentation, code comments and commit messages are English; diary content follows the "content language" setting; UI in Italian and English (§7).
+Why: Code artifacts stay readable and consistent; the diary is personal.
+Alternatives rejected:
 
-**Decision:** `/mcp`, `/hooks/*` and `/upload/*` are served on the agent port (LAN only, default 8081). `HEPH_URL` points to it. The REST API is mounted on both ports; on the UI port it accepts the session cookie or the bearer token, on the agent port only the bearer token.
-**Why:** The UI port sits behind Cloudflare Access, which would block `curl` calls from Claude Code hooks and uploads. The spec lists these endpoints under REST without naming a port; this keeps the agent surface off the tunnel.
+- Everything in Italian: inconsistent with public code and tooling.
 
-## 2026-11-24 — Badge precedence vs dashboard ordering
+## D17 — GitHub integration by polling, read-only (2026-11-24)
 
-**Decision:** The displayed badge follows the spec precedence: live activity (`claude_testing` > `claude_working`) → lifecycle → recency. Dashboard ordering follows the spec list (awaiting manual test first). They are two different computations.
-**Why:** Spec §6 wins over the design's badge table.
+Decision: Polling with a fine-grained read-only token at a configurable interval; commits (grouped) and releases become diary events; docs fetched from repos; no webhooks, no issue sync (§10).
+Why: The server is LAN-only, so GitHub cannot reach it; read-only minimises risk.
+Alternatives rejected:
 
-## 2026-11-24 — Next task: computed default with override
+- Webhooks: need a public endpoint.
+- Issue sync: duplicates GitHub; tasks link to issues by URL instead.
 
-**Decision:** The next task is the override if it points to an open task, else the first open task of the first non-done phase. Completing the override clears it. "No next step" means no open task exists in non-done phases. `complete_task` returns the new next task.
-**Why:** Spec §5; the design's "suggest but don't pick" contradicts it.
+## D18 — Claude Code integration as a plugin in this repo (2026-11-24)
 
-## 2026-11-24 — Activity thresholds and session expiry defaults
+Decision: A Claude Code plugin versioned in this repo bundles MCP config (`HEPH_URL`, `HEPH_TOKEN`), hooks and skills; installed once at user level; hook scripts depend only on `git` and `curl` where possible (§9).
+Why: One install covers every project; versioning it with the server keeps the hook ↔ endpoint contract in sync.
+Alternatives rejected:
 
-**Decision:** `recently_active` < 7 days, `inactive` > 30 days (spec defaults; design used 3/21). Live sessions expire after 30 minutes without events. All configurable in settings.
-**Why:** Spec wins; values to be tuned after real use.
+- Manual per-project configuration: easy to forget, drifts.
 
-## 2026-11-24 — Screenshot retention: last N per target
+## D19 — Global rules injected by the SessionStart hook (2026-11-24)
 
-**Decision:** Unpinned files uploaded by Claude Code are kept up to the last N (default 20) per attached target (task, diary entry, phase or project); older ones are deleted. Pinned files are never deleted.
-**Why:** Spec §5 wins over the design's age-based expiry.
+Decision: The rules Claude follows in every project are injected by the `SessionStart` hook with the briefing, not written to `~/.claude/CLAUDE.md` (§9).
+Why: Plugins cannot install a user CLAUDE.md, and the user's own CLAUDE.md stays free.
+Alternatives rejected:
 
-## 2026-11-24 — Phase status is stored and kept in sync with tasks
+- Asking the user to paste rules into their CLAUDE.md: manual and drifts from the server.
 
-**Decision:** `phases.status` is a stored field that can be set explicitly. Task changes keep it in sync: all tasks done → `done`; some done or a task reopened in a done phase → `in_progress`. Phase progress is always computed from tasks.
-**Why:** The spec lists status as a field and progress as computed; syncing avoids a done-looking phase that blocks the next-task computation.
+## D20 — Two-level roadmap, minimal planning model (2026-11-24)
 
-## 2026-11-24 — Docs per repo
+Decision: Exactly two levels (macro-phases → tasks); no subtasks, due dates, priorities or estimates in v1; always one next task (computed, overridable) (§5).
+Why: The goal is resuming work, not project management.
+Alternatives rejected:
 
-**Decision:** `projects.docs_source` selects `repo` or `internal`. With `repo`, every linked repo has its own docs path (default `DECISIONS.md`) and cached content; the Documentation tab shows one entry per repo.
-**Why:** The spec makes the path configurable per repo while projects can have many repos.
+- Arbitrary nesting or a full PM model: more UI and agent complexity for no gain in the core job.
 
-## 2026-11-24 — Diary is strictly append-only; reverts via change log
+## D21 — Node.js 26 LTS (2026-11-24)
 
-**Decision:** Diary entries are never edited or deleted through the API. Every domain mutation writes a `change_log` row (before/after JSON, source, session). A revert applies the inverse change and appends a compensating event.
-**Why:** Spec §2 principle 5.
+Decision: Target Node.js 26 ("Lithium"), pinned in `.nvmrc` and the Docker base image.
+Why: Current Active LTS with the longest support window. Checked on 2026-11-24 against https://nodejs.org/dist/index.json (latest LTS v26.13.1, released 2026-11-10).
+Alternatives rejected:
 
-## 2026-11-24 — Small additions adopted from the design
+- Node 24 (Maintenance LTS): shorter support window.
 
-**Decision:** Adopted because they don't contradict the spec: a per-project `claude_write_enabled` switch; a `decision_note` on proposals that Claude can read; a per-repo `show_commits` toggle; a `content_language` setting (spec §7 mentions it). Export stays Markdown + files in a zip, which also includes a `project.json`.
-**Why:** They improve the product without changing agreed behavior.
+## D22 — Dark theme only for the first UI (2026-11-24)
 
-## 2026-11-24 — Monorepo layout and core libraries
+Decision: The approved design (`docs/design/`) is dark only; the UI uses `docs/design/tokens.css` so a light theme can be added; styling isolated from logic.
+Why: Matches the approved design while keeping a light variant possible.
+Alternatives rejected:
 
-**Decision:** npm workspaces: `packages/schema` (Zod), `packages/core` (Drizzle schema, migrations, domain), `apps/server` (Hono adapters, CLI), `apps/web` (Vite + React SPA). Libraries: Hono, Zod v4, Drizzle + better-sqlite3, @node-rs/argon2, sharp, busboy, pino, Vitest, Biome. Integer IDs, unix-ms timestamps.
-**Why:** No extra package manager to install (corepack is gone from Node 25+); one domain package for all adapters; mature, light dependencies. Integer IDs are short for an agent to reference.
+- Designing both themes now: not part of the approved design.
 
-## 2026-11-24 — Diary keyset pagination and no all-digit slugs
+## D23 — Conflict rule between spec and design (2026-11-24)
 
-**Decision:** Diary lists paginate with a keyset cursor `(before = occurredAt, beforeId = id)` of the last entry received, because many entries share a millisecond. Project slugs can never be only digits (generated ones get a `p-` prefix; explicit ones are rejected), so a project reference that is all digits is always an id.
-**Why:** Found by the domain test suite: timestamp-only cursors skipped entries, and digit-only slugs were unreachable by slug.
+Decision: When `docs/HANDOFF.md` and `docs/design/` disagree, the spec wins; a design choice is adopted only if it adds something without contradicting the spec.
+Why: The spec is the agreed scope; the design is the visual layer (user decision, 2026-11-24).
+Alternatives rejected:
 
-## 2026-11-24 — MCP server: SDK v2, stateless, on the agent port
+- Design wins: it would change agreed behaviour (thresholds, retention, badge order).
 
-**Decision:** Use `@modelcontextprotocol/server` v2 (stable line, MCP 2026-07-28) through `createMcpHandler`, which also serves 2025-era clients with a stateless fallback. A fresh `McpServer` is built per request over the shared domain layer; no MCP sessions are stored. Endpoint `POST /mcp` on the agent port, bearer token, cross-origin requests refused.
-**Why:** Works with whichever protocol revision the Claude Code client speaks, survives restarts, and keeps the agent surface off the tunnel.
+## D24 — Hooks and agent uploads are served on the LAN agent port (2026-11-24)
 
-## 2026-11-24 — MCP tool conventions
+Decision: `/mcp`, `/hooks/*` and `/upload/*` are served on the agent port (default 8081); `HEPH_URL` points there. REST is on both ports: cookie or token on the UI port, token only on the agent port.
+Why: The UI port sits behind Cloudflare Access, which would block `curl` from hooks and uploads; §11 lists these under REST without naming a port.
+Alternatives rejected:
 
-**Decision:** Tools return compact Markdown with ids written as `#42`; domain errors are returned as tool errors (`isError`) so the agent can recover. Every write tool accepts an optional `session_id`. `get_briefing` resolves the project from `project`, then `repo` (`owner/name`), then `session_id`; other tools require `project`. Single moves and edits are applied directly; deletes, roadmap restructuring and `completed`/`abandoned` need `confirmed: true` (the user confirmed in chat) or become proposals. Material deletion is not exposed over MCP.
-**Why:** Intent-level tools (spec §8) with the graduated-trust rules of §2.6, refined during implementation.
+- Hooks on the UI port with an Access service token: more setup, and exposes them to the internet.
 
-## 2026-11-24 — "Confirmed in chat" is recorded and can be disabled
+## D25 — Badge precedence vs dashboard ordering (2026-11-24)
 
-**Decision:** When the agent applies a destructive change with `confirmed: true`, the change log and the diary event record it. A setting `allowClaudeConfirm` (default on) lets the user force every destructive agent change through a proposal.
-**Why:** The confirmed flag is self-reported by the agent; the user needs visibility and a way to opt out.
+Decision: The badge follows §6 precedence: live activity (`claude_testing` > `claude_working`) → lifecycle → recency. Dashboard ordering follows the §6 list (awaiting manual test first). They are separate computations.
+Why: Spec §6 wins over the design's badge table (D23).
+Alternatives rejected:
 
-## 2026-11-24 — Roadmap restructuring as a batch of operations
+- The design's badge order (awaiting test above live activity): contradicts §6.
 
-**Decision:** `restructure_roadmap` takes a list of operations (`add_phase`, `update_phase`, `move_phase`, `delete_phase`, `add_task`, `update_task`, `move_task`, `delete_task`); new phases get a temporary `ref` that later operations can target. The batch is validated when proposed and again when approved, applied in one transaction, and the proposal stores a before/after outline for review.
-**Why:** Lets the agent propose a coherent reorganisation that the user approves or rejects as a whole, without a free-form "replace the roadmap" payload.
+## D26 — Next task: computed default with override (2026-11-24)
+
+Decision: The next task is the override if it points to an open task, else the first open task of the first non-done phase; completing the override clears it; "no next step" means no open task in non-done phases; `complete_task` returns the new next task (§5).
+Why: Spec §5; the design's "suggest but don't pick" contradicts it.
+Alternatives rejected:
+
+- An explicit pointer only (design §9): projects would lose their next step after every completion.
+
+## D27 — Activity thresholds and session expiry defaults (2026-11-24)
+
+Decision: `recently_active` < 7 days, `inactive` > 30 days (spec), live sessions expire after 30 minutes without events; all configurable.
+Why: Spec wins (D23); values to be tuned after real use (§13).
+Alternatives rejected:
+
+- The design's 3 / 21 days: contradicts §6.
+
+## D28 — Screenshot retention: last N per target (2026-11-24)
+
+Decision: Unpinned Claude Code uploads are kept up to the last N (default 20) per attached target; older ones are deleted; pinned files never are.
+Why: Spec §5 wins over the design's age-based expiry (D23).
+Alternatives rejected:
+
+- Delete after N days (design): contradicts §5.
+
+## D29 — Phase status is stored and kept in sync with tasks (2026-11-24)
+
+Decision: `phases.status` is stored and settable; task changes keep it in sync (all done → `done`; reopened or partly done → `in_progress`); progress is always computed.
+Why: §5 lists status as a field and progress as computed; syncing prevents a done-looking phase from blocking the next-task computation.
+Alternatives rejected:
+
+- Fully computed status: the user could not mark an empty phase done.
+- Fully manual status: easy to forget, breaks D26.
+
+## D30 — Docs per repo (2026-11-24)
+
+Decision: `projects.docs_source` selects `repo` or `internal`; with `repo`, every linked repo has its own docs path (default `DECISIONS.md`) and cached content; the Documentation tab shows one entry per repo.
+Why: §7 makes the path configurable per repo while projects can have many repos.
+Alternatives rejected:
+
+- One docs path per project: ambiguous with several repos.
+
+## D31 — Diary strictly append-only; reverts via change log (2026-11-24)
+
+Decision: Diary entries are never edited or deleted through the API; every mutation writes a `change_log` row (before/after JSON, source, session); a revert applies the inverse and appends a compensating event.
+Why: §2.5.
+Alternatives rejected:
+
+- Editable or soft-deletable notes: weakens the trust D11 relies on.
+
+## D32 — Small additions adopted from the design (2026-11-24)
+
+Decision: Per-project `claude_write_enabled`; `decision_note` on proposals that Claude can read; per-repo `show_commits`; a `content_language` setting (§7). Export stays Markdown + files in a zip, plus a `project.json`.
+Why: They improve the product without changing agreed behaviour (D23).
+Alternatives rejected:
+
+- JSON-only export (design): §11 asks for Markdown.
+
+## D33 — Monorepo layout and core libraries (2026-11-24)
+
+Decision: npm workspaces: `packages/schema` (Zod), `packages/core` (Drizzle schema, migrations, domain), `apps/server` (Hono adapters, CLI), `apps/web` (Vite + React). Libraries: Hono, Zod v4, Drizzle + better-sqlite3, @node-rs/argon2, sharp, busboy, pino, Vitest, Biome. Integer ids. _Timestamp storage superseded by D39._
+Why: No extra package manager (corepack is gone from Node 25+); one domain package for all adapters; mature, light dependencies; short integer ids are easy for an agent to reference.
+Alternatives rejected:
+
+- pnpm: one more tool to install.
+- Express/Fastify: heavier; Hono is web-standard and testable in-process.
+- Prisma: heavier runtime and engine binary.
+- UUIDs: long for the agent to reference.
+
+## D34 — Diary keyset pagination and no all-digit slugs (2026-11-24)
+
+Decision: Diary lists paginate with a keyset cursor (`before` = occurredAt, `beforeId` = id). Slugs are never only digits (generated ones get a `p-` prefix; explicit ones are rejected), so an all-digit project reference is always an id.
+Why: Found by the domain tests: timestamp-only cursors skipped entries; digit-only slugs were unreachable.
+Alternatives rejected:
+
+- Offset pagination: skips or repeats entries while new ones are added.
+
+## D35 — MCP server: SDK v2, stateless, on the agent port (2026-11-24)
+
+Decision: `@modelcontextprotocol/server` v2 (stable line, MCP 2026-07-28) through `createMcpHandler`, which also serves 2025-era clients with a stateless fallback; a fresh `McpServer` per request; `POST /mcp` on the agent port, bearer token, cross-origin requests refused. Checked on 2026-11-24: server 2.4.0 on npm. Verified with the real Claude Code CLI 2.1.331 on 2026-11-24.
+Why: Works with whichever protocol revision the client speaks and survives restarts.
+Alternatives rejected:
+
+- SDK v1 (`@modelcontextprotocol/sdk`): replaced by v2.
+- Stateful sessions: state to keep and lose on restart, no benefit for request/response tools.
+
+## D36 — MCP tool conventions (2026-11-24)
+
+Decision: Compact Markdown results with ids as `#42`; domain errors as tool errors (`isError`); optional `session_id` on every write tool; `get_briefing` resolves project → repo (also git remote URLs) → session; single moves and edits apply directly; deletes, restructuring and `completed`/`abandoned` need `confirmed: true` or become proposals; material deletion not exposed over MCP; positions are 1-based for the agent.
+Why: Intent-level tools (D8) with graduated trust (D12).
+Alternatives rejected:
+
+- JSON results: more tokens, less readable for the agent.
+- Protocol errors for domain failures: the agent cannot recover as easily.
+
+## D37 — "Confirmed in chat" is recorded and can be disabled (2026-11-24)
+
+Decision: When the agent passes `confirmed: true`, `change_log.confirmed` and the diary event record it; the setting `allowClaudeConfirm` (default on) forces every destructive agent change through a proposal when off.
+Why: The flag is self-reported by the agent; the user needs visibility and an opt-out.
+Alternatives rejected:
+
+- Not offering a confirmed flag: every agreed change would need a UI round trip.
+
+## D38 — Roadmap restructuring as a batch of operations (2026-11-24)
+
+Decision: `restructure_roadmap` takes operations (`add_phase`, `update_phase`, `move_phase`, `delete_phase`, `add_task`, `update_task`, `move_task`, `delete_task`); new phases get a temporary `ref` (never digit-only); validated when proposed and again when approved; applied in one transaction; the proposal stores a before/after outline.
+Why: A coherent reorganisation the user approves or rejects as a whole.
+Alternatives rejected:
+
+- A free-form "replace the roadmap" payload: hard to review and validate, loses ids.
+
+## D39 — Timestamps as UTC ISO 8601 strings (2026-11-24)
+
+Decision: Database columns store UTC ISO 8601 text with milliseconds (`2026-11-24T12:00:00.000Z`) through the `isoTime` column type; the domain computes in unix ms; views, REST and MCP expose ISO strings; the diary cursor `before` is an ISO time. Supersedes the timestamp part of D33.
+Why: User rule "timestamps in UTC as ISO strings" (global CLAUDE.md, user decision 2026-11-24). Fixed-width ISO keeps text order equal to time order, so comparisons and ORDER BY stay correct.
+Alternatives rejected:
+
+- Keep unix ms: contradicts the rule; unreadable in the DB and the API.
+- ISO strings throughout the domain: every expiry and threshold calculation would parse strings.
+
+## D40 — Migrations regenerated from scratch before first production use (2026-11-24)
+
+Decision: The migrations were regenerated as `0000_init` + `0001_search_fts` for D39; existing databases must be recreated.
+Why: Nothing is in production and there is no data to keep (user decision, 2026-11-24). From now on migrations are append-only and never edited once merged.
+Alternatives rejected:
+
+- A conversion migration from integers to text: work for data that does not exist.
+
+## D41 — Hardened container (2026-11-24)
+
+Decision: The container runs as the non-root `node` user with a read-only root filesystem, a tmpfs `/tmp`, all Linux capabilities dropped and `no-new-privileges`; only the two data volumes are writable. `compose.yaml` and the smoke test use the same flags, and the smoke test asserts them.
+Why: User rule for container deployments (global CLAUDE.md); limits what a compromised process can do.
+Alternatives rejected:
+
+- Default Docker settings: a writable image filesystem and default capabilities for no need.
+
+## D42 — CalVer multi-arch releases (2026-11-24)
+
+Decision: Releases are triggered manually by the Release workflow: version `YYYY.MM.DD-b<N>` (N = releases that UTC day + 1), amd64 smoke test first, then a multi-arch image (linux/amd64 + linux/arm64) pushed to `ghcr.io/undermix96/heph` with tags `<version>`, `latest` and `sha-<short>`, a git tag and a GitHub release listing the commits since the previous release. The version is exposed in `/health` and as the MCP server version. The server only pulls published images.
+Why: User rules on versioning and multi-arch images (global CLAUDE.md, user decision 2026-11-24).
+Alternatives rejected:
+
+- SemVer: the user's convention is CalVer.
+- Building on the server: the server only pulls.
+
+## D43 — Secret scanning and dependency updates (2026-11-24)
+
+Decision: gitleaks v8.30.1 scans staged changes in a versioned pre-commit hook (`.githooks`, set up by `npm install`; local binary or the pinned Docker image) and the full history in CI. Dependabot opens weekly grouped updates for npm, GitHub Actions and the Docker base image.
+Why: User rules (global CLAUDE.md); the repo is public. Version checked on 2026-11-24 (winget and ghcr.io).
+Alternatives rejected:
+
+- CI-only scanning: a secret would already be pushed.
+- The gitleaks GitHub Action: running the pinned image keeps CI and the hook on the same version.
+
+## D44 — Error texts: fixed for the UI, detailed for the agent (2026-11-24)
+
+Decision: The REST/MCP error format keeps `code` and the domain `message` (the agent needs the detail to recover). The web UI (phase 4) shows fixed, translated texts per error `code` with an action, never the raw message.
+Why: User rule "user-facing errors are fixed texts per error type" (global CLAUDE.md) balanced with D36; user decision, 2026-11-24.
+Alternatives rejected:
+
+- Fixed texts in the API too: the agent could no longer tell what to fix.
+
+## D45 — API token stays readable in Settings (2026-11-24)
+
+Decision: The API token is stored readable and shown in Settings as §4 requires; the GitHub token is write-only (the API returns only whether it is set).
+Why: The project spec wins over the global write-only-secrets rule (the global rules give the project precedence); user decision, 2026-11-24.
+Alternatives rejected:
+
+- Write-only API token: contradicts §4 ("shown in settings") and the "Connect Claude Code" page.

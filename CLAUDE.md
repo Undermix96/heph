@@ -6,7 +6,7 @@ Self-hosted, AI-first project tracker. Short name `heph` (CLI, Docker image/cont
 
 - **Spec:** `docs/HANDOFF.md` — scope and design decisions. Read the relevant section before changing behavior.
 - **UI design:** `docs/design/` (`DESIGN.md`, `tokens.css`, mockups). Dark theme only; use the tokens, keep styling isolated.
-- **Decisions:** `DECISIONS.md` — add a dated section for every architectural/technical decision and its rationale. Never rewrite history; mark superseded entries.
+- **Decisions:** `DECISIONS.md` — one numbered entry `D<n>` per architectural/technical decision (format in the global rules). Never renumber or rewrite; mark superseded entries.
 
 ## Work state
 

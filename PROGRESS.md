@@ -4,7 +4,7 @@ Temporary work-state tracker. Delete once Heph is running and tracks itself via 
 
 ## Current phase
 
-Roadmap phases 1 (Foundation) and 2 (Core model + REST) are **done**. Next: phase 3 (MCP server).
+Roadmap phases 1, 2 and 3 (MCP server) are **done**. Next: phase 4 (web UI).
 
 ## Done
 
@@ -22,9 +22,9 @@ Roadmap phases 1 (Foundation) and 2 (Core model + REST) are **done**. Next: phas
 
 - Revert of changes from `change_log` (data is recorded; no API yet).
 - Project export (markdown + files zip, spec §11).
-- `restructure_roadmap` proposals can be stored but not applied (needs the phase-3 tool design).
+- Real Claude Code CLI check against MCP not run (no CLI on the dev machine).
 - Claude session endpoints (hooks) arrive with phase 5; activity already reads `claude_sessions`.
 
 ## Next step
 
-Phase 3: MCP server on the agent port (Streamable HTTP, bearer token), tools from spec §8 on top of the domain layer, starting with `get_briefing`.
+Phase 4: functional web UI (dashboard, project page, diary, docs, materials, files, proposals, settings, IT/EN), then apply the design.

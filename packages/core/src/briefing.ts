@@ -1,4 +1,4 @@
-import type { ProjectDetail } from '@heph/schema';
+import { normalizeRepo, type ProjectDetail } from '@heph/schema';
 import type { Domain } from './domain.js';
 import { DomainError } from './errors.js';
 import { badgeLabel, diaryLine, isoDay, isoMinute, oneLine, pct, relTime } from './format.js';
@@ -29,7 +29,7 @@ export class BriefingService {
   resolve(t: BriefingTarget): number {
     if (t.project !== undefined && t.project !== '') return this.d.projects.row(t.project).id;
     if (t.repo) {
-      const repo = t.repo.trim();
+      const repo = normalizeRepo(t.repo);
       try {
         return this.d.projects.row(repo.includes('/') ? repo : `${repo}/`).id;
       } catch {

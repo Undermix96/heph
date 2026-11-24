@@ -4,6 +4,7 @@ import {
   CreateProjectInput,
   type Gated,
   type LinkInput,
+  normalizeRepo,
   type ProjectDetail,
   ProjectListQuery,
   type ProjectSummary,
@@ -54,7 +55,7 @@ export class ProjectsService {
       const repo = this.d.db
         .select({ projectId: projectRepos.projectId })
         .from(projectRepos)
-        .where(eq(projectRepos.fullName, ref.trim().toLowerCase()))
+        .where(eq(projectRepos.fullName, normalizeRepo(ref).toLowerCase()))
         .get();
       if (repo)
         row = this.d.db.select().from(projects).where(eq(projects.id, repo.projectId)).get();

@@ -78,7 +78,7 @@ jobs:
       - name: Smoke test the built image
         if: ${{ !inputs.push && inputs.platforms == 'linux/amd64' }}
         env:
-          SKIP_BUILD: '1'
+          SKIP_BUILD: "1"
           # metadata-action lower-cases the image name; take its first tag.
           IMAGE: ${{ fromJSON(steps.meta.outputs.json).tags[0] }}
         run: bash scripts/docker-smoke.sh

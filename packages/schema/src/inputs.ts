@@ -18,10 +18,26 @@ export const QueryBool = z.preprocess(
 );
 
 /** `owner/name`, as on GitHub. */
+/**
+ * Turns what `git remote get-url origin` prints into `owner/name`:
+ * https://github.com/o/n(.git), git@github.com:o/n.git, ssh://git@github.com/o/n.
+ * Anything else is returned trimmed and unchanged.
+ */
+export function normalizeRepo(input: string): string {
+  const s = input.trim();
+  const m =
+    s.match(
+      /^(?:https?|git|ssh):\/\/(?:[^@/]+@)?github\.com(?::\d+)?\/([^/]+)\/([^/]+?)(?:\.git)?\/?$/i,
+    ) ?? s.match(/^(?:[^@/]+@)?github\.com:([^/]+)\/([^/]+?)(?:\.git)?\/?$/i);
+  return m ? `${m[1]}/${m[2]}` : s.replace(/\.git$/i, '');
+}
+
 export const RepoFullName = z
   .string()
-  .trim()
-  .regex(/^[A-Za-z0-9-]+\/[A-Za-z0-9._-]+$/, 'Expected "owner/name"');
+  .transform(normalizeRepo)
+  .pipe(
+    z.string().regex(/^[A-Za-z0-9-]+\/[A-Za-z0-9._-]+$/, 'Expected "owner/name" or a GitHub URL'),
+  );
 
 export const Slug = z
   .string()

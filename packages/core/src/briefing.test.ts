@@ -529,3 +529,25 @@ describe('briefing: build', () => {
     expect([...order].sort((a, b) => a - b)).toEqual(order);
   });
 });
+
+describe('briefing: repo given as a git remote URL', () => {
+  it.each([
+    'https://github.com/Me/Spot-Welder.git',
+    'https://github.com/me/spot-welder',
+    'git@github.com:me/spot-welder.git',
+    'ssh://git@github.com/me/spot-welder.git',
+  ])('resolves %s', (url) => {
+    const t = makeDomain();
+    const p = t.d.projects.create({ name: 'Welder', repos: ['me/spot-welder'] }, UI);
+    expect(t.d.briefing.resolve({ repo: url })).toBe(p.id);
+  });
+
+  it('links repos given as URLs and suggests owner/name for unknown ones', () => {
+    const t = makeDomain();
+    const p = t.d.projects.create({ name: 'X', repos: ['git@github.com:me/x.git'] }, UI);
+    expect(p.repos).toEqual(['me/x']);
+    expect(() => t.d.briefing.resolve({ repo: 'https://github.com/me/other.git' })).toThrow(
+      /repos: \["me\/other"\]/,
+    );
+  });
+});

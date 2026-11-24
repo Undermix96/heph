@@ -12,12 +12,14 @@
     "@heph/schema": "*",
     "@hono/node-server": "*",
     "@hono/zod-validator": "*",
+    "@modelcontextprotocol/server": "^2.4.0",
     "busboy": "*",
     "hono": "*",
     "pino": "*",
     "zod": "^4.0.0"
   },
   "devDependencies": {
+    "@modelcontextprotocol/client": "^2.4.0",
     "@types/busboy": "*",
     "tsdown": "*",
     "tsx": "*"

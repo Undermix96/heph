@@ -202,6 +202,38 @@ export class FilesService {
     return this.toView(this.rowOf(id));
   }
 
+  /**
+   * Agent-friendly preview of a file: raster images downscaled to `maxEdge`
+   * (WebP), small text files as UTF-8, anything else nothing.
+   */
+  async preview(
+    id: number,
+    maxEdge = 1568,
+  ): Promise<
+    | { kind: 'image'; data: Buffer; mime: string }
+    | { kind: 'text'; text: string }
+    | { kind: 'none'; reason: string }
+  > {
+    const f = this.rowOf(id);
+    const p = this.abs(f.storagePath);
+    if (!fs.existsSync(p)) return { kind: 'none', reason: 'content missing on disk' };
+    if (THUMBNAILABLE.has(f.mime)) {
+      const data = await sharp(p, { pages: 1 })
+        .rotate()
+        .resize(maxEdge, maxEdge, { fit: 'inside', withoutEnlargement: true })
+        .webp({ quality: 80 })
+        .toBuffer();
+      return { kind: 'image', data, mime: 'image/webp' };
+    }
+    if (isTextLike(f.mime, f.originalName)) {
+      if (f.size > TEXT_PREVIEW_MAX) {
+        return { kind: 'none', reason: `text file larger than ${TEXT_PREVIEW_MAX / 1024} KB` };
+      }
+      return { kind: 'text', text: await fsp.readFile(p, 'utf8') };
+    }
+    return { kind: 'none', reason: 'binary file' };
+  }
+
   /** Absolute path (and metadata) for download; `thumb` picks the thumbnail. */
   open(id: number, thumb = false): { path: string; mime: string; name: string; size: number } {
     const f = this.rowOf(id);
@@ -486,6 +518,23 @@ function targetId(t: {
   diaryEntryId: number | null;
 }): number | null {
   return t.taskId ?? t.phaseId ?? t.diaryEntryId ?? null;
+}
+
+const TEXT_PREVIEW_MAX = 100 * 1024;
+const TEXT_MIME = new Set([
+  'application/json',
+  'application/xml',
+  'application/x-yaml',
+  'application/yaml',
+  'application/toml',
+  'application/javascript',
+  'image/svg+xml',
+]);
+const TEXT_EXT =
+  /\.(md|markdown|txt|log|csv|tsv|json|jsonc|ya?ml|toml|ini|cfg|conf|xml|html?|css|s?css|js|mjs|cjs|ts|tsx|jsx|py|rb|go|rs|c|h|cpp|hpp|java|kt|sh|ps1|sql|gcode|ino|svg)$/i;
+
+function isTextLike(mime: string, name: string): boolean {
+  return mime.startsWith('text/') || TEXT_MIME.has(mime) || TEXT_EXT.test(name);
 }
 
 function sanitizeName(name: string): string {

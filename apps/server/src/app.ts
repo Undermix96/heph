@@ -7,6 +7,7 @@ import { secureHeaders } from 'hono/secure-headers';
 import type { Logger } from 'pino';
 import { authenticate } from './http/auth.js';
 import { type AppEnv, errorHandler } from './http/common.js';
+import { mcpRoutes } from './mcp/route.js';
 import { apiRoutes } from './routes/api.js';
 import { authRoutes, LoginLimiter } from './routes/auth.js';
 import { uploadRoutes } from './routes/upload.js';
@@ -60,6 +61,7 @@ export function createAgentApp(opts: AppOptions): Hono<AppEnv> {
   app.onError(errorHandler(opts.log));
   app.get('/health', (c) => c.json({ ok: true, port: 'agent' }));
   app.route('/upload', uploadRoutes(opts.domain));
+  app.route('/mcp', mcpRoutes(opts.domain));
   const api = new Hono<AppEnv>();
   api.use('*', authenticate(opts.domain, { allowCookie: false }));
   api.route('/', apiRoutes(opts.domain));

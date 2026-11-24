@@ -1,0 +1,17 @@
+#!/bin/sh
+# Secret scanning of the staged changes with gitleaks (see SECURITY.md).
+# Do not bypass with --no-verify. Installed by `npm install` (core.hooksPath).
+set -e
+GITLEAKS_VERSION=v8.30.1
+if command -v gitleaks >/dev/null 2>&1; then
+  exec gitleaks git --pre-commit --staged --redact --no-banner .
+fi
+if command -v docker >/dev/null 2>&1; then
+  root=$(git rev-parse --show-toplevel)
+  # MSYS_NO_PATHCONV: keep Git Bash on Windows from rewriting /repo.
+  MSYS_NO_PATHCONV=1 exec docker run --rm -v "$root:/repo" -w /repo \
+    "ghcr.io/gitleaks/gitleaks:$GITLEAKS_VERSION" git --pre-commit --staged --redact --no-banner /repo
+fi
+echo "pre-commit: gitleaks is required for secret scanning." >&2
+echo "Install it (winget install Gitleaks.Gitleaks) or Docker, then commit again." >&2
+exit 1

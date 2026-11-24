@@ -22,7 +22,8 @@
     "test:watch": "vitest",
     "db:generate": "npm run db:generate -w @heph/core",
     "check": "npm run lint && npm run typecheck && npm test",
-    "smoke:docker": "bash scripts/docker-smoke.sh"
+    "smoke:docker": "bash scripts/docker-smoke.sh",
+    "prepare": "node scripts/setup-hooks.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.6.8",

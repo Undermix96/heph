@@ -110,6 +110,11 @@ export function syncedPhaseStatus(current: PhaseStatus, ts: { done: boolean }[])
   return current;
 }
 
+/** Marks diary event data when the agent applied a destructive change "confirmed in chat". */
+export function confirmedFlag(ctx: Ctx): { confirmedInChat?: true } {
+  return ctx.source === 'claude_code' && ctx.confirmed ? { confirmedInChat: true } : {};
+}
+
 export class RoadmapService {
   constructor(private readonly d: Domain) {}
 
@@ -257,23 +262,37 @@ export class RoadmapService {
       );
     }
     this.d.tx(() => {
-      const ts = this.taskRowsOfPhase(id);
-      this.clearOverrideIfIn(
+      const ts = this.removePhase(id, ctx);
+      this.d.diary.event(
         phase.projectId,
-        ts.map((t) => t.id),
+        'phase_deleted',
+        `Deleted phase: ${phase.title} (${ts.length} tasks)`,
+        { phaseId: id, title: phase.title, taskCount: ts.length, ...confirmedFlag(ctx) },
+        ctx,
       );
-      this.d.files.detachToProject({ phaseId: id, taskIds: ts.map((t) => t.id) });
-      this.d.db.delete(phases).where(eq(phases.id, id)).run();
-      this.renumberPhases(this.phaseRows(phase.projectId));
-      this.d.audit.record(ctx, {
-        projectId: phase.projectId,
-        entity: 'phase',
-        entityId: id,
-        action: 'delete',
-        before: { phase, tasks: ts },
-      });
     });
     return null;
+  }
+
+  /** Deletes a phase and its tasks without gating or diary event (files move to project level). */
+  removePhase(id: number, ctx: Ctx): TaskRow[] {
+    const phase = this.getPhase(id);
+    const ts = this.taskRowsOfPhase(id);
+    this.clearOverrideIfIn(
+      phase.projectId,
+      ts.map((t) => t.id),
+    );
+    this.d.files.detachToProject({ phaseId: id, taskIds: ts.map((t) => t.id) });
+    this.d.db.delete(phases).where(eq(phases.id, id)).run();
+    this.renumberPhases(this.phaseRows(phase.projectId));
+    this.d.audit.record(ctx, {
+      projectId: phase.projectId,
+      entity: 'phase',
+      entityId: id,
+      action: 'delete',
+      before: { phase, tasks: ts },
+    });
+    return ts;
   }
 
   // ------------------------------------------------------------ tasks
@@ -461,20 +480,33 @@ export class RoadmapService {
       );
     }
     this.d.tx(() => {
-      this.clearOverrideIfIn(task.projectId, [id]);
-      this.d.files.detachToProject({ taskIds: [id] });
-      this.d.db.delete(tasks).where(eq(tasks.id, id)).run();
-      this.renumberTasks(this.taskRowsOfPhase(task.phaseId));
-      this.syncPhase(task.phaseId);
-      this.d.audit.record(ctx, {
-        projectId: task.projectId,
-        entity: 'task',
-        entityId: id,
-        action: 'delete',
-        before: task,
-      });
+      this.removeTask(id, ctx);
+      this.d.diary.event(
+        task.projectId,
+        'task_deleted',
+        `Deleted task: ${task.title}`,
+        { taskId: id, title: task.title, ...confirmedFlag(ctx) },
+        ctx,
+      );
     });
     return null;
+  }
+
+  /** Deletes a task without gating or diary event (its files move to project level). */
+  removeTask(id: number, ctx: Ctx): void {
+    const task = this.taskRow(id);
+    this.clearOverrideIfIn(task.projectId, [id]);
+    this.d.files.detachToProject({ taskIds: [id] });
+    this.d.db.delete(tasks).where(eq(tasks.id, id)).run();
+    this.renumberTasks(this.taskRowsOfPhase(task.phaseId));
+    this.syncPhase(task.phaseId);
+    this.d.audit.record(ctx, {
+      projectId: task.projectId,
+      entity: 'task',
+      entityId: id,
+      action: 'delete',
+      before: task,
+    });
   }
 
   /** Sets (or clears, with null) the next-task override. */

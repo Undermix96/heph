@@ -175,3 +175,23 @@ Work state (what's done, what's next) does **not** belong here.
 
 **Decision:** Diary lists paginate with a keyset cursor `(before = occurredAt, beforeId = id)` of the last entry received, because many entries share a millisecond. Project slugs can never be only digits (generated ones get a `p-` prefix; explicit ones are rejected), so a project reference that is all digits is always an id.
 **Why:** Found by the domain test suite: timestamp-only cursors skipped entries, and digit-only slugs were unreachable by slug.
+
+## 2026-11-24 — MCP server: SDK v2, stateless, on the agent port
+
+**Decision:** Use `@modelcontextprotocol/server` v2 (stable line, MCP 2026-07-28) through `createMcpHandler`, which also serves 2025-era clients with a stateless fallback. A fresh `McpServer` is built per request over the shared domain layer; no MCP sessions are stored. Endpoint `POST /mcp` on the agent port, bearer token, cross-origin requests refused.
+**Why:** Works with whichever protocol revision the Claude Code client speaks, survives restarts, and keeps the agent surface off the tunnel.
+
+## 2026-11-24 — MCP tool conventions
+
+**Decision:** Tools return compact Markdown with ids written as `#42`; domain errors are returned as tool errors (`isError`) so the agent can recover. Every write tool accepts an optional `session_id`. `get_briefing` resolves the project from `project`, then `repo` (`owner/name`), then `session_id`; other tools require `project`. Single moves and edits are applied directly; deletes, roadmap restructuring and `completed`/`abandoned` need `confirmed: true` (the user confirmed in chat) or become proposals. Material deletion is not exposed over MCP.
+**Why:** Intent-level tools (spec §8) with the graduated-trust rules of §2.6, refined during implementation.
+
+## 2026-11-24 — "Confirmed in chat" is recorded and can be disabled
+
+**Decision:** When the agent applies a destructive change with `confirmed: true`, the change log and the diary event record it. A setting `allowClaudeConfirm` (default on) lets the user force every destructive agent change through a proposal.
+**Why:** The confirmed flag is self-reported by the agent; the user needs visibility and a way to opt out.
+
+## 2026-11-24 — Roadmap restructuring as a batch of operations
+
+**Decision:** `restructure_roadmap` takes a list of operations (`add_phase`, `update_phase`, `move_phase`, `delete_phase`, `add_task`, `update_task`, `move_task`, `delete_task`); new phases get a temporary `ref` that later operations can target. The batch is validated when proposed and again when approved, applied in one transaction, and the proposal stores a before/after outline for review.
+**Why:** Lets the agent propose a coherent reorganisation that the user approves or rejects as a whole, without a free-form "replace the roadmap" payload.

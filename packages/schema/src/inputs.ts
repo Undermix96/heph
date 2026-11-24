@@ -245,6 +245,8 @@ export const Settings = z.object({
   githubToken: z.string().max(500).nullable(),
   githubPollMinutes: z.number().int().min(1).max(1440),
   currency: z.string().length(3).toUpperCase(),
+  /** When false, destructive agent changes always become proposals, even with confirmed: true. */
+  allowClaudeConfirm: z.boolean(),
 });
 export type Settings = z.infer<typeof Settings>;
 export const UpdateSettingsInput = Settings.partial().refine(
@@ -280,4 +282,53 @@ export const DEFAULT_SETTINGS: Settings = {
   githubToken: null,
   githubPollMinutes: 15,
   currency: 'EUR',
+  allowClaudeConfirm: true,
 };
+
+// ---------------------------------------------------------------- roadmap restructuring
+
+/** A phase in a restructure batch: an existing id, or the `ref` of a phase added earlier in the batch. */
+export const PhaseRef = z.union([Id, z.string().trim().min(1).max(50)]);
+export type PhaseRef = z.infer<typeof PhaseRef>;
+
+const pos = z.number().int().min(0);
+
+export const RestructureOp = z.discriminatedUnion('op', [
+  z.object({
+    op: z.literal('add_phase'),
+    ref: z.string().trim().min(1).max(50).optional(),
+    title,
+    description: md().optional(),
+    position: pos.optional(),
+  }),
+  z.object({
+    op: z.literal('update_phase'),
+    phase: PhaseRef,
+    title: title.optional(),
+    description: md().optional(),
+  }),
+  z.object({ op: z.literal('move_phase'), phase: PhaseRef, position: pos }),
+  z.object({ op: z.literal('delete_phase'), phaseId: Id }),
+  z.object({
+    op: z.literal('add_task'),
+    phase: PhaseRef,
+    title,
+    notes: md().optional(),
+    position: pos.optional(),
+  }),
+  z.object({
+    op: z.literal('update_task'),
+    taskId: Id,
+    title: title.optional(),
+    notes: md().optional(),
+  }),
+  z.object({ op: z.literal('move_task'), taskId: Id, phase: PhaseRef.optional(), position: pos }),
+  z.object({ op: z.literal('delete_task'), taskId: Id }),
+]);
+export type RestructureOp = z.infer<typeof RestructureOp>;
+
+export const RestructureInput = z.object({
+  operations: z.array(RestructureOp).min(1).max(200),
+  reason: md(20_000).optional(),
+});
+export type RestructureInput = z.infer<typeof RestructureInput>;

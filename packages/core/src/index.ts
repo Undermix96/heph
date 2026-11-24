@@ -1,10 +1,13 @@
 export { API_TOKEN_PREFIX, type AuthUser, type LoginResult, SESSION_TTL_MS } from './auth.js';
+export type { BriefingTarget } from './briefing.js';
 export * from './context.js';
 export { type Db, DEFAULT_MIGRATIONS_DIR, openDb, schema } from './db/index.js';
 export { createDomain, Domain, type DomainOptions } from './domain.js';
 export * from './errors.js';
 export { type IngestInput, UPLOAD_TOKEN_TTL_MS } from './files.js';
+export * from './format.js';
 export type { ProjectRef } from './projects.js';
-export { computeNextTask, syncedPhaseStatus } from './roadmap.js';
+export { outline, type RestructurePayload } from './restructure.js';
+export { computeNextTask, confirmedFlag, syncedPhaseStatus } from './roadmap.js';
 export { toFtsQuery } from './search.js';
 export { activityStateOf, attentionGroupOf, badgeOf } from './status.js';

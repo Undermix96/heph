@@ -27,7 +27,7 @@ import {
 } from './db/schema.js';
 import type { Domain } from './domain.js';
 import { DomainError, notFound } from './errors.js';
-import { computeNextTask, currentPhaseOf, progressOf } from './roadmap.js';
+import { computeNextTask, confirmedFlag, currentPhaseOf, progressOf } from './roadmap.js';
 import { parse, slugify } from './util.js';
 
 export type ProjectRow = typeof projects.$inferSelect;
@@ -360,7 +360,7 @@ export class ProjectsService {
           row.id,
           'status_changed',
           note ? `Status: ${status} — ${note}` : `Status: ${status}`,
-          { from: row.lifecycleStatus, to: status, note: note ?? '' },
+          { from: row.lifecycleStatus, to: status, note: note ?? '', ...confirmedFlag(ctx) },
           ctx,
         );
       }

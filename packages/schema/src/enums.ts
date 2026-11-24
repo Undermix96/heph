@@ -50,6 +50,9 @@ export const EVENT_KINDS = [
   'test_outcome',
   'proposal_decided',
   'reverted',
+  'phase_deleted',
+  'task_deleted',
+  'roadmap_restructured',
 ] as const;
 export const EventKind = z.enum(EVENT_KINDS);
 export type EventKind = z.infer<typeof EventKind>;

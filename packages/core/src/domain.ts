@@ -1,11 +1,13 @@
 import { AuditLog } from './audit.js';
 import { AuthService } from './auth.js';
+import { BriefingService } from './briefing.js';
 import type { Db } from './db/index.js';
 import { DiaryService } from './diary.js';
 import { FilesService } from './files.js';
 import { MaterialsService } from './materials.js';
 import { ProjectsService } from './projects.js';
 import { ProposalsService } from './proposals.js';
+import { RestructureService } from './restructure.js';
 import { RoadmapService } from './roadmap.js';
 import { SearchService } from './search.js';
 import { SessionsService } from './sessions.js';
@@ -41,6 +43,8 @@ export class Domain {
   readonly sessions: SessionsService;
   readonly status: StatusService;
   readonly search: SearchService;
+  readonly restructure: RestructureService;
+  readonly briefing: BriefingService;
 
   constructor(opts: DomainOptions) {
     this.db = opts.db;
@@ -58,6 +62,8 @@ export class Domain {
     this.sessions = new SessionsService(this);
     this.status = new StatusService(this);
     this.search = new SearchService(this);
+    this.restructure = new RestructureService(this);
+    this.briefing = new BriefingService(this);
   }
 
   /** Runs `fn` in a SQLite transaction (synchronous, as better-sqlite3 requires). */

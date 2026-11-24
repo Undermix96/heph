@@ -1,5 +1,5 @@
 import type { LiveSessionView } from '@heph/schema';
-import { and, gt, inArray, isNull, lte } from 'drizzle-orm';
+import { and, eq, gt, inArray, isNull, lte } from 'drizzle-orm';
 import { claudeSessions } from './db/schema.js';
 import type { Domain } from './domain.js';
 
@@ -41,6 +41,16 @@ export class SessionsService {
       ]);
     }
     return out;
+  }
+
+  /** Project a Claude Code session is linked to (set by the SessionStart hook, phase 5). */
+  projectFor(sessionId: string): number | null {
+    const row = this.d.db
+      .select({ projectId: claudeSessions.projectId })
+      .from(claudeSessions)
+      .where(eq(claudeSessions.sessionId, sessionId))
+      .get();
+    return row?.projectId ?? null;
   }
 
   /** Closes sessions without events for longer than the expiry window. Returns how many. */

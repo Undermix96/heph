@@ -10,6 +10,7 @@ import { proposals } from './db/schema.js';
 import type { Domain } from './domain.js';
 import { DomainError, notFound } from './errors.js';
 import type { ProjectRef } from './projects.js';
+import type { RestructurePayload } from './restructure.js';
 import { parse } from './util.js';
 
 type ProposalRow = typeof proposals.$inferSelect;
@@ -23,7 +24,8 @@ export class ProposalsService {
 
   /** True when a destructive operation must become a proposal instead of running. */
   needsProposal(ctx: Ctx): boolean {
-    return ctx.source === 'claude_code' && !ctx.confirmed;
+    if (ctx.source !== 'claude_code') return false;
+    return !ctx.confirmed || !this.d.settings.get().allowClaudeConfirm;
   }
 
   create(
@@ -110,7 +112,22 @@ export class ProposalsService {
         this.d.roadmap.deleteTask(Number(payload.taskId), ctx);
         return;
       case 'restructure_roadmap':
-        throw new DomainError('unsupported', 'Roadmap restructuring is not available yet');
+        try {
+          this.d.restructure.apply(
+            p.projectId,
+            (payload as unknown as RestructurePayload).operations,
+            ctx,
+          );
+        } catch (e) {
+          if (e instanceof DomainError && (e.code === 'validation' || e.code === 'not_found')) {
+            throw new DomainError(
+              'conflict',
+              `The roadmap changed since this proposal was made: ${e.message}`,
+            );
+          }
+          throw e;
+        }
+        return;
     }
   }
 

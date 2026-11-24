@@ -117,7 +117,9 @@ describe('search', () => {
     expect(d.search.search({ q: 'calibr' })).toEqual([]);
     expect(d.search.search({ q: 'ventol' }).map((h) => h.refId)).toEqual([taskId]);
     d.roadmap.deleteTask(taskId, UI);
-    expect(d.search.search({ q: 'ventol' })).toEqual([]);
+    expect(d.search.search({ q: 'ventol', kinds: ['task'] })).toEqual([]);
+    // The deletion itself is recorded in the diary, which is searchable.
+    expect(d.search.search({ q: 'ventol' }).map((h) => h.kind)).toEqual(['diary']);
     d.projects.delete(welder.id, UI);
     expect(d.search.search({ q: 'trasform' })).toEqual([]);
   });

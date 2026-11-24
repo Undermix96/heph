@@ -27,6 +27,7 @@ export class AuditLog {
         after: r.after ?? null,
         source: ctx.source,
         sessionId: ctx.sessionId ?? null,
+        confirmed: ctx.source === 'claude_code' && !!ctx.confirmed,
         createdAt: this.d.now(),
       })
       .run();

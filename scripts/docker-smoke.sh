@@ -66,6 +66,19 @@ NEXT=$(curl -fsS -H "authorization: Bearer $TOKEN" "$AGENT/api/projects/$SLUG/ne
 code=$(curl -s -o /dev/null -w '%{http_code}' -b "$JAR" "$AGENT/api/projects")
 [ "$code" = "401" ] || fail "agent port accepted a cookie ($code)"
 
+echo "==> MCP on the agent port"
+mcp() {
+  curl -fsS -H "authorization: Bearer $TOKEN" -H 'content-type: application/json' \
+    -H 'accept: application/json, text/event-stream' -d "$1" "$AGENT/mcp"
+}
+mcp '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"smoke","version":"0"}}}' \
+  | grep -q '"name":"heph"' || fail "MCP initialize"
+mcp '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}' | grep -q '"get_briefing"' || fail "MCP tools/list"
+mcp "{\"jsonrpc\":\"2.0\",\"id\":3,\"method\":\"tools/call\",\"params\":{\"name\":\"get_briefing\",\"arguments\":{\"project\":\"$SLUG\"}}}" \
+  | grep -q 'First task' || fail "MCP get_briefing"
+code=$(curl -s -o /dev/null -w '%{http_code}' -H 'content-type: application/json' -d '{}' "$AGENT/mcp")
+[ "$code" = "401" ] || fail "MCP without token returned $code"
+
 echo "==> one-time upload with curl -F"
 URL_PATH=$(curl -fsS -H "authorization: Bearer $TOKEN" -H 'content-type: application/json' \
   -d '{"caption":"smoke"}' "$AGENT/api/projects/$SLUG/upload-requests" | json .path)

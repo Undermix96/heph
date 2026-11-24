@@ -1,6 +1,6 @@
 # Hephaestus (heph)
 
-> **Work in progress.** The backend (data model, REST API, auth, CLI) works; the web UI is only a setup/login page for now, and the MCP server and Claude Code plugin are not built yet.
+> **Work in progress.** The backend (data model, REST API, auth, CLI) and the MCP server work; the web UI is only a setup/login page for now, and the Claude Code plugin (hooks, automatic diary) is not built yet.
 
 Hephaestus is a self-hosted, AI-first tracker for personal software and DIY projects.
 Its core job: let you resume any project after weeks without reconstructing context.
@@ -27,10 +27,10 @@ To build from source instead of pulling: `docker compose -f compose.yaml -f comp
 
 Then open `http://<server>:8080` and complete the one-time setup wizard (username + password). The wizard shows the **API token** once; you can see it again later in Settings.
 
-| Port   | Serves                                                                     | Expose                                          |
-| ------ | -------------------------------------------------------------------------- | ----------------------------------------------- |
-| `8080` | Web UI + REST API (`/api`)                                                 | LAN, and through your Cloudflare Tunnel         |
-| `8081` | REST API with the token, one-time uploads (`/upload`), later MCP and hooks | **LAN only**: never route it through the tunnel |
+| Port   | Serves                                                                           | Expose                                          |
+| ------ | -------------------------------------------------------------------------------- | ----------------------------------------------- |
+| `8080` | Web UI + REST API (`/api`)                                                       | LAN, and through your Cloudflare Tunnel         |
+| `8081` | MCP (`/mcp`), REST API with the token, one-time uploads (`/upload`), later hooks | **LAN only**: never route it through the tunnel |
 
 To change the host ports or time zone, copy `.env.example` to `.env` and edit it.
 
@@ -44,6 +44,19 @@ docker exec -it heph heph reset-password --username me   # also rename the user
 docker exec heph heph rotate-token                   # new API token; the old one stops working
 docker compose logs -f heph
 ```
+
+### Connect Claude Code (MCP)
+
+Heph exposes an MCP server at `http://<server>:8081/mcp` (Streamable HTTP, bearer token). Register it once at user level, with the API token from the setup wizard or Settings:
+
+```sh
+claude mcp add --scope user --transport http heph http://<server>:8081/mcp \
+  --header "Authorization: Bearer <api-token>"
+```
+
+Then ask Claude Code for the briefing of a project (tool `get_briefing`), or use the `heph_overview` and `heph_resume` prompts. Destructive changes Claude asks for (deleting phases or tasks, restructuring the roadmap, marking a project completed or abandoned) are stored as proposals for you to approve, unless you confirmed them in the chat. After `heph rotate-token`, update the header.
+
+The Claude Code plugin (phase 5) will replace this manual step and add the hooks that keep the diary up to date.
 
 ### Cloudflare Tunnel
 

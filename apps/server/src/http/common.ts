@@ -3,6 +3,7 @@ import { DomainError } from '@heph/core';
 import type { Context, ErrorHandler } from 'hono';
 import type { ContentfulStatusCode } from 'hono/utils/http-status';
 import type { Logger } from 'pino';
+import { ZodError } from 'zod';
 
 /** Variables set on the Hono context by the auth middleware. */
 export interface AppEnv {
@@ -34,6 +35,12 @@ export function errorHandler(log: Logger): ErrorHandler<AppEnv> {
         STATUS[err.code],
       );
     }
+    if (err instanceof ZodError) {
+      const message = err.issues
+        .map((i) => `${i.path.join('.') || 'input'}: ${i.message}`)
+        .join('; ');
+      return c.json({ error: { code: 'validation', message, details: err.issues } }, 400);
+    }
     if (err instanceof SyntaxError) {
       return c.json({ error: { code: 'validation', message: 'Malformed JSON body' } }, 400);
     }
@@ -53,11 +60,15 @@ export function errorHandler(log: Logger): ErrorHandler<AppEnv> {
   };
 }
 
-/** Reads a JSON body; an empty body is `{}`. */
-export async function body(c: Context): Promise<unknown> {
+/** Reads a JSON object body; an empty body is `{}`. Anything but an object is a 400. */
+export async function body(c: Context): Promise<Record<string, unknown>> {
   const text = await c.req.text();
   if (!text.trim()) return {};
-  return JSON.parse(text);
+  const value: unknown = JSON.parse(text);
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) {
+    throw new DomainError('validation', 'The request body must be a JSON object');
+  }
+  return value as Record<string, unknown>;
 }
 
 /** Parses a positive integer path parameter. */

@@ -37,7 +37,15 @@ export async function parseMultipart(
 
   const bb = busboy({
     headers: { 'content-type': contentType },
-    limits: { fileSize: opts.maxBytes, files: opts.maxFiles, fields: 50, fieldSize: 64 * 1024 },
+    // Filenames are UTF-8 in practice; busboy defaults to latin1.
+    defParamCharset: 'utf8',
+    limits: {
+      // busboy fires "limit" when a file reaches fileSize; allow exactly maxBytes.
+      fileSize: opts.maxBytes + 1,
+      files: opts.maxFiles,
+      fields: 50,
+      fieldSize: 64 * 1024,
+    },
   });
 
   bb.on('field', (name, value) => {

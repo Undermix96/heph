@@ -21,9 +21,9 @@ docker compose up -d --build
 
 Then open `http://<server>:8080` and complete the one-time setup wizard (username + password). The wizard shows the **API token** once; you can see it again later in Settings.
 
-| Port | Serves | Expose |
-|------|--------|--------|
-| `8080` | Web UI + REST API (`/api`) | LAN, and through your Cloudflare Tunnel |
+| Port   | Serves                                                                     | Expose                                          |
+| ------ | -------------------------------------------------------------------------- | ----------------------------------------------- |
+| `8080` | Web UI + REST API (`/api`)                                                 | LAN, and through your Cloudflare Tunnel         |
 | `8081` | REST API with the token, one-time uploads (`/upload`), later MCP and hooks | **LAN only**: never route it through the tunnel |
 
 To change the host ports or time zone, copy `.env.example` to `.env` and edit it.

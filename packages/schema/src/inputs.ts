@@ -11,6 +11,12 @@ const url = z.url().max(2000);
 
 export const Id = z.coerce.number().int().positive();
 
+/** Boolean from a query string: "true"/"1" and "false"/"0" (z.coerce.boolean treats "false" as true). */
+export const QueryBool = z.preprocess(
+  (v) => (v === 'true' || v === '1' ? true : v === 'false' || v === '0' ? false : v),
+  z.boolean(),
+);
+
 /** `owner/name`, as on GitHub. */
 export const RepoFullName = z
   .string()
@@ -150,7 +156,7 @@ export const DiaryQuery = z.object({
   limit: z.coerce.number().int().min(1).max(500).default(50),
   source: z.enum(['ui', 'claude_code', 'github', 'system']).optional(),
   type: z.enum(['note', 'session', 'event']).optional(),
-  withFiles: z.coerce.boolean().optional(),
+  withFiles: QueryBool.optional(),
 });
 export type DiaryQuery = z.infer<typeof DiaryQuery>;
 
@@ -185,7 +191,7 @@ export type UpdateFileInput = z.infer<typeof UpdateFileInput>;
 export const ProjectListQuery = z.object({
   status: LifecycleStatus.optional(),
   tag: TagName.optional(),
-  includeClosed: z.coerce.boolean().optional(),
+  includeClosed: QueryBool.optional(),
 });
 export type ProjectListQuery = z.infer<typeof ProjectListQuery>;
 

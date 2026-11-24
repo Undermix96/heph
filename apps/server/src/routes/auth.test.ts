@@ -132,3 +132,26 @@ describe('API token', () => {
     expect(r.data.githubToken).toBe('***');
   });
 });
+
+describe('cross-site login protection', () => {
+  it('refuses login and setup from another origin and non-JSON bodies', async () => {
+    const t = makeApps();
+    const foreign = { origin: 'https://evil.example', host: 'heph.local' };
+    expect((await t.uiReq('POST', '/api/setup', { json: USER, headers: foreign })).status).toBe(
+      403,
+    );
+    await t.setup();
+    t.clearCookie();
+    expect(
+      (await t.uiReq('POST', '/api/auth/login', { json: USER, headers: foreign })).status,
+    ).toBe(403);
+    const plain = await t.ui.request('/api/auth/login', {
+      method: 'POST',
+      headers: { 'content-type': 'text/plain' },
+      body: JSON.stringify(USER),
+    });
+    expect(plain.status).toBe(400);
+    // Neither attempt counted against the owner.
+    expect((await t.uiReq('POST', '/api/auth/login', { json: USER })).status).toBe(200);
+  });
+});

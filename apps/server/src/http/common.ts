@@ -60,8 +60,21 @@ export function errorHandler(log: Logger): ErrorHandler<AppEnv> {
   };
 }
 
-/** Reads a JSON object body; an empty body is `{}`. Anything but an object is a 400. */
-export async function body(c: Context): Promise<Record<string, unknown>> {
+/**
+ * Reads a JSON object body; an empty body is `{}`. Anything but an object is a 400.
+ * `requireJson`: the Content-Type must be application/json (browsers cannot send that
+ * cross-site without a CORS preflight, which this server never grants).
+ */
+export async function body(
+  c: Context,
+  opts: { requireJson?: boolean } = {},
+): Promise<Record<string, unknown>> {
+  if (
+    opts.requireJson &&
+    !(c.req.header('content-type') ?? '').toLowerCase().startsWith('application/json')
+  ) {
+    throw new DomainError('validation', 'Content-Type must be application/json');
+  }
   const text = await c.req.text();
   if (!text.trim()) return {};
   const value: unknown = JSON.parse(text);

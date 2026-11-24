@@ -11,7 +11,7 @@ Security posture of Hephaestus (heph), stated as it is. Decisions are referenced
 ## Authentication
 
 - Passwords are hashed with argon2id. Login sessions are random tokens stored only as SHA-256 hashes; the cookie is `httpOnly`, `SameSite=Lax`, and `Secure` when the request arrives over HTTPS (`X-Forwarded-Proto`). Sessions expire after 30 days of inactivity.
-- Failed logins are rate-limited per TCP peer address (`X-Forwarded-For` is ignored because clients control it; behind the tunnel all logins share one limit). Cookie-authenticated writes from another origin are refused.
+- Failed logins are rate-limited per TCP peer address (`X-Forwarded-For` is ignored because clients control it; behind the tunnel all logins share one limit). Attempts from one address are evaluated one at a time, so parallel requests cannot test more passwords than the limit. Login and setup refuse other origins and non-JSON bodies, so another website cannot lock the owner out. Cookie-authenticated writes from another origin are refused.
 - **API token (D6, D45):** one static bearer token for MCP and the agent REST API. It is stored readable in the database because the spec requires showing it in Settings. Rotate it with `docker exec heph heph rotate-token` or from Settings; the old token stops working at once. It does not expire by itself.
 - The GitHub token (phase 6) is write-only: the API only says whether it is set.
 - Recovery: `docker exec -it heph heph reset-password` sets a new password and signs out every session.

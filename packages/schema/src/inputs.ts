@@ -288,7 +288,14 @@ export const DEFAULT_SETTINGS: Settings = {
 // ---------------------------------------------------------------- roadmap restructuring
 
 /** A phase in a restructure batch: an existing id, or the `ref` of a phase added earlier in the batch. */
-export const PhaseRef = z.union([Id, z.string().trim().min(1).max(50)]);
+// A number is always an id, a string always a ref (no coercion), so digit-only refs are rejected.
+const BatchRef = z
+  .string()
+  .trim()
+  .min(1)
+  .max(50)
+  .refine((s) => !/^\d+$/.test(s), 'A phase ref cannot be only digits (use a name like "testing")');
+export const PhaseRef = z.union([z.number().int().positive(), BatchRef]);
 export type PhaseRef = z.infer<typeof PhaseRef>;
 
 const pos = z.number().int().min(0);
@@ -296,7 +303,7 @@ const pos = z.number().int().min(0);
 export const RestructureOp = z.discriminatedUnion('op', [
   z.object({
     op: z.literal('add_phase'),
-    ref: z.string().trim().min(1).max(50).optional(),
+    ref: BatchRef.optional(),
     title,
     description: md().optional(),
     position: pos.optional(),

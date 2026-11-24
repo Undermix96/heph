@@ -386,7 +386,7 @@ export const changeLog = sqliteTable(
     after: text('after', { mode: 'json' }),
     source: text('source', { enum: SOURCES }).notNull(),
     sessionId: text('session_id'),
-    /** The agent applied this destructive change saying the user confirmed it in chat. */
+    /** The agent's call carried confirmed: true (it says the user confirmed in chat). */
     confirmed: bool('confirmed').notNull().default(false),
     revertedAt: integer('reverted_at'),
     createdAt: createdAt(),

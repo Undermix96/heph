@@ -3,6 +3,7 @@ import {
   type ProposalKind,
   type ProposalState,
   type ProposalView,
+  RestructureInput,
 } from '@heph/schema';
 import { and, desc, eq, type SQL } from 'drizzle-orm';
 import type { Ctx } from './context.js';
@@ -113,11 +114,11 @@ export class ProposalsService {
         return;
       case 'restructure_roadmap':
         try {
-          this.d.restructure.apply(
-            p.projectId,
-            (payload as unknown as RestructurePayload).operations,
-            ctx,
-          );
+          // Re-validate the stored batch: the payload is data from the database.
+          const { operations } = parse(RestructureInput, {
+            operations: (payload as Partial<RestructurePayload>).operations,
+          });
+          this.d.restructure.apply(p.projectId, operations, ctx);
         } catch (e) {
           if (e instanceof DomainError && (e.code === 'validation' || e.code === 'not_found')) {
             throw new DomainError(

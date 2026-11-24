@@ -97,10 +97,10 @@ describe('proposals', () => {
     expect(d.proposals.get(prop.id).state).toBe('pending');
   });
 
-  it('restructure_roadmap proposals cannot be applied yet', () => {
+  it('a restructure_roadmap proposal with a malformed payload fails as a conflict', () => {
     const { d, p } = setup();
     const prop = d.proposals.create(p.id, 'restructure_roadmap', {}, 'rework', CLAUDE);
-    expectDomainError(() => d.proposals.approve(prop.id, {}, UI), 'unsupported');
+    expectDomainError(() => d.proposals.approve(prop.id, {}, UI), 'conflict');
     expect(d.proposals.get(prop.id).state).toBe('pending');
     // It can still be rejected.
     expect(d.proposals.reject(prop.id, {}, UI).state).toBe('rejected');

@@ -228,7 +228,7 @@ export class BriefingService {
         out.push(head);
         for (const t of ph.tasks.filter((x) => !x.done)) {
           if (shown++ >= MAX_TASKS_SHOWN) continue;
-          out.push(`   - [ ] #${t.id} ${t.title}`);
+          out.push(`   - [ ] #${t.id} ${t.title}${t.id === p.nextTask?.id ? ' ← next' : ''}`);
         }
       }
     });

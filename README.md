@@ -11,7 +11,7 @@ Its core job: let you resume any project after weeks without reconstructing cont
 
 ## Run with Docker Compose
 
-Requirements: Docker with the Compose plugin on a Linux host. The published image is `ghcr.io/undermix96/heph` (built by the manual **Docker image** workflow in GitHub Actions; amd64 by default, arm64 on request).
+Requirements: Docker with the Compose plugin on a Linux host. The published image is `ghcr.io/undermix96/heph`, multi-arch (amd64 + arm64), built and smoke-tested by the manual **Release** workflow in GitHub Actions. Versions are CalVer `YYYY.MM.DD-b<N>`; each release has a git tag and a GitHub release with its commits. The container runs hardened (non-root, read-only root filesystem, no capabilities, no privilege escalation).
 
 Only `compose.yaml` is needed on the server (plus an optional `.env`):
 
@@ -21,7 +21,7 @@ curl -fsSLO https://raw.githubusercontent.com/Undermix96/heph/main/compose.yaml
 docker compose up -d
 ```
 
-To update: `docker compose pull && docker compose up -d`. Pin a version with `HEPH_TAG` in `.env` (e.g. `HEPH_TAG=sha-cde56b2`).
+To update: `docker compose pull && docker compose up -d`. Pin a release with `HEPH_TAG` in `.env` (e.g. `HEPH_TAG=2026.11.24-b1`).
 
 To build from source instead of pulling: `docker compose -f compose.yaml -f compose.build.yaml up -d --build` in a clone of the repo.
 

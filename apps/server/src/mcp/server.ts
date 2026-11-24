@@ -17,7 +17,8 @@ import { z } from 'zod';
 import * as fmt from './format.js';
 
 export const MCP_SERVER_NAME = 'heph';
-export const MCP_SERVER_VERSION = '0.3.0';
+/** CalVer release version from the image (HEPH_VERSION), "dev" otherwise. */
+export const MCP_SERVER_VERSION = process.env.HEPH_VERSION || 'dev';
 
 const INSTRUCTIONS = `Hephaestus (Heph) tracks the user's software and DIY projects: roadmap (phases → tasks), next step, diary, materials, files and docs.
 Start every working session with get_briefing (pass project, or repo "owner/name" from \`git remote get-url origin\`, and your session_id). Then keep Heph up to date while you work: log_progress after meaningful steps, complete_task when a task is done, set_status awaiting_manual_test (with what to test) when the user must test something.

@@ -28,7 +28,10 @@ FROM manifests AS prod-deps
 RUN npm ci --omit=dev
 
 FROM base AS runtime
-ENV NODE_ENV=production \
+# CalVer release version (set by the Release workflow; "dev" for local builds).
+ARG HEPH_VERSION=dev
+ENV HEPH_VERSION=$HEPH_VERSION \
+    NODE_ENV=production \
     HEPH_DB_DIR=/data/db \
     HEPH_FILES_DIR=/data/files \
     HEPH_WEB_DIR=/app/web \

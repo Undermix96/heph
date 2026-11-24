@@ -127,7 +127,8 @@ describe('MCP protocol: tools, prompts, instructions', () => {
     const m = await startMcp();
     const info = m.client.getServerVersion();
     expect(info?.name).toBe('heph');
-    expect(info?.version).toMatch(/^\d+\.\d+\.\d+$/);
+    // CalVer release version from the image, "dev" outside it.
+    expect(info?.version).toMatch(/^(dev|\d{4}\.\d{2}\.\d{2}-b\d+)$/);
     const instructions = m.client.getInstructions();
     expect(instructions).toContain('get_briefing');
     expect(instructions).toContain('confirmed: true');

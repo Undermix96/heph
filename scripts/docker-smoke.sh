@@ -23,7 +23,10 @@ fail() { echo "FAIL: $*" >&2; docker logs "$NAME" 2>&1 | tail -30 >&2; exit 1; }
 json() { node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const v=JSON.parse(s);console.log(eval('v'+process.argv[1]))})" "$1"; }
 
 start() {
-  docker run -d --name "$NAME" -p "$UI_PORT:8080" -p "$AGENT_PORT:8081" \
+  # Same hardening as compose.yaml: read-only root, no capabilities, no privilege escalation.
+  # MSYS_NO_PATHCONV: stop Git Bash on Windows rewriting /tmp; no effect on Linux.
+  MSYS_NO_PATHCONV=1 docker run -d --name "$NAME" --init --read-only --tmpfs /tmp --cap-drop ALL \
+    --security-opt no-new-privileges:true -p "$UI_PORT:8080" -p "$AGENT_PORT:8081" \
     -v "$NAME-db:/data/db" -v "$NAME-files:/data/files" "$IMAGE" >/dev/null
   for _ in $(seq 1 30); do
     curl -fsS "$UI/health" >/dev/null 2>&1 && curl -fsS "$AGENT/health" >/dev/null 2>&1 && return 0
@@ -39,6 +42,11 @@ fi
 
 echo "==> start"
 start
+
+echo "==> hardening"
+docker exec "$NAME" sh -c 'touch /app/write-test' 2>/dev/null && fail "root filesystem is writable"
+docker exec "$NAME" sh -c 'touch /data/files/.write-test && rm /data/files/.write-test' || fail "data volume not writable"
+[ "$(docker exec "$NAME" id -u)" != "0" ] || fail "container runs as root"
 
 echo "==> setup wizard"
 [ "$(curl -fsS "$UI/api/auth/status" | json .setupDone)" = "false" ] || fail "setup already done"

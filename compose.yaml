@@ -8,6 +8,15 @@ services:
     container_name: heph # lets you run `docker exec -it heph heph reset-password`
     init: true
     restart: unless-stopped
+    # Hardening: nothing outside the two data volumes is writable, no Linux
+    # capabilities, no privilege escalation. The app runs as the non-root user "node".
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
     ports:
       # UI + REST API. Point the Cloudflare Tunnel at this port.
       - "${HEPH_UI_PORT:-8080}:8080"

@@ -31,7 +31,9 @@ export function createUiApp(opts: AppOptions): Hono<AppEnv> {
   const app = new Hono<AppEnv>();
   app.onError(errorHandler(opts.log));
   app.use('*', secureHeaders({ crossOriginEmbedderPolicy: false }));
-  app.get('/health', (c) => c.json({ ok: true, port: 'ui' }));
+  app.get('/health', (c) =>
+    c.json({ ok: true, port: 'ui', version: process.env.HEPH_VERSION || 'dev' }),
+  );
 
   app.route('/api', authRoutes(opts.domain, opts.limiter ?? new LoginLimiter()));
   const api = new Hono<AppEnv>();
@@ -59,7 +61,9 @@ export function createUiApp(opts: AppOptions): Hono<AppEnv> {
 export function createAgentApp(opts: AppOptions): Hono<AppEnv> {
   const app = new Hono<AppEnv>();
   app.onError(errorHandler(opts.log));
-  app.get('/health', (c) => c.json({ ok: true, port: 'agent' }));
+  app.get('/health', (c) =>
+    c.json({ ok: true, port: 'agent', version: process.env.HEPH_VERSION || 'dev' }),
+  );
   app.route('/upload', uploadRoutes(opts.domain));
   app.route('/mcp', mcpRoutes(opts.domain));
   const api = new Hono<AppEnv>();

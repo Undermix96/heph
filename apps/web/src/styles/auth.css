@@ -1,0 +1,123 @@
+/* Styling for the auth screens only; all values come from tokens.css. */
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  background: var(--bg-canvas);
+  color: var(--fg-default);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+}
+.auth {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.auth-box {
+  width: 100%;
+  max-width: 380px;
+}
+.auth-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid var(--border-default);
+  display: grid;
+  place-items: center;
+  margin: 0 auto 16px;
+  font-weight: var(--weight-semibold);
+}
+.auth h1 {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-regular);
+  text-align: center;
+  margin: 0 0 16px;
+}
+.auth p.intro {
+  color: var(--fg-muted);
+  font-size: var(--text-sm);
+  text-align: center;
+  margin: 0 0 16px;
+}
+.panel {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-box);
+  padding: 16px;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.field label {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+}
+.field input {
+  height: var(--control-md);
+  padding: 0 12px;
+  background: var(--bg-canvas);
+  color: var(--fg-default);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-box);
+  font: inherit;
+}
+.field input:focus {
+  outline: none;
+  border-color: var(--accent-emphasis);
+  box-shadow: var(--focus-ring);
+}
+.btn {
+  height: var(--control-md);
+  padding: 0 16px;
+  border-radius: var(--radius-box);
+  border: 1px solid var(--border-default);
+  background: var(--bg-muted);
+  color: var(--fg-default);
+  font: inherit;
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+}
+.btn-primary {
+  width: 100%;
+  background: var(--success-emphasis);
+  border-color: transparent;
+  color: var(--fg-on-emphasis);
+}
+.btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+.alert {
+  border: 1px solid var(--danger-border);
+  background: var(--danger-subtle);
+  color: var(--danger-text);
+  border-radius: var(--radius-box);
+  padding: 10px 12px;
+  font-size: var(--text-sm);
+  margin-bottom: 14px;
+}
+.token {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  word-break: break-all;
+  background: var(--bg-canvas);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-box);
+  padding: 8px;
+  margin: 8px 0;
+}
+.muted {
+  color: var(--fg-muted);
+  font-size: var(--text-sm);
+}

@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "files": {
-    "includes": ["**", "!**/dist", "!**/node_modules", "!docs/design", "!**/drizzle/meta", "!data"]
+    "includes": ["**", "!**/dist", "!**/node_modules", "!docs/design", "!apps/web/src/styles/tokens.css", "!**/drizzle/meta", "!data"]
   },
   "formatter": {
     "enabled": true,

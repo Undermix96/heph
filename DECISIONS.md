@@ -115,3 +115,58 @@ Work state (what's done, what's next) does **not** belong here.
 
 **Decision:** The approved design (`docs/design/`) is dark-theme only. The UI is implemented with the design tokens in `docs/design/tokens.css` so a light theme can be added later. Styling is kept isolated from functional components.
 **Why:** Matches the approved design while keeping the door open for a light variant.
+
+## 2026-11-24 — Conflict rule between spec and design
+
+**Decision:** When `docs/HANDOFF.md` and `docs/design/` disagree, the spec wins. A design choice is adopted only where it adds something without contradicting the spec.
+**Why:** The spec is the agreed product scope; the design package is the visual layer.
+
+## 2026-11-24 — Hooks and agent uploads are served on the LAN agent port
+
+**Decision:** `/mcp`, `/hooks/*` and `/upload/*` are served on the agent port (LAN only, default 8081). `HEPH_URL` points to it. The REST API is mounted on both ports; on the UI port it accepts the session cookie or the bearer token, on the agent port only the bearer token.
+**Why:** The UI port sits behind Cloudflare Access, which would block `curl` calls from Claude Code hooks and uploads. The spec lists these endpoints under REST without naming a port; this keeps the agent surface off the tunnel.
+
+## 2026-11-24 — Badge precedence vs dashboard ordering
+
+**Decision:** The displayed badge follows the spec precedence: live activity (`claude_testing` > `claude_working`) → lifecycle → recency. Dashboard ordering follows the spec list (awaiting manual test first). They are two different computations.
+**Why:** Spec §6 wins over the design's badge table.
+
+## 2026-11-24 — Next task: computed default with override
+
+**Decision:** The next task is the override if it points to an open task, else the first open task of the first non-done phase. Completing the override clears it. "No next step" means no open task exists in non-done phases. `complete_task` returns the new next task.
+**Why:** Spec §5; the design's "suggest but don't pick" contradicts it.
+
+## 2026-11-24 — Activity thresholds and session expiry defaults
+
+**Decision:** `recently_active` < 7 days, `inactive` > 30 days (spec defaults; design used 3/21). Live sessions expire after 30 minutes without events. All configurable in settings.
+**Why:** Spec wins; values to be tuned after real use.
+
+## 2026-11-24 — Screenshot retention: last N per target
+
+**Decision:** Unpinned files uploaded by Claude Code are kept up to the last N (default 20) per attached target (task, diary entry, phase or project); older ones are deleted. Pinned files are never deleted.
+**Why:** Spec §5 wins over the design's age-based expiry.
+
+## 2026-11-24 — Phase status is stored and kept in sync with tasks
+
+**Decision:** `phases.status` is a stored field that can be set explicitly. Task changes keep it in sync: all tasks done → `done`; some done or a task reopened in a done phase → `in_progress`. Phase progress is always computed from tasks.
+**Why:** The spec lists status as a field and progress as computed; syncing avoids a done-looking phase that blocks the next-task computation.
+
+## 2026-11-24 — Docs per repo
+
+**Decision:** `projects.docs_source` selects `repo` or `internal`. With `repo`, every linked repo has its own docs path (default `DECISIONS.md`) and cached content; the Documentation tab shows one entry per repo.
+**Why:** The spec makes the path configurable per repo while projects can have many repos.
+
+## 2026-11-24 — Diary is strictly append-only; reverts via change log
+
+**Decision:** Diary entries are never edited or deleted through the API. Every domain mutation writes a `change_log` row (before/after JSON, source, session). A revert applies the inverse change and appends a compensating event.
+**Why:** Spec §2 principle 5.
+
+## 2026-11-24 — Small additions adopted from the design
+
+**Decision:** Adopted because they don't contradict the spec: a per-project `claude_write_enabled` switch; a `decision_note` on proposals that Claude can read; a per-repo `show_commits` toggle; a `content_language` setting (spec §7 mentions it). Export stays Markdown + files in a zip, which also includes a `project.json`.
+**Why:** They improve the product without changing agreed behavior.
+
+## 2026-11-24 — Monorepo layout and core libraries
+
+**Decision:** npm workspaces: `packages/schema` (Zod), `packages/core` (Drizzle schema, migrations, domain), `apps/server` (Hono adapters, CLI), `apps/web` (Vite + React SPA). Libraries: Hono, Zod v4, Drizzle + better-sqlite3, @node-rs/argon2, sharp, busboy, pino, Vitest, Biome. Integer IDs, unix-ms timestamps.
+**Why:** No extra package manager to install (corepack is gone from Node 25+); one domain package for all adapters; mature, light dependencies. Integer IDs are short for an agent to reference.

@@ -4,7 +4,7 @@ Work state of Hephaestus (heph): phases, what is done, the next step, open quest
 Decisions live in [`DECISIONS.md`](DECISIONS.md), scope in [`docs/HANDOFF.md`](docs/HANDOFF.md).
 Temporary: once Heph runs, its own MCP server tracks this project and this file is deleted (CLAUDE.md).
 
-Status: Phase 3 (MCP server) built; waiting for user verification of the phase 3 acceptance criteria and for the first CalVer release.
+Status: Phase 3 (MCP server) built and aligned with the global rules; first CalVer release being published; waiting for user verification of the phase 3 acceptance criteria.
 Last updated: 2026-11-24
 
 ## Done
@@ -40,15 +40,17 @@ Last updated: 2026-11-24
 - Timestamps as UTC ISO strings; migrations regenerated (D39, D40), commit `ab29542`. Existing databases must be recreated.
 - Hardened container (D41) and CalVer multi-arch Release workflow (D42), commit `9e28a0d`.
 - gitleaks pre-commit + CI and Dependabot (D43), commit `9fb3042`; full history scanned: no leaks.
-- DECISIONS.md renumbered into D1–D45 with rejected alternatives; this file in the new format; package READMEs and SECURITY.md.
+- DECISIONS.md renumbered into D1–D45 with rejected alternatives; this file in the new format; package READMEs and SECURITY.md (`dcfcc1e`, `0ba2c07`).
+- Independent verification: 6 rounds by fresh subagents given only the criteria and the diff. Found and fixed: Docker build broken by the hook setup script; `testing_since` still integer; REST upload expiry and MCP text times not ISO; years outside 0000–9999; login limiter bypassable (spoofed X-Forwarded-For, concurrency, cross-site lockout, more than 10 000 addresses → global cap D46); stale docs. Commits `be3d58f`, `54a608e`, `230ad5e`, `a6e4e03`, `6c99b84`, `62e9d0d`. Last round found no bugs.
+- Tests: 650 (45 files); lint, typecheck, build and Docker smoke test green locally on `62e9d0d`.
 
 ## In progress
 
-- Independent verification (fresh subagent, spec + diff only) of the alignment changes, then the first CalVer release.
+- CI on `62e9d0d`, then the first CalVer release (multi-arch) with the Release workflow.
 
 ## Next step
 
-Run the Release workflow for the first CalVer release (multi-arch) once the independent verification is green.
+User: recreate the server volumes, deploy the first CalVer release and check the phase 3 acceptance criteria.
 
 ## Open questions
 

@@ -12,4 +12,7 @@ export default defineConfig({
   dts: false,
   sourcemap: true,
   noExternal: [/^@heph\//],
+  // Every other bare import (npm packages, including native modules pulled in
+  // through @heph/core) stays external and is loaded from node_modules.
+  external: [/^(?!@heph\/|\.|\/|[A-Za-z]:|node:)/],
 });

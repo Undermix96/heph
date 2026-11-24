@@ -402,3 +402,48 @@ Alternatives rejected:
 
 - Keeping `PROGRESS.md` alongside Heph: two sources of truth that drift.
 - Waiting for the web UI (phase 4): the MCP server already covers reading and writing work state.
+
+## D48 — Web UI libraries for phase 4 (2026-11-24)
+
+Decision: On top of React + Vite (D33) the web UI uses React Router (routes and shareable URLs per tab), TanStack Query (server state, cache, invalidation), react-markdown + remark-gfm (Markdown without raw HTML), dnd-kit (accessible drag and drop, plus _Move up / down_ in the ⋯ menu), and Octicons (`@primer/octicons-react`) for icons. i18n uses typed IT/EN dictionaries and `Intl` (no library). Styling is plain CSS per component using only `tokens.css` variables. Tests add Testing Library, happy-dom, MSW (fake API built on the `@heph/schema` contract) and Playwright with axe (end-to-end, screenshots at 1440 and 390 px, accessibility). Licenses checked on 2026-11-24 with `npm view`: all MIT except Playwright (Apache-2.0) and `@axe-core/playwright` (MPL-2.0), both dev-only.
+Why: Phase 4 plan approved by the user on 2026-11-24. Mature libraries for the hard parts (routing, server state, safe Markdown, accessible reordering), none for what a little glue code covers (i18n). Octicons is MIT as `docs/design/DESIGN.md` §1 asks and matches the design's Primer style.
+Alternatives rejected:
+
+- Lucide: ISC rather than the MIT the design names, and a less Primer-like look.
+- i18next: a dependency where typed dictionaries already catch missing keys at typecheck.
+- Tailwind or CSS-in-JS: scatters values outside the design tokens.
+- Rendering Markdown with raw HTML and a sanitizer: more attack surface than not allowing HTML at all.
+
+## D49 — Design elements of later phases in the phase 4 UI (2026-11-24)
+
+Decision: Screens from `docs/design/` that depend on later phases are built in phase 4 only as far as the server already supports them ("Connect Claude Code": API token show / copy / rotate; GitHub token: write-only setting). The rest (test-command recognition, _Sync now_, the live Claude queue) appears as a disabled placeholder saying which phase brings it.
+Why: Keeps the layout of the approved design without UI that does nothing (user decision, 2026-11-24).
+Alternatives rejected:
+
+- Building the full screens now: no backend behind them until phases 5–6.
+- Leaving them out: the layout would change again later.
+
+## D50 — Design extras left out of phase 4 (2026-11-24)
+
+Decision: Bulk actions on the dashboard multi-select bar, CSV export of materials, the project cover image and the "conflicting edit" warning are not built in phase 4.
+Why: Not in the spec (§12.4); none is needed by the phase 4 acceptance criteria (user decision, 2026-11-24, D23).
+Alternatives rejected:
+
+- Building them now: more scope and API for features nobody asked for yet.
+
+## D51 — Revert API postponed (2026-11-24)
+
+Decision: The revert API on top of `change_log` (D31) is not part of phase 4; the open question on which changes are revertible stays open.
+Why: No phase 4 acceptance criterion needs it (user decision, 2026-11-24).
+Alternatives rejected:
+
+- Designing it with the UI: decides revert semantics before real use shows what needs undoing.
+
+## D52 — Live updates in the web UI by polling (2026-11-24)
+
+Decision: The web UI refetches the data of the visible screen every 10 seconds while the tab is visible (TanStack Query `refetchInterval`, paused in background tabs) and after every own mutation.
+Why: The simplest way to show Claude's changes without reloading; one user and small payloads make the cost negligible (user decision, 2026-11-24).
+Alternatives rejected:
+
+- Server-Sent Events: a new long-lived endpoint and reconnect logic for little gain at this scale.
+- No refresh: Claude's changes would only appear after a manual reload.

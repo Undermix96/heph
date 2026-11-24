@@ -383,3 +383,13 @@ Why: The project spec wins over the global write-only-secrets rule (the global r
 Alternatives rejected:
 
 - Write-only API token: contradicts §4 ("shown in settings") and the "Connect Claude Code" page.
+
+## D46 — Global cap on failed logins (2026-11-24)
+
+Decision: Besides 10 failures per client address, the login limiter caps failures at 100 per 15-minute window across all clients; past either limit, logins get 403 until the window ends. All login attempts are evaluated one at a time in a single queue (at most 50 waiting, then 429), so concurrency cannot exceed either cap. Invalid login bodies are rejected (400) before the limiter.
+Why: Per-address accounting with bounded memory cannot be exact against an attacker with more than 10 000 addresses (e.g. an IPv6 range): evicting entries resets their counts (found by independent verification, 2026-11-24). For a single-user app a global cap bounds password guessing regardless of address count.
+Alternatives rejected:
+
+- Unbounded per-address memory: memory exhaustion.
+- Per-address limits only: unbounded guesses with enough addresses.
+- Account lockout until reset by CLI: too easy to turn into a permanent denial of service.

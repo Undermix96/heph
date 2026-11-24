@@ -9,7 +9,7 @@ import { authenticate } from './http/auth.js';
 import { type AppEnv, errorHandler } from './http/common.js';
 import { mcpRoutes } from './mcp/route.js';
 import { apiRoutes } from './routes/api.js';
-import { authRoutes, LoginLimiter } from './routes/auth.js';
+import { authRoutes, defaultLoginLimiter, type LoginLimiter } from './routes/auth.js';
 import { uploadRoutes } from './routes/upload.js';
 
 export interface AppOptions {
@@ -35,7 +35,7 @@ export function createUiApp(opts: AppOptions): Hono<AppEnv> {
     c.json({ ok: true, port: 'ui', version: process.env.HEPH_VERSION || 'dev' }),
   );
 
-  app.route('/api', authRoutes(opts.domain, opts.limiter ?? new LoginLimiter()));
+  app.route('/api', authRoutes(opts.domain, opts.limiter ?? defaultLoginLimiter()));
   const api = new Hono<AppEnv>();
   api.use('*', authenticate(opts.domain, { allowCookie: true }));
   api.route('/', apiRoutes(opts.domain));

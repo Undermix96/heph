@@ -194,7 +194,7 @@ describe('verify4: resource bounds and queue health (criterion 4)', () => {
     const results = await Promise.allSettled(Array.from({ length: 5000 }, () => l.run('k', bad)));
     expect(results.every((r) => r.status === 'rejected')).toBe(true);
     await new Promise((r) => setTimeout(r, 0));
-    expect(internals(l).queues.size).toBe(0);
+    expect(internals(l).queued).toBe(0);
     expect(internals(l).failures.get('k').count).toBe(3);
   });
 
@@ -204,7 +204,7 @@ describe('verify4: resource bounds and queue health (criterion 4)', () => {
       Array.from({ length: 5000 }, (_, i) => l.run(`k${i % 2500}`, i % 3 ? bad : ok)),
     );
     await new Promise((r) => setTimeout(r, 0));
-    expect(internals(l).queues.size).toBe(0);
+    expect(internals(l).queued).toBe(0);
   });
 
   it('failure map stays bounded with 30 000 unblocked keys', async () => {
@@ -258,7 +258,7 @@ describe('verify4: resource bounds and queue health (criterion 4)', () => {
     expect(l.isBlocked('k')).toBe(true);
   });
 
-  it('attempts are strictly serialized per key, parallel across keys', async () => {
+  it('attempts are strictly serialized, also across keys (one global queue, D46)', async () => {
     const l = new LoginLimiter(100, 60_000, () => 0);
     let active = 0;
     let peak = 0;
@@ -273,7 +273,8 @@ describe('verify4: resource bounds and queue health (criterion 4)', () => {
     expect(peak).toBe(1);
     peak = 0;
     await Promise.all(Array.from({ length: 20 }, (_, i) => l.run(`k${i}`, slow)));
-    expect(peak).toBeGreaterThan(1);
+    // One queue for all clients keeps the global cap exact under concurrency.
+    expect(peak).toBe(1);
   });
 
   it('later requests are still answered after a refused burst (real socket)', async () => {

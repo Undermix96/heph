@@ -170,3 +170,25 @@ describe('LoginLimiter eviction', () => {
     expect(l.isBlocked('k0')).toBe(false);
   }, 30_000);
 });
+
+describe('LoginLimiter global cap (D46)', () => {
+  it('caps failures across all clients, also concurrently, until the window ends', async () => {
+    const { DomainError } = await import('@heph/core');
+    let now = 0;
+    const l = new LoginLimiter(10, 1_000, () => now, 3);
+    let evaluated = 0;
+    const bad = async () => {
+      evaluated++;
+      throw new DomainError('unauthorized', 'nope');
+    };
+    const results = await Promise.allSettled(
+      Array.from({ length: 30 }, (_, i) => l.run(`ip${i}`, bad)),
+    );
+    expect(evaluated).toBe(3);
+    expect(results.filter((r) => r.status === 'rejected')).toHaveLength(30);
+    // The owner, from a fresh address, is refused too while the cap holds.
+    await expect(l.run('owner', async () => 'ok')).rejects.toThrow(/Too many/);
+    now = 1_000;
+    await expect(l.run('owner', async () => 'ok')).resolves.toBe('ok');
+  });
+});

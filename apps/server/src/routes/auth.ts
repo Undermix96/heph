@@ -13,44 +13,53 @@ import {
 } from '../http/auth.js';
 import { type AppEnv, body } from '../http/common.js';
 
-/** Most keys tracked at once; beyond this, expired then unblocked entries are evicted. */
+/** Most keys tracked at once; beyond this, expired, then unblocked, then oldest entries go. */
 const MAX_TRACKED_KEYS = 10_000;
-/** Most login attempts waiting in one key's queue; more are refused at once. */
-const MAX_QUEUED_PER_KEY = 50;
+/** Most login attempts waiting at once (all clients); more are refused with 429. */
+const MAX_QUEUED = 50;
 
 const tooMany = () => new DomainError('forbidden', 'Too many failed logins; try again later');
 const busy = () =>
   new DomainError('rate_limited', 'Too many login attempts in progress; try again in a moment');
 
+interface Window {
+  count: number;
+  resetAt: number;
+}
+
 /**
- * Fixed-window limiter for failed logins, per client key.
- * Do not break: attempts of one key are evaluated strictly one after another
- * (run()), so concurrent requests cannot evaluate more than `max` wrong
- * passwords, and concurrent correct logins are not refused (up to the queue
- * bound, beyond which attempts get 429). Blocks are evicted only past 10 000 keys.
+ * Fixed-window limiter for failed logins: `max` per client key and `globalMax`
+ * across all clients (single-user app: the global cap bounds password guessing
+ * no matter how many addresses an attacker has, also when per-key entries are
+ * evicted to bound memory).
+ * Do not break: attempts are evaluated strictly one after another (one queue for
+ * all clients; logins are rare), so concurrency cannot exceed either limit, and
+ * concurrent correct logins are not refused (up to the queue bound: 429).
  */
 export class LoginLimiter {
-  private readonly failures = new Map<string, { count: number; resetAt: number }>();
-  private readonly queues = new Map<string, { tail: Promise<unknown>; size: number }>();
+  private readonly failures = new Map<string, Window>();
+  private global: Window = { count: 0, resetAt: 0 };
+  private tail: Promise<unknown> = Promise.resolve();
+  private queued = 0;
 
   constructor(
     private readonly max = 10,
     private readonly windowMs = 15 * 60_000,
     private readonly now: () => number = Date.now,
+    /** Failures per window across all clients; the app sets it (D46), off by default. */
+    private readonly globalMax = Number.POSITIVE_INFINITY,
   ) {}
 
   /**
-   * Runs one login attempt for `key` after the previous ones finished.
-   * A DomainError `unauthorized` from `attempt` counts as a failure; success clears the key.
+   * Runs one login attempt after the previous ones finished. A DomainError
+   * `unauthorized` from `attempt` counts as a failure; success clears the key.
    */
   run<T>(key: string, attempt: () => Promise<T>): Promise<T> {
     if (this.isBlocked(key)) return Promise.reject(tooMany());
-    const q = this.queues.get(key) ?? { tail: Promise.resolve(), size: 0 };
     // Bounded queue (memory): excess concurrent attempts get 429, not a "failed logins" 403.
-    if (q.size >= MAX_QUEUED_PER_KEY) return Promise.reject(busy());
-    q.size++;
-    this.queues.set(key, q);
-    const result = q.tail.then(async () => {
+    if (this.queued >= MAX_QUEUED) return Promise.reject(busy());
+    this.queued++;
+    const result = this.tail.then(async () => {
       if (this.isBlocked(key)) throw tooMany();
       try {
         const value = await attempt();
@@ -61,31 +70,38 @@ export class LoginLimiter {
         throw e;
       }
     });
-    q.tail = result.catch(() => undefined);
-    void q.tail.then(() => {
-      if (--q.size === 0 && this.queues.get(key) === q) this.queues.delete(key);
+    this.tail = result.catch(() => undefined);
+    void this.tail.then(() => {
+      this.queued--;
     });
     return result;
   }
 
+  /** True when the key, or every client (global cap), is blocked right now. */
   isBlocked(key: string): boolean {
+    const now = this.now();
+    if (this.global.resetAt > now && this.global.count >= this.globalMax) return true;
     const e = this.failures.get(key);
-    return !!e && e.resetAt > this.now() && e.count >= this.max;
+    return !!e && e.resetAt > now && e.count >= this.max;
   }
 
   private recordFailure(key: string): void {
     const now = this.now();
+    if (this.global.resetAt <= now) this.global = { count: 0, resetAt: now + this.windowMs };
+    this.global.count++;
     const e = this.failures.get(key);
-    if (!e || e.resetAt <= now) this.failures.set(key, { count: 1, resetAt: now + this.windowMs });
-    else e.count++;
+    if (!e || e.resetAt <= now) {
+      // Re-insert so a renewed window counts as the newest entry for eviction.
+      this.failures.delete(key);
+      this.failures.set(key, { count: 1, resetAt: now + this.windowMs });
+    } else e.count++;
     if (this.failures.size > MAX_TRACKED_KEYS) this.evict(now);
   }
 
   /**
-   * Shrinks the map to 90% of the cap (so the O(n) sweep runs at most once per
-   * ~1000 new keys): expired entries first, then unblocked ones, and only then the
-   * oldest blocks. Blocks are evicted only with more than 10 000 distinct
-   * addresses failing, where the attacker already has that many fresh budgets.
+   * Shrinks the map to 90% of the cap, so the O(n) sweep runs at most once per
+   * ~1000 new keys: expired entries first, then unblocked ones, then the oldest.
+   * Evicting a key can reset its count, but never lifts the global cap.
    */
   private evict(now: number): void {
     const target = Math.floor(MAX_TRACKED_KEYS * 0.9);
@@ -121,7 +137,10 @@ const crossSiteGuard: MiddlewareHandler<AppEnv> = async (c, next) => {
  * Setup wizard, login/logout, account and API token routes (mounted at /api).
  * `/setup` only works before the first user exists.
  */
-export function authRoutes(domain: Domain, limiter = new LoginLimiter()) {
+/** Production limits: 10 failures per client and 100 overall per 15-minute window. */
+export const defaultLoginLimiter = () => new LoginLimiter(10, 15 * 60_000, Date.now, 100);
+
+export function authRoutes(domain: Domain, limiter = defaultLoginLimiter()) {
   const r = new Hono<AppEnv>();
 
   r.get('/auth/status', (c) => {

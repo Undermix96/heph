@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Heph — Materiali</title>
+<style>
+body{margin:0;background:#0D1117}
+a{color:#4493F8}a:hover{color:#79B8FF}
+input::placeholder,textarea::placeholder{color:#8B949E}
+@keyframes heph-dot{0%,100%{opacity:1}50%{opacity:.35}}
+</style>
+</head>
+<body>
+<div style="min-height: 100vh; background: #0D1117; color: #E6EDF3; font-family: -apple-system, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; font-size: 14px">
+
+  <header style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 12px 20px; background: #010409; border-bottom: 1px solid #30363D">
+    <a href="01-dashboard.html" aria-label="Heph, dashboard" style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid #30363D; display: grid; place-items: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E6EDF3" stroke-width="2" aria-hidden="true"><path d="M3 9h12c0 3 2 4 6 4v2h-7l-1 3h2v2H6v-2h2l-1-3H3z"></path></svg></a>
+    <span><a href="01-dashboard.html" style="color: #E6EDF3; text-decoration: none">progetti</a> <span style="color: #8B949E">/</span> <b style="font-weight: 600">stazione-meteo-esp32</b></span>
+    <span style="flex: 1"></span>
+    <label style="flex: 0 1 340px; display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 10px; border: 1px solid #30363D; border-radius: 6px">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8B949E" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+      <span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Cerca</span>
+      <input type="search" placeholder="Digita / per cercare" style="flex: 1; min-width: 0; background: transparent; border: 0; color: #E6EDF3; font: inherit; outline: none">
+    </label>
+    <button type="button" style="height: 32px; padding: 0 10px; background: transparent; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; cursor: pointer">IT ▾</button>
+    <a href="20-nuovo-progetto.html" style="height: 32px; padding: 0 12px; display: inline-flex; align-items: center; background: #238636; border: 1px solid rgba(240,246,252,.1); border-radius: 6px; color: #FFF; font-weight: 600; text-decoration: none; box-sizing: border-box">Nuovo progetto</a>
+    <a href="31-impostazioni.html" aria-label="Impostazioni" style="width: 32px; height: 32px; box-sizing: border-box; background: transparent; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; display: grid; place-items: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"></path></svg></a>
+    <span style="width: 32px; height: 32px; border-radius: 50%; background: #1F6FEB; display: grid; place-items: center; font-size: 12px; font-weight: 600">TU</span>
+  </header>
+
+  <div style="display: flex; flex-wrap: wrap; align-items: flex-start">
+    <nav aria-label="Progetti" style="flex: 1 1 220px; max-width: 256px; box-sizing: border-box; padding: 16px 12px; border-right: 1px solid #21262D; align-self: stretch">
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 0 8px; margin-bottom: 8px"><span style="font-weight: 600">Progetti</span><span style="font-size: 12px; color: #8B949E">6 attivi</span></div>
+      <label style="display: block; margin-bottom: 8px"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Trova un progetto</span><input type="search" placeholder="Trova un progetto…" style="width: 100%; box-sizing: border-box; height: 30px; padding: 0 10px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 13px"></label>
+      
+        <a href="10-progetto-panoramica.html" style="display: flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 8px; border-radius: 6px; color: #E6EDF3; text-decoration: none; background: #161B22; font-weight: 600">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #D29922; animation: none"></span>
+          <span style="flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Stazione meteo ESP32</span>
+          <span style="font-size: 12px; color: #8B949E; font-weight: 400">65%</span>
+        </a>
+      
+        <a href="10-progetto-panoramica.html" style="display: flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 8px; border-radius: 6px; color: #E6EDF3; text-decoration: none; background: transparent; font-weight: 400">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #AB7DF8; animation: heph-dot 1s infinite"></span>
+          <span style="flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Heph — tracker progetti</span>
+          <span style="font-size: 12px; color: #8B949E; font-weight: 400">41%</span>
+        </a>
+      
+        <a href="10-progetto-panoramica.html" style="display: flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 8px; border-radius: 6px; color: #E6EDF3; text-decoration: none; background: transparent; font-weight: 400">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #AB7DF8; animation: heph-dot 1s infinite"></span>
+          <span style="flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Bot Telegram bollette</span>
+          <span style="font-size: 12px; color: #8B949E; font-weight: 400">80%</span>
+        </a>
+      
+        <a href="10-progetto-panoramica.html" style="display: flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 8px; border-radius: 6px; color: #E6EDF3; text-decoration: none; background: transparent; font-weight: 400">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #F85149; animation: none"></span>
+          <span style="flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Libreria in noce</span>
+          <span style="font-size: 12px; color: #8B949E; font-weight: 400">55%</span>
+        </a>
+      
+        <a href="10-progetto-panoramica.html" style="display: flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 8px; border-radius: 6px; color: #E6EDF3; text-decoration: none; background: transparent; font-weight: 400">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #3FB950; animation: none"></span>
+          <span style="flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Supporto microscopio</span>
+          <span style="font-size: 12px; color: #8B949E; font-weight: 400">30%</span>
+        </a>
+      
+        <a href="10-progetto-panoramica.html" style="display: flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 8px; border-radius: 6px; color: #E6EDF3; text-decoration: none; background: transparent; font-weight: 400">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #8B949E; animation: none"></span>
+          <span style="flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Radio Grundig 1958</span>
+          <span style="font-size: 12px; color: #8B949E; font-weight: 400">45%</span>
+        </a>
+      
+      <a href="#" style="display: block; padding: 8px; font-size: 13px; text-decoration: none">Mostra chiusi (3)</a>
+    </nav>
+
+    <main style="flex: 999 1 640px; min-width: 0; box-sizing: border-box">
+      <div style="padding: 16px 24px 0; border-bottom: 1px solid #30363D">
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 4px">
+          <h1 style="margin: 0; font-size: 20px; font-weight: 600">Stazione meteo ESP32</h1>
+          <span style="height: 22px; padding: 0 8px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #D29922; border-radius: 11px; color: #D29922; font-size: 12px; font-weight: 500"><span style="width: 6px; height: 6px; border-radius: 50%; background: #D29922"></span>da testare</span>
+          <span style="font-size: 12px; color: #8B949E">13/20 · 65%</span>
+          <span style="flex: 1"></span>
+          <a href="21-modifica-progetto.html" style="height: 28px; padding: 0 10px; display: inline-flex; align-items: center; box-sizing: border-box; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font-size: 12px; font-weight: 500; text-decoration: none">Modifica</a>
+          <button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer">Stato ▾</button>
+          <button type="button" aria-label="Altre azioni" style="width: 28px; height: 28px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; cursor: pointer">⋯</button>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: center; font-size: 13px; color: #8B949E; margin-bottom: 10px">
+          <span>Stazione da balcone a batteria, letture ogni 10 min verso Home Assistant.</span>
+          <a href="#" style="text-decoration: none">tu/meteo-esp32</a>
+          <a href="#" style="text-decoration: none">Datasheet BME280</a>
+          <a href="#" style="text-decoration: none">Dashboard HA</a>
+          <span style="display: inline-flex; gap: 4px"><span style="height: 20px; padding: 0 8px; display: inline-flex; align-items: center; border-radius: 10px; background: #121D2F; color: #4493F8; font-size: 12px; font-weight: 500">elettronica</span><span style="height: 20px; padding: 0 8px; display: inline-flex; align-items: center; border-radius: 10px; background: #121D2F; color: #4493F8; font-size: 12px; font-weight: 500">firmware</span></span>
+        </div>
+        <nav aria-label="Sezioni del progetto" style="display: flex; flex-wrap: wrap; gap: 4px">
+          <a href="10-progetto-panoramica.html" style="padding: 8px 10px 10px; color: #E6EDF3; text-decoration: none">Panoramica</a>
+          <a href="11-progetto-roadmap.html" style="padding: 8px 10px 10px; color: #E6EDF3; text-decoration: none">Roadmap <span style="padding: 0 6px; border-radius: 10px; background: #30363D; font-size: 12px; font-weight: 400">7</span></a>
+          <a href="12-progetto-diario.html" style="padding: 8px 10px 10px; color: #E6EDF3; text-decoration: none">Diario <span style="padding: 0 6px; border-radius: 10px; background: #30363D; font-size: 12px; font-weight: 400">47</span></a>
+          <a href="13-progetto-documentazione.html" style="padding: 8px 10px 10px; color: #E6EDF3; text-decoration: none">Documentazione</a>
+          <a href="14-progetto-materiali.html" style="padding: 8px 10px 10px; color: #E6EDF3; text-decoration: none; font-weight: 600; border-bottom: 2px solid #F78166">Materiali <span style="padding: 0 6px; border-radius: 10px; background: #30363D; font-size: 12px; font-weight: 400">11</span></a>
+          <a href="15-progetto-file.html" style="padding: 8px 10px 10px; color: #E6EDF3; text-decoration: none">File <span style="padding: 0 6px; border-radius: 10px; background: #30363D; font-size: 12px; font-weight: 400">38</span></a>
+        </nav>
+      </div>
+      <div style="padding: 20px 24px 40px; display: flex; flex-direction: column; gap: 16px">
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center">
+          <div role="group" aria-label="Stato" style="display: flex; flex-wrap: wrap; border: 1px solid #30363D; border-radius: 6px; overflow: hidden">
+            <button type="button" style="height: 30px; padding: 0 12px; background: #30363D; border: 0; color: #E6EDF3; font: inherit; font-weight: 600; cursor: pointer">Tutti 11</button><button type="button" style="height: 30px; padding: 0 12px; background: transparent; border: 0; border-left: 1px solid #30363D; color: #8B949E; font: inherit; cursor: pointer">Da comprare 2</button><button type="button" style="height: 30px; padding: 0 12px; background: transparent; border: 0; border-left: 1px solid #30363D; color: #8B949E; font: inherit; cursor: pointer">Ordinati 2</button><button type="button" style="height: 30px; padding: 0 12px; background: transparent; border: 0; border-left: 1px solid #30363D; color: #8B949E; font: inherit; cursor: pointer">Arrivati 3</button><button type="button" style="height: 30px; padding: 0 12px; background: transparent; border: 0; border-left: 1px solid #30363D; color: #8B949E; font: inherit; cursor: pointer">Usati 4</button>
+          </div>
+          <label style="flex: 1 1 200px"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Filtra materiali</span><input type="search" placeholder="Filtra materiali…" style="width: 100%; box-sizing: border-box; height: 32px; padding: 0 10px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit"></label>
+          <button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; height: 32px; font-size: 14px">Esporta CSV</button>
+          <button type="button" style="height: 32px; padding: 0 14px; background: #238636; border: 1px solid rgba(240,246,252,.1); border-radius: 6px; color: #FFF; font: inherit; font-weight: 600; cursor: pointer">Aggiungi materiale</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px">
+          
+            <div style="border: 1px solid #30363D; border-radius: 6px; padding: 12px 16px"><div style="font-size: 12px; color: #8B949E">Totale previsto</div><div style="font-size: 20px; font-weight: 600; margin-top: 4px; color: #E6EDF3">€ 68,10</div></div>
+          
+            <div style="border: 1px solid #30363D; border-radius: 6px; padding: 12px 16px"><div style="font-size: 12px; color: #8B949E">Già speso</div><div style="font-size: 20px; font-weight: 600; margin-top: 4px; color: #E6EDF3">€ 49,70</div></div>
+          
+            <div style="border: 1px solid #30363D; border-radius: 6px; padding: 12px 16px"><div style="font-size: 12px; color: #8B949E">Da comprare</div><div style="font-size: 20px; font-weight: 600; margin-top: 4px; color: #E3B341">€ 18,40 · 2 voci</div></div>
+          
+            <div style="border: 1px solid #30363D; border-radius: 6px; padding: 12px 16px"><div style="font-size: 12px; color: #8B949E">In arrivo</div><div style="font-size: 20px; font-weight: 600; margin-top: 4px; color: #4493F8">2 ordini</div></div>
+          
+        </div>
+
+        <section style="border: 1px solid #30363D; border-radius: 6px; overflow-x: auto">
+          <table style="width: 100%; min-width: 900px; border-collapse: collapse">
+            <thead>
+              <tr style="background: #161B22; font-size: 12px; font-weight: 600; color: #8B949E; text-align: left">
+                <th style="width: 36px; padding: 10px 16px; border-bottom: 1px solid #30363D"><input type="checkbox" aria-label="Seleziona tutti" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB"></th>
+                <th style="padding: 10px 8px; border-bottom: 1px solid #30363D">Materiale</th>
+                <th style="padding: 10px 8px; border-bottom: 1px solid #30363D; text-align: right">Q.tà</th>
+                <th style="padding: 10px 8px; border-bottom: 1px solid #30363D; text-align: right">Prezzo</th>
+                <th style="padding: 10px 8px; border-bottom: 1px solid #30363D">Dove</th>
+                <th style="padding: 10px 8px; border-bottom: 1px solid #30363D">Stato</th>
+                <th style="width: 40px; padding: 10px 16px; border-bottom: 1px solid #30363D"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Azioni</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              
+                <tr style="background: #1C1A10">
+                  <td style="padding: 10px 16px; border-bottom: 1px solid #21262D"><input type="checkbox" aria-label="Seleziona Pannello solare 6 V 1 W" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB"></td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D"><div style="font-weight: 600; color: #E6EDF3">Pannello solare 6 V 1 W</div><div style="font-size: 12px; color: #8B949E; margin-top: 2px">per la ricarica della 18650</div></td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D; text-align: right; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px">×1</td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D; text-align: right; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px">€ 7,90</td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D"><a href="#" style="text-decoration: none; font-size: 13px">amazon.it ↗</a></td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D"><button type="button" style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; border-radius: 10px; font-size: 12px; font-weight: 500; white-space: nowrap; border: 1px solid #D29922; color: #D29922; background: transparent; cursor: pointer; font-family: inherit">da comprare ▾</button></td>
+                  <td style="padding: 10px 16px; border-bottom: 1px solid #21262D"><button type="button" aria-label="Azioni su Pannello solare 6 V 1 W" style="width: 28px; height: 28px; background: transparent; border: 0; color: #8B949E; cursor: pointer">⋯</button></td>
+                </tr>
+              
+                <tr style="background: transparent">
+                  <td style="padding: 10px 16px; border-bottom: 1px solid #21262D"><input type="checkbox" aria-label="Seleziona Connettori JST-PH 2 pin" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB"></td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D"><div style="font-weight: 600; color: #E6EDF3">Connettori JST-PH 2 pin</div><div style="font-size: 12px; color: #8B949E; margin-top: 2px">kit da 20</div></td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D; text-align: right; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px">×1</td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D; text-align: right; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px">€ 6,60</td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D"><a href="#" style="text-decoration: none; font-size: 13px">aliexpress.com ↗</a></td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D"><button type="button" style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; border-radius: 10px; font-size: 12px; font-weight: 500; white-space: nowrap; border: 1px solid #D29922; color: #D29922; background: transparent; cursor: pointer; font-family: inherit">da comprare ▾</button></td>
+                  <td style="padding: 10px 16px; border-bottom: 1px solid #21262D"><button type="button" aria-label="Azioni su Connettori JST-PH 2 pin" style="width: 28px; height: 28px; background: transparent; border: 0; color: #8B949E; cursor: pointer">⋯</button></td>
+                </tr>
+              
+                <tr style="background: transparent">
+                  <td style="padding: 10px 16px; border-bottom: 1px solid #21262D"><input type="checkbox" aria-label="Seleziona Batteria 18650 3000 mAh" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB"></td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D"><div style="font-weight: 600; color: #E6EDF3">Batteria 18650 3000 mAh</div><div style="font-size: 12px; color: #8B949E; margin-top: 2px">protetta, con linguette</div></td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D; text-align: right; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px">×2</td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D; text-align: right; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px">€ 11,80</td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D"><a href="#" style="text-decoration: none; font-size: 13px">nkon.nl ↗</a></td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D"><button type="button" style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; border-radius: 10px; font-size: 12px; font-weight: 500; white-space: nowrap; border: 1px solid #4493F8; color: #4493F8; background: transparent; cursor: pointer; font-family: inherit">ordinato ▾</button></td>
+                  <td style="padding: 10px 16px; border-bottom: 1px solid #21262D"><button type="button" aria-label="Azioni su Batteria 18650 3000 mAh" style="width: 28px; height: 28px; background: transparent; border: 0; color: #8B949E; cursor: pointer">⋯</button></td>
+                </tr>
+              
+                <tr style="background: transparent">
+                  <td style="padding: 10px 16px; border-bottom: 1px solid #21262D"><input type="checkbox" aria-label="Seleziona Modulo TP4056 con protezione" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB"></td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D"><div style="font-weight: 600; color: #E6EDF3">Modulo TP4056 con protezione</div><div style="font-size: 12px; color: #8B949E; margin-top: 2px"></div></td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D; text-align: right; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px">×2</td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D; text-align: right; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px">€ 2,40</td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D"><a href="#" style="text-decoration: none; font-size: 13px">aliexpress.com ↗</a></td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D"><button type="button" style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; border-radius: 10px; font-size: 12px; font-weight: 500; white-space: nowrap; border: 1px solid #4493F8; color: #4493F8; background: transparent; cursor: pointer; font-family: inherit">ordinato ▾</button></td>
+                  <td style="padding: 10px 16px; border-bottom: 1px solid #21262D"><button type="button" aria-label="Azioni su Modulo TP4056 con protezione" style="width: 28px; height: 28px; background: transparent; border: 0; color: #8B949E; cursor: pointer">⋯</button></td>
+                </tr>
+              
+                <tr style="background: transparent">
+                  <td style="padding: 10px 16px; border-bottom: 1px solid #21262D"><input type="checkbox" aria-label="Seleziona Schermo solare in ASA" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB"></td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D"><div style="font-weight: 600; color: #E6EDF3">Schermo solare in ASA</div><div style="font-size: 12px; color: #8B949E; margin-top: 2px">stampato da Lorenzo, 7 piatti</div></td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D; text-align: right; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px">×1</td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D; text-align: right; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px">€ 0,00</td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D"><a href="#" style="text-decoration: none; font-size: 13px">locale ↗</a></td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D"><button type="button" style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; border-radius: 10px; font-size: 12px; font-weight: 500; white-space: nowrap; border: 1px solid #3FB950; color: #3FB950; background: transparent; cursor: pointer; font-family: inherit">arrivato ▾</button></td>
+                  <td style="padding: 10px 16px; border-bottom: 1px solid #21262D"><button type="button" aria-label="Azioni su Schermo solare in ASA" style="width: 28px; height: 28px; background: transparent; border: 0; color: #8B949E; cursor: pointer">⋯</button></td>
+                </tr>
+              
+                <tr style="background: transparent">
+                  <td style="padding: 10px 16px; border-bottom: 1px solid #21262D"><input type="checkbox" aria-label="Seleziona BME280 breakout 3,3 V" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB"></td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D"><div style="font-weight: 600; color: #E6EDF3">BME280 breakout 3,3 V</div><div style="font-size: 12px; color: #8B949E; margin-top: 2px">versione I²C</div></td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D; text-align: right; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px">×1</td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D; text-align: right; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px">€ 6,90</td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D"><a href="#" style="text-decoration: none; font-size: 13px">amazon.it ↗</a></td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D"><button type="button" style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; border-radius: 10px; font-size: 12px; font-weight: 500; white-space: nowrap; border: 1px solid #3FB950; color: #3FB950; background: transparent; cursor: pointer; font-family: inherit">arrivato ▾</button></td>
+                  <td style="padding: 10px 16px; border-bottom: 1px solid #21262D"><button type="button" aria-label="Azioni su BME280 breakout 3,3 V" style="width: 28px; height: 28px; background: transparent; border: 0; color: #8B949E; cursor: pointer">⋯</button></td>
+                </tr>
+              
+                <tr style="background: transparent">
+                  <td style="padding: 10px 16px; border-bottom: 1px solid #21262D"><input type="checkbox" aria-label="Seleziona Viti M3 inox" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB"></td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D"><div style="font-weight: 600; color: #E6EDF3">Viti M3 inox</div><div style="font-size: 12px; color: #8B949E; margin-top: 2px">assortimento</div></td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D; text-align: right; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px">×1</td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D; text-align: right; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px">€ 5,50</td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D"><a href="#" style="text-decoration: none; font-size: 13px">leroymerlin.it ↗</a></td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D"><button type="button" style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; border-radius: 10px; font-size: 12px; font-weight: 500; white-space: nowrap; border: 1px solid #3FB950; color: #3FB950; background: transparent; cursor: pointer; font-family: inherit">arrivato ▾</button></td>
+                  <td style="padding: 10px 16px; border-bottom: 1px solid #21262D"><button type="button" aria-label="Azioni su Viti M3 inox" style="width: 28px; height: 28px; background: transparent; border: 0; color: #8B949E; cursor: pointer">⋯</button></td>
+                </tr>
+              
+                <tr style="background: transparent">
+                  <td style="padding: 10px 16px; border-bottom: 1px solid #21262D"><input type="checkbox" aria-label="Seleziona ESP32-C3 SuperMini" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB"></td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D"><div style="font-weight: 600; color: #8B949E">ESP32-C3 SuperMini</div><div style="font-size: 12px; color: #8B949E; margin-top: 2px"></div></td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D; text-align: right; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px">×2</td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D; text-align: right; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px">€ 8,40</td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D"><a href="#" style="text-decoration: none; font-size: 13px">aliexpress.com ↗</a></td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D"><button type="button" style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; border-radius: 10px; font-size: 12px; font-weight: 500; white-space: nowrap; border: 1px solid #8B949E; color: #8B949E; background: transparent; cursor: pointer; font-family: inherit">usato ▾</button></td>
+                  <td style="padding: 10px 16px; border-bottom: 1px solid #21262D"><button type="button" aria-label="Azioni su ESP32-C3 SuperMini" style="width: 28px; height: 28px; background: transparent; border: 0; color: #8B949E; cursor: pointer">⋯</button></td>
+                </tr>
+              
+                <tr style="background: transparent">
+                  <td style="padding: 10px 16px; border-bottom: 1px solid #21262D"><input type="checkbox" aria-label="Seleziona Breadboard 400 punti" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB"></td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D"><div style="font-weight: 600; color: #8B949E">Breadboard 400 punti</div><div style="font-size: 12px; color: #8B949E; margin-top: 2px"></div></td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D; text-align: right; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px">×1</td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D; text-align: right; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px">€ 3,20</td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D"><a href="#" style="text-decoration: none; font-size: 13px">amazon.it ↗</a></td>
+                  <td style="padding: 10px 8px; border-bottom: 1px solid #21262D"><button type="button" style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; border-radius: 10px; font-size: 12px; font-weight: 500; white-space: nowrap; border: 1px solid #8B949E; color: #8B949E; background: transparent; cursor: pointer; font-family: inherit">usato ▾</button></td>
+                  <td style="padding: 10px 16px; border-bottom: 1px solid #21262D"><button type="button" aria-label="Azioni su Breadboard 400 punti" style="width: 28px; height: 28px; background: transparent; border: 0; color: #8B949E; cursor: pointer">⋯</button></td>
+                </tr>
+              
+              <tr>
+                <td style="padding: 10px 16px"></td>
+                <td style="padding: 8px"><label><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Nome</span><input type="text" value="Fascette UV nere" style="width: 100%; box-sizing: border-box; height: 32px; padding: 0 10px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; border-color: #1F6FEB; box-shadow: 0 0 0 3px rgba(31,111,235,.3)"></label></td>
+                <td style="padding: 8px; width: 70px"><label><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Quantità</span><input type="text" value="20" style="width: 100%; box-sizing: border-box; height: 32px; padding: 0 10px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; text-align: right"></label></td>
+                <td style="padding: 8px; width: 90px"><label><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Prezzo</span><input type="text" value="3,90" style="width: 100%; box-sizing: border-box; height: 32px; padding: 0 10px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; text-align: right"></label></td>
+                <td style="padding: 8px"><label><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Link</span><input type="text" placeholder="https://…" style="width: 100%; box-sizing: border-box; height: 32px; padding: 0 10px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit"></label></td>
+                <td style="padding: 8px" colspan="2"><button type="button" style="height: 32px; padding: 0 14px; background: #238636; border: 1px solid rgba(240,246,252,.1); border-radius: 6px; color: #FFF; font: inherit; font-weight: 600; cursor: pointer">Salva</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+      </div>
+    </main>
+  </div>
+</div>
+</body>
+</html>

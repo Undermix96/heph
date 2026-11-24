@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Heph — Diario lungo</title>
+<style>
+body{margin:0;background:#0D1117}
+a{color:#4493F8}a:hover{color:#79B8FF}
+input::placeholder,textarea::placeholder{color:#8B949E}
+@keyframes heph-dot{0%,100%{opacity:1}50%{opacity:.35}}
+</style>
+</head>
+<body>
+<div style="min-height: 100vh; background: #0D1117; color: #E6EDF3; font-family: -apple-system, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; font-size: 14px">
+
+  <header style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 12px 20px; background: #010409; border-bottom: 1px solid #30363D">
+    <a href="../screens/01-dashboard.html" aria-label="Heph, dashboard" style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid #30363D; display: grid; place-items: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E6EDF3" stroke-width="2" aria-hidden="true"><path d="M3 9h12c0 3 2 4 6 4v2h-7l-1 3h2v2H6v-2h2l-1-3H3z"></path></svg></a>
+    <span><a href="../screens/01-dashboard.html" style="color: #E6EDF3; text-decoration: none">progetti</a> <span style="color: #8B949E">/</span> <b style="font-weight: 600">stazione-meteo-esp32</b></span>
+    <span style="flex: 1"></span>
+    <label style="flex: 0 1 340px; display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 10px; border: 1px solid #30363D; border-radius: 6px">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8B949E" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+      <span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Cerca</span>
+      <input type="search" placeholder="Digita / per cercare" style="flex: 1; min-width: 0; background: transparent; border: 0; color: #E6EDF3; font: inherit; outline: none">
+    </label>
+    <button type="button" style="height: 32px; padding: 0 10px; background: transparent; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; cursor: pointer">IT ▾</button>
+    <a href="../screens/20-nuovo-progetto.html" style="height: 32px; padding: 0 12px; display: inline-flex; align-items: center; background: #238636; border: 1px solid rgba(240,246,252,.1); border-radius: 6px; color: #FFF; font-weight: 600; text-decoration: none; box-sizing: border-box">Nuovo progetto</a>
+    <a href="../screens/31-impostazioni.html" aria-label="Impostazioni" style="width: 32px; height: 32px; box-sizing: border-box; background: transparent; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; display: grid; place-items: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"></path></svg></a>
+    <span style="width: 32px; height: 32px; border-radius: 50%; background: #1F6FEB; display: grid; place-items: center; font-size: 12px; font-weight: 600">TU</span>
+  </header>
+
+  <div style="display: flex; flex-wrap: wrap; align-items: flex-start">
+    <nav aria-label="Progetti" style="flex: 1 1 220px; max-width: 256px; box-sizing: border-box; padding: 16px 12px; border-right: 1px solid #21262D; align-self: stretch">
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 0 8px; margin-bottom: 8px"><span style="font-weight: 600">Progetti</span><span style="font-size: 12px; color: #8B949E">6 attivi</span></div>
+      <label style="display: block; margin-bottom: 8px"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Trova un progetto</span><input type="search" placeholder="Trova un progetto…" style="width: 100%; box-sizing: border-box; height: 30px; padding: 0 10px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 13px"></label>
+      
+        <a href="../screens/10-progetto-panoramica.html" style="display: flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 8px; border-radius: 6px; color: #E6EDF3; text-decoration: none; background: #161B22; font-weight: 600">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #D29922; animation: none"></span>
+          <span style="flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Stazione meteo ESP32</span>
+          <span style="font-size: 12px; color: #8B949E; font-weight: 400">65%</span>
+        </a>
+      
+        <a href="../screens/10-progetto-panoramica.html" style="display: flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 8px; border-radius: 6px; color: #E6EDF3; text-decoration: none; background: transparent; font-weight: 400">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #AB7DF8; animation: heph-dot 1s infinite"></span>
+          <span style="flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Heph — tracker progetti</span>
+          <span style="font-size: 12px; color: #8B949E; font-weight: 400">41%</span>
+        </a>
+      
+        <a href="../screens/10-progetto-panoramica.html" style="display: flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 8px; border-radius: 6px; color: #E6EDF3; text-decoration: none; background: transparent; font-weight: 400">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #AB7DF8; animation: heph-dot 1s infinite"></span>
+          <span style="flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Bot Telegram bollette</span>
+          <span style="font-size: 12px; color: #8B949E; font-weight: 400">80%</span>
+        </a>
+      
+        <a href="../screens/10-progetto-panoramica.html" style="display: flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 8px; border-radius: 6px; color: #E6EDF3; text-decoration: none; background: transparent; font-weight: 400">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #F85149; animation: none"></span>
+          <span style="flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Libreria in noce</span>
+          <span style="font-size: 12px; color: #8B949E; font-weight: 400">55%</span>
+        </a>
+      
+        <a href="../screens/10-progetto-panoramica.html" style="display: flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 8px; border-radius: 6px; color: #E6EDF3; text-decoration: none; background: transparent; font-weight: 400">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #3FB950; animation: none"></span>
+          <span style="flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Supporto microscopio</span>
+          <span style="font-size: 12px; color: #8B949E; font-weight: 400">30%</span>
+        </a>
+      
+        <a href="../screens/10-progetto-panoramica.html" style="display: flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 8px; border-radius: 6px; color: #E6EDF3; text-decoration: none; background: transparent; font-weight: 400">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #8B949E; animation: none"></span>
+          <span style="flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Radio Grundig 1958</span>
+          <span style="font-size: 12px; color: #8B949E; font-weight: 400">45%</span>
+        </a>
+      
+      <a href="#" style="display: block; padding: 8px; font-size: 13px; text-decoration: none">Mostra chiusi (3)</a>
+    </nav>
+
+    <main style="flex: 999 1 640px; min-width: 0; box-sizing: border-box">
+      <div style="padding: 16px 24px 0; border-bottom: 1px solid #30363D">
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 4px">
+          <h1 style="margin: 0; font-size: 20px; font-weight: 600">Stazione meteo ESP32</h1>
+          <span style="height: 22px; padding: 0 8px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #D29922; border-radius: 11px; color: #D29922; font-size: 12px; font-weight: 500"><span style="width: 6px; height: 6px; border-radius: 50%; background: #D29922"></span>da testare</span>
+          <span style="font-size: 12px; color: #8B949E">13/20 · 65%</span>
+          <span style="flex: 1"></span>
+          <a href="../screens/21-modifica-progetto.html" style="height: 28px; padding: 0 10px; display: inline-flex; align-items: center; box-sizing: border-box; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font-size: 12px; font-weight: 500; text-decoration: none">Modifica</a>
+          <button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer">Stato ▾</button>
+          <button type="button" aria-label="Altre azioni" style="width: 28px; height: 28px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; cursor: pointer">⋯</button>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: center; font-size: 13px; color: #8B949E; margin-bottom: 10px">
+          <span>Stazione da balcone a batteria, letture ogni 10 min verso Home Assistant.</span>
+          <a href="#" style="text-decoration: none">tu/meteo-esp32</a>
+          <a href="#" style="text-decoration: none">Datasheet BME280</a>
+          <a href="#" style="text-decoration: none">Dashboard HA</a>
+          <span style="display: inline-flex; gap: 4px"><span style="height: 20px; padding: 0 8px; display: inline-flex; align-items: center; border-radius: 10px; background: #121D2F; color: #4493F8; font-size: 12px; font-weight: 500">elettronica</span><span style="height: 20px; padding: 0 8px; display: inline-flex; align-items: center; border-radius: 10px; background: #121D2F; color: #4493F8; font-size: 12px; font-weight: 500">firmware</span></span>
+        </div>
+        <nav aria-label="Sezioni del progetto" style="display: flex; flex-wrap: wrap; gap: 4px">
+          <a href="../screens/10-progetto-panoramica.html" style="padding: 8px 10px 10px; color: #E6EDF3; text-decoration: none">Panoramica</a>
+          <a href="../screens/11-progetto-roadmap.html" style="padding: 8px 10px 10px; color: #E6EDF3; text-decoration: none">Roadmap <span style="padding: 0 6px; border-radius: 10px; background: #30363D; font-size: 12px; font-weight: 400">7</span></a>
+          <a href="../screens/12-progetto-diario.html" style="padding: 8px 10px 10px; color: #E6EDF3; text-decoration: none; font-weight: 600; border-bottom: 2px solid #F78166">Diario <span style="padding: 0 6px; border-radius: 10px; background: #30363D; font-size: 12px; font-weight: 400">412</span></a>
+          <a href="../screens/13-progetto-documentazione.html" style="padding: 8px 10px 10px; color: #E6EDF3; text-decoration: none">Documentazione</a>
+          <a href="../screens/14-progetto-materiali.html" style="padding: 8px 10px 10px; color: #E6EDF3; text-decoration: none">Materiali <span style="padding: 0 6px; border-radius: 10px; background: #30363D; font-size: 12px; font-weight: 400">11</span></a>
+          <a href="../screens/15-progetto-file.html" style="padding: 8px 10px 10px; color: #E6EDF3; text-decoration: none">File <span style="padding: 0 6px; border-radius: 10px; background: #30363D; font-size: 12px; font-weight: 400">38</span></a>
+        </nav>
+      </div>
+      <div style="padding: 20px 24px 40px; display: flex; flex-direction: column; gap: 16px">
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center">
+          <div role="group" aria-label="Fonte" style="display: flex; flex-wrap: wrap; border: 1px solid #30363D; border-radius: 6px; overflow: hidden">
+            <button type="button" style="height: 30px; padding: 0 12px; background: #30363D; border: 0; color: #E6EDF3; font: inherit; font-weight: 600; cursor: pointer">Tutto 412</button><button type="button" style="height: 30px; padding: 0 12px; background: transparent; border: 0; border-left: 1px solid #30363D; color: #8B949E; font: inherit; cursor: pointer">Tu 96</button><button type="button" style="height: 30px; padding: 0 12px; background: transparent; border: 0; border-left: 1px solid #30363D; color: #8B949E; font: inherit; cursor: pointer">Claude 241</button><button type="button" style="height: 30px; padding: 0 12px; background: transparent; border: 0; border-left: 1px solid #30363D; color: #8B949E; font: inherit; cursor: pointer">GitHub 58</button><button type="button" style="height: 30px; padding: 0 12px; background: transparent; border: 0; border-left: 1px solid #30363D; color: #8B949E; font: inherit; cursor: pointer">Sistema 17</button>
+          </div>
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer"><input type="checkbox" checked style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">Riassumi le sessioni di Claude</label>
+          <span style="flex: 1"></span>
+          <label style="flex: 0 1 220px"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Cerca nel diario</span><input type="search" placeholder="Cerca nel diario…" style="width: 100%; box-sizing: border-box; height: 32px; padding: 0 10px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit"></label>
+        </div>
+        <nav aria-label="Vai al mese" style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px">
+          
+            <a href="#" style="flex: 0 0 auto; padding: 6px 12px; border: 1px solid #484F58; border-radius: 6px; background: #30363D; color: #E6EDF3; text-decoration: none; font-size: 13px; font-weight: 600">nov 2026 <span style="color: #8B949E; font-weight: 400">48</span></a>
+          
+            <a href="#" style="flex: 0 0 auto; padding: 6px 12px; border: 1px solid #30363D; border-radius: 6px; background: transparent; color: #E6EDF3; text-decoration: none; font-size: 13px; font-weight: 400">ott <span style="color: #8B949E; font-weight: 400">61</span></a>
+          
+            <a href="#" style="flex: 0 0 auto; padding: 6px 12px; border: 1px solid #30363D; border-radius: 6px; background: transparent; color: #E6EDF3; text-decoration: none; font-size: 13px; font-weight: 400">set <span style="color: #8B949E; font-weight: 400">93</span></a>
+          
+            <a href="#" style="flex: 0 0 auto; padding: 6px 12px; border: 1px solid #30363D; border-radius: 6px; background: transparent; color: #E6EDF3; text-decoration: none; font-size: 13px; font-weight: 400">ago <span style="color: #8B949E; font-weight: 400">54</span></a>
+          
+            <a href="#" style="flex: 0 0 auto; padding: 6px 12px; border: 1px solid #30363D; border-radius: 6px; background: transparent; color: #E6EDF3; text-decoration: none; font-size: 13px; font-weight: 400">lug <span style="color: #8B949E; font-weight: 400">77</span></a>
+          
+            <a href="#" style="flex: 0 0 auto; padding: 6px 12px; border: 1px solid #30363D; border-radius: 6px; background: transparent; color: #E6EDF3; text-decoration: none; font-size: 13px; font-weight: 400">giu <span style="color: #8B949E; font-weight: 400">79</span></a>
+          
+        </nav>
+
+        <div style="max-width: 920px; display: flex; flex-direction: column; gap: 14px">
+          <div style="position: sticky; top: 0; z-index: 1; display: flex; align-items: center; gap: 10px; padding: 8px 0; background: #0D1117; font-size: 13px; color: #8B949E; border-bottom: 1px solid #21262D">
+            <span style="width: 16px; height: 16px; border-radius: 50%; border: 2px solid #30363D; box-sizing: border-box"></span><b style="color: #E6EDF3; font-weight: 600">Venerdì 20 novembre</b> · 6 voci <span style="flex: 1"></span><span style="font-size: 12px">la data resta in alto mentre scorri</span>
+          </div>
+          <article style="border: 1px solid #30363D; border-radius: 6px; border-color: #5B3E99">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding: 10px 16px; background: #161B22; border-bottom: 1px solid #30363D; border-radius: 6px 6px 0 0; background: #1E1631; border-bottom-color: #5B3E99">
+              <span style="width: 22px; height: 22px; border-radius: 50%; background: #AB7DF8; color: #0D1117; display: grid; place-items: center; font-size: 9px; font-weight: 700">IA</span>
+              <b style="font-weight: 600">Sessione di Claude</b><span style="font-size: 12px; color: #8B949E">21:02 → 23:12 · 2 h 10 min · 34 eventi</span>
+            </div>
+            <div style="padding: 12px 16px">
+              <div style="display: flex; flex-wrap: wrap; gap: 6px 16px; margin-bottom: 10px; font-size: 13px">
+                <span><b style="color: #AB7DF8">✓ 5</b> task chiusi</span><span><b style="color: #3FB950">▶ 31/31</b> test</span><span><b style="color: #8B949E">▣ 48</b> screenshot</span><span><b style="color: #D29922">◆ 1</b> cambio di stato</span><span><b style="color: #8B949E">✎ 3</b> note</span>
+              </div>
+              <div style="line-height: 1.55; margin-bottom: 10px">Riassunto: chiusi deep sleep e invio MQTT, riscritto il driver del BME280, richiesto un test all'aperto.</div>
+              <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; margin-bottom: 10px">
+                <a href="56-visualizzatore-screenshot.html" style="aspect-ratio: 4/3; border: 1px solid #30363D; border-radius: 6px; background: #1C2128; display: grid; place-items: center; font-size: 11px; color: #8B949E; text-align: center; padding: 4px; box-sizing: border-box; text-decoration: none">grafico 24h</a><a href="56-visualizzatore-screenshot.html" style="aspect-ratio: 4/3; border: 1px solid #30363D; border-radius: 6px; background: #1C2128; display: grid; place-items: center; font-size: 11px; color: #8B949E; text-align: center; padding: 4px; box-sizing: border-box; text-decoration: none">log seriale</a><a href="56-visualizzatore-screenshot.html" style="aspect-ratio: 4/3; border: 1px solid #30363D; border-radius: 6px; background: #1C2128; display: grid; place-items: center; font-size: 11px; color: #8B949E; text-align: center; padding: 4px; box-sizing: border-box; text-decoration: none">entità HA</a><a href="56-visualizzatore-screenshot.html" style="aspect-ratio: 4/3; border: 1px solid #30363D; border-radius: 6px; background: #1C2128; display: grid; place-items: center; font-size: 11px; color: #8B949E; text-align: center; padding: 4px; box-sizing: border-box; text-decoration: none">i2c scan</a><a href="56-visualizzatore-screenshot.html" style="aspect-ratio: 4/3; border: 1px solid #30363D; border-radius: 6px; background: #1C2128; display: grid; place-items: center; font-size: 11px; color: #8B949E; text-align: center; padding: 4px; box-sizing: border-box; text-decoration: none">sleep 11 µA</a><a href="56-visualizzatore-screenshot.html" style="aspect-ratio: 4/3; border: 1px solid #30363D; border-radius: 6px; background: #1C2128; display: grid; place-items: center; font-size: 11px; color: #8B949E; text-align: center; padding: 4px; box-sizing: border-box; text-decoration: none">mqtt</a>
+                <a href="56-visualizzatore-screenshot.html" style="aspect-ratio: 4/3; border: 1px solid #30363D; border-radius: 6px; background: #1C2128; display: grid; place-items: center; font-size: 11px; color: #8B949E; text-align: center; padding: 4px; box-sizing: border-box; text-decoration: none; color: #E6EDF3; font-size: 15px; font-weight: 600">+42</a>
+              </div>
+              <button type="button" style="height: 28px; padding: 0; background: transparent; border: 0; color: #4493F8; font: inherit; cursor: pointer">▸ Mostra i 34 eventi</button>
+            </div>
+          </article>
+          
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; min-height: 30px; padding-left: 4px; font-size: 13px">
+              <span style="width: 22px; height: 22px; border-radius: 50%; background: #30363D; color: #E6EDF3; display: grid; place-items: center; font-size: 9px; font-weight: 700">GH</span>
+              <span style="color: #C9D1D9; flex: 1 1 300px">4 commit su main — ultimo: fix(sleep): keep RTC memory across wake</span><span style="font-size: 12px; color: #8B949E">23:10</span>
+            </div>
+          
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; min-height: 30px; padding-left: 4px; font-size: 13px">
+              <span style="width: 22px; height: 22px; border-radius: 50%; background: #1F6FEB; color: #FFF; display: grid; place-items: center; font-size: 9px; font-weight: 700">TU</span>
+              <span style="color: #C9D1D9; flex: 1 1 300px">Nota: «Domani provo all’aperto, previsto sereno»</span><span style="font-size: 12px; color: #8B949E">23:30</span>
+            </div>
+          
+
+          
+            <button type="button" style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding: 10px 14px; background: #161B22; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; text-align: left; cursor: pointer">
+              <span style="color: #8B949E">▸</span><b style="font-weight: 600">Giovedì 19 novembre</b><span style="color: #8B949E; flex: 1 1 200px">9 voci · 1 sessione di Claude · 1 test fallito</span>
+              <span style="display: flex; gap: 4px"><span style="width: 8px; height: 8px; border-radius: 50%; background: #AB7DF8"></span><span style="width: 8px; height: 8px; border-radius: 50%; background: #1F6FEB"></span><span style="width: 8px; height: 8px; border-radius: 50%; background: #F85149"></span></span>
+            </button>
+          
+            <button type="button" style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding: 10px 14px; background: #161B22; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; text-align: left; cursor: pointer">
+              <span style="color: #8B949E">▸</span><b style="font-weight: 600">Mercoledì 18 novembre</b><span style="color: #8B949E; flex: 1 1 200px">3 voci · materiale arrivato</span>
+              <span style="display: flex; gap: 4px"><span style="width: 8px; height: 8px; border-radius: 50%; background: #484F58"></span><span style="width: 8px; height: 8px; border-radius: 50%; background: #1F6FEB"></span></span>
+            </button>
+          
+            <button type="button" style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding: 10px 14px; background: #161B22; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; text-align: left; cursor: pointer">
+              <span style="color: #8B949E">▸</span><b style="font-weight: 600">Martedì 17 novembre</b><span style="color: #8B949E; flex: 1 1 200px">17 voci · 2 sessioni di Claude · 22 screenshot</span>
+              <span style="display: flex; gap: 4px"><span style="width: 8px; height: 8px; border-radius: 50%; background: #AB7DF8"></span><span style="width: 8px; height: 8px; border-radius: 50%; background: #30363D"></span><span style="width: 8px; height: 8px; border-radius: 50%; background: #1F6FEB"></span></span>
+            </button>
+          
+            <button type="button" style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding: 10px 14px; background: #161B22; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; text-align: left; cursor: pointer">
+              <span style="color: #8B949E">▸</span><b style="font-weight: 600">Domenica 15 novembre</b><span style="color: #8B949E; flex: 1 1 200px">5 voci · 2 note con foto</span>
+              <span style="display: flex; gap: 4px"><span style="width: 8px; height: 8px; border-radius: 50%; background: #1F6FEB"></span></span>
+            </button>
+          
+            <button type="button" style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding: 10px 14px; background: #161B22; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; text-align: left; cursor: pointer">
+              <span style="color: #8B949E">▸</span><b style="font-weight: 600">Venerdì 13 novembre</b><span style="color: #8B949E; flex: 1 1 200px">8 voci · 1 sessione di Claude</span>
+              <span style="display: flex; gap: 4px"><span style="width: 8px; height: 8px; border-radius: 50%; background: #AB7DF8"></span><span style="width: 8px; height: 8px; border-radius: 50%; background: #30363D"></span></span>
+            </button>
+          
+          <div style="display: flex; flex-wrap: wrap; gap: 8px"><button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; height: 32px; font-size: 14px">Carica i giorni precedenti</button><button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; height: 32px; font-size: 14px">Vai a ottobre (61)</button></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+</body>
+</html>

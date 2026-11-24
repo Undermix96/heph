@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Heph — Impostazioni</title>
+<style>
+body{margin:0;background:#0D1117}
+a{color:#4493F8}a:hover{color:#79B8FF}
+input::placeholder,textarea::placeholder{color:#8B949E}
+mark{background:rgba(210,153,34,.35);color:#E6EDF3;border-radius:2px;padding:0 1px}
+</style>
+</head>
+<body>
+<div style="min-height: 100vh; background: #0D1117; color: #E6EDF3; font-family: -apple-system, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; font-size: 14px">
+  <header style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 12px 20px; background: #010409; border-bottom: 1px solid #30363D">
+    <a href="01-dashboard.html" aria-label="Heph, dashboard" style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid #30363D; display: grid; place-items: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E6EDF3" stroke-width="2" aria-hidden="true"><path d="M3 9h12c0 3 2 4 6 4v2h-7l-1 3h2v2H6v-2h2l-1-3H3z"></path></svg></a>
+    <span style="font-weight: 600">Impostazioni</span>
+    <span style="flex: 1"></span>
+    <label style="flex: 0 1 340px; display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 10px; border: 1px solid #30363D; border-radius: 6px">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8B949E" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+      <span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Cerca</span>
+      <input type="search" placeholder="Digita / per cercare" style="flex: 1; min-width: 0; background: transparent; border: 0; color: #E6EDF3; font: inherit; outline: none">
+    </label>
+    <button type="button" style="height: 32px; padding: 0 10px; background: transparent; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; cursor: pointer">IT ▾</button>
+    <a href="20-nuovo-progetto.html" style="height: 32px; padding: 0 12px; display: inline-flex; align-items: center; background: #238636; border: 1px solid rgba(240,246,252,.1); border-radius: 6px; color: #FFF; font-weight: 600; text-decoration: none; box-sizing: border-box">Nuovo progetto</a>
+    <a href="31-impostazioni.html" aria-label="Impostazioni" style="width: 32px; height: 32px; box-sizing: border-box; background: transparent; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; display: grid; place-items: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"></path></svg></a>
+    <span style="width: 32px; height: 32px; border-radius: 50%; background: #1F6FEB; display: grid; place-items: center; font-size: 12px; font-weight: 600">TU</span>
+  </header>
+  <div style="max-width: 1100px; margin: 0 auto; padding: 24px 20px 56px; box-sizing: border-box">
+    <h1 style="margin: 0 0 20px; font-size: 20px; font-weight: 600">Impostazioni</h1>
+    <div style="display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start">
+      <nav aria-label="Sezioni delle impostazioni" style="flex: 1 1 200px; max-width: 240px">
+        
+          <a href="#" style="display: flex; align-items: center; min-height: 34px; padding: 0 10px; border-radius: 6px; color: #E6EDF3; text-decoration: none; background: transparent; font-weight: 400">Account</a>
+        
+          <a href="#" style="display: flex; align-items: center; min-height: 34px; padding: 0 10px; border-radius: 6px; color: #E6EDF3; text-decoration: none; background: transparent; font-weight: 400">Lingua</a>
+        
+          <a href="#" style="display: flex; align-items: center; min-height: 34px; padding: 0 10px; border-radius: 6px; color: #E6EDF3; text-decoration: none; background: #161B22; font-weight: 600">Collega Claude Code</a>
+        
+          <a href="#" style="display: flex; align-items: center; min-height: 34px; padding: 0 10px; border-radius: 6px; color: #E6EDF3; text-decoration: none; background: transparent; font-weight: 400">GitHub</a>
+        
+          <a href="#" style="display: flex; align-items: center; min-height: 34px; padding: 0 10px; border-radius: 6px; color: #E6EDF3; text-decoration: none; background: transparent; font-weight: 400">Attività e soglie</a>
+        
+          <a href="#" style="display: flex; align-items: center; min-height: 34px; padding: 0 10px; border-radius: 6px; color: #E6EDF3; text-decoration: none; background: transparent; font-weight: 400">File</a>
+        
+          <a href="#" style="display: flex; align-items: center; min-height: 34px; padding: 0 10px; border-radius: 6px; color: #E6EDF3; text-decoration: none; background: transparent; font-weight: 400">Riconoscimento dei test</a>
+        
+      </nav>
+      <main style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 40px">
+
+        <section>
+          <h2 style="margin: 0 0 16px; padding-bottom: 8px; border-bottom: 1px solid #21262D; font-size: 20px; font-weight: 400">Account</h2>
+          <div style="display: flex; flex-direction: column; gap: 14px; max-width: 440px">
+            <label><span style="display: block; font-weight: 600; margin-bottom: 6px">Nome utente</span><input type="text" value="officina" readonly style="width: 100%; box-sizing: border-box; height: 32px; padding: 0 10px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; color: #8B949E"></label>
+            <label><span style="display: block; font-weight: 600; margin-bottom: 6px">Password attuale</span><input type="password" value="••••••••••••••" style="width: 100%; box-sizing: border-box; height: 32px; padding: 0 10px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit"></label>
+            <label><span style="display: block; font-weight: 600; margin-bottom: 6px">Nuova password</span><input type="password" style="width: 100%; box-sizing: border-box; height: 32px; padding: 0 10px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit"></label>
+            <label><span style="display: block; font-weight: 600; margin-bottom: 6px">Conferma nuova password</span><input type="password" style="width: 100%; box-sizing: border-box; height: 32px; padding: 0 10px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit"></label>
+            <div><button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; height: 32px; font-size: 14px">Aggiorna password</button></div>
+          </div>
+        </section>
+
+        <section>
+          <h2 style="margin: 0 0 16px; padding-bottom: 8px; border-bottom: 1px solid #21262D; font-size: 20px; font-weight: 400">Lingua</h2>
+          <label style="display: block; max-width: 260px"><span style="display: block; font-weight: 600; margin-bottom: 6px">Lingua dell'interfaccia</span><select style="width: 100%; box-sizing: border-box; height: 32px; padding: 0 10px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; background: #21262D"><option>Italiano</option><option>English</option></select></label>
+        </section>
+
+        <section>
+          <h2 style="margin: 0 0 16px; padding-bottom: 8px; border-bottom: 1px solid #21262D; font-size: 20px; font-weight: 400; display: flex; align-items: center; gap: 10px">Collega Claude Code <span style="height: 22px; padding: 0 8px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #3FB950; border-radius: 11px; color: #3FB950; font-size: 12px; font-weight: 500">collegato · ultima chiamata 40 s fa</span></h2>
+          <p style="margin: 0 0 14px; color: #8B949E; line-height: 1.6">Claude Code usa questo token per scrivere nel diario, chiudere task, caricare screenshot e cambiare stato. Le modifiche grandi arrivano come proposte da approvare.</p>
+          <ol style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 16px; line-height: 1.5">
+            <li>
+              <b style="font-weight: 600">Aggiungi il server di Heph a Claude Code</b>
+              <div style="display: flex; align-items: flex-start; gap: 8px; padding: 10px 12px; background: #161B22; border: 1px solid #30363D; border-radius: 6px; margin-top: 8px"><code style="flex: 1; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; line-height: 1.6; white-space: pre-wrap; word-break: break-all">claude mcp add heph --transport http https://heph.casa.lan/mcp \
+  --header "Authorization: Bearer $HEPH_TOKEN"</code><button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer">Copia</button></div>
+            </li>
+            <li>
+              <b style="font-weight: 600">Imposta il token nel tuo ambiente</b>
+              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 8px">
+                <code style="flex: 1 1 260px; display: flex; align-items: flex-start; gap: 8px; padding: 10px 12px; background: #161B22; border: 1px solid #30363D; border-radius: 6px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px">heph_••••••••••••••••••••3f9a</code>
+                <button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; height: 32px">Mostra</button>
+                <button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; height: 32px">Copia</button>
+                <button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; height: 32px; color: #FF7B72">Rigenera…</button>
+              </div>
+              <div style="font-size: 12px; color: #8B949E; margin-top: 6px; line-height: 1.5">Creato il 2/09 · rigenerandolo, le sessioni aperte di Claude smettono di funzionare finché non aggiorni la variabile.</div>
+            </li>
+            <li>
+              <b style="font-weight: 600">Collega ogni repository al suo progetto</b>
+              <div style="display: flex; align-items: flex-start; gap: 8px; padding: 10px 12px; background: #161B22; border: 1px solid #30363D; border-radius: 6px; margin-top: 8px"><code style="flex: 1; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; line-height: 1.6; white-space: pre-wrap"># nel CLAUDE.md del repository
+Progetto Heph: stazione-meteo-esp32</code><button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer">Copia</button></div>
+            </li>
+          </ol>
+        </section>
+
+        <section>
+          <h2 style="margin: 0 0 16px; padding-bottom: 8px; border-bottom: 1px solid #21262D; font-size: 20px; font-weight: 400">GitHub</h2>
+          <div style="display: flex; flex-direction: column; gap: 14px; max-width: 520px">
+            <label><span style="display: block; font-weight: 600; margin-bottom: 6px">Token di accesso personale</span>
+              <span style="display: flex; gap: 8px"><input type="password" value="github_pat_••••••••••••" style="width: 100%; box-sizing: border-box; height: 32px; padding: 0 10px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit"><button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; height: 32px; white-space: nowrap">Verifica</button></span>
+              <span style="display: block; font-size: 12px; color: #8B949E; margin-top: 6px; line-height: 1.5; color: #3FB950">✓ Valido · accesso in lettura a 12 repository</span></label>
+            <label><span style="display: block; font-weight: 600; margin-bottom: 6px">Sincronizza ogni</span><select style="width: 100%; box-sizing: border-box; height: 32px; padding: 0 10px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; background: #21262D; max-width: 220px"><option>10 minuti</option><option>30 minuti</option><option>1 ora</option></select><span style="display: block; font-size: 12px; color: #8B949E; margin-top: 6px; line-height: 1.5">Commit, documentazione e stato dei repository collegati. Ultima sincronizzazione: 10 min fa.</span></label>
+          </div>
+        </section>
+
+        <section>
+          <h2 style="margin: 0 0 16px; padding-bottom: 8px; border-bottom: 1px solid #21262D; font-size: 20px; font-weight: 400">Attività e soglie</h2>
+          <div style="display: flex; flex-direction: column; gap: 12px; line-height: 1.6">
+            <label style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">Un progetto è <b style="font-weight: 600">attivo di recente</b> se l'ultima attività è entro <input type="number" value="3" style="width: 100%; box-sizing: border-box; height: 32px; padding: 0 10px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; width: 64px"> giorni</label>
+            <label style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">È <b style="font-weight: 600">fermo da tempo</b> dopo <input type="number" value="21" style="width: 100%; box-sizing: border-box; height: 32px; padding: 0 10px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; width: 64px"> giorni senza attività</label>
+          </div>
+        </section>
+
+        <section>
+          <h2 style="margin: 0 0 16px; padding-bottom: 8px; border-bottom: 1px solid #21262D; font-size: 20px; font-weight: 400">File</h2>
+          <div style="display: flex; flex-direction: column; gap: 12px; line-height: 1.6">
+            <label style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">Elimina gli screenshot di Claude non fissati dopo <input type="number" value="90" style="width: 100%; box-sizing: border-box; height: 32px; padding: 0 10px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; width: 72px"> giorni</label>
+            <label style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">Dimensione massima di un file <input type="number" value="200" style="width: 100%; box-sizing: border-box; height: 32px; padding: 0 10px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; width: 80px"> MB</label>
+            <div style="font-size: 13px; color: #8B949E">Spazio usato: 3,4 GB · di cui screenshot di Claude 1,1 GB</div>
+          </div>
+        </section>
+
+        <section>
+          <h2 style="margin: 0 0 16px; padding-bottom: 8px; border-bottom: 1px solid #21262D; font-size: 20px; font-weight: 400">Riconoscimento dei test</h2>
+          <p style="margin: 0 0 12px; color: #8B949E; line-height: 1.6">Quando Claude lancia uno di questi comandi, l'attività del progetto diventa «Claude esegue i test».</p>
+          <div style="border: 1px solid #30363D; border-radius: 6px; max-width: 520px">
+            
+              <div style="display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 12px; border-bottom: 1px solid #21262D"><code style="flex: 1; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px">pytest*</code><button type="button" aria-label="Rimuovi pytest*" style="width: 28px; height: 28px; background: transparent; border: 0; color: #8B949E; cursor: pointer">✕</button></div>
+            
+              <div style="display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 12px; border-bottom: 1px solid #21262D"><code style="flex: 1; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px">npm test*</code><button type="button" aria-label="Rimuovi npm test*" style="width: 28px; height: 28px; background: transparent; border: 0; color: #8B949E; cursor: pointer">✕</button></div>
+            
+              <div style="display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 12px; border-bottom: 1px solid #21262D"><code style="flex: 1; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px">pio test*</code><button type="button" aria-label="Rimuovi pio test*" style="width: 28px; height: 28px; background: transparent; border: 0; color: #8B949E; cursor: pointer">✕</button></div>
+            
+              <div style="display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 12px; border-bottom: 1px solid #21262D"><code style="flex: 1; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px">cargo test*</code><button type="button" aria-label="Rimuovi cargo test*" style="width: 28px; height: 28px; background: transparent; border: 0; color: #8B949E; cursor: pointer">✕</button></div>
+            
+            <div style="display: flex; gap: 8px; padding: 8px 12px"><label style="flex: 1"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Nuovo schema</span><input type="text" placeholder="es. make check*" style="width: 100%; box-sizing: border-box; height: 32px; padding: 0 10px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px"></label><button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; height: 32px">Aggiungi</button></div>
+          </div>
+        </section>
+
+        <div style="padding-top: 16px; border-top: 1px solid #21262D"><button type="button" style="height: 32px; padding: 0 14px; background: #238636; border: 1px solid rgba(240,246,252,.1); border-radius: 6px; color: #FFF; font: inherit; font-weight: 600; cursor: pointer">Salva impostazioni</button></div>
+      </main>
+    </div>
+  </div>
+</div>
+</body>
+</html>

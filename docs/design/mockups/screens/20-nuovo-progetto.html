@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Heph — Nuovo progetto</title>
+<style>
+body{margin:0;background:#0D1117}
+a{color:#4493F8}a:hover{color:#79B8FF}
+input::placeholder,textarea::placeholder{color:#8B949E}
+mark{background:rgba(210,153,34,.35);color:#E6EDF3;border-radius:2px;padding:0 1px}
+</style>
+</head>
+<body>
+<div style="min-height: 100vh; background: #0D1117; color: #E6EDF3; font-family: -apple-system, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; font-size: 14px">
+  <header style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 12px 20px; background: #010409; border-bottom: 1px solid #30363D">
+    <a href="01-dashboard.html" aria-label="Heph, dashboard" style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid #30363D; display: grid; place-items: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E6EDF3" stroke-width="2" aria-hidden="true"><path d="M3 9h12c0 3 2 4 6 4v2h-7l-1 3h2v2H6v-2h2l-1-3H3z"></path></svg></a>
+    <span><a href="01-dashboard.html" style="color: #E6EDF3; text-decoration: none">progetti</a> <span style="color: #8B949E">/</span> <b style="font-weight: 600">nuovo</b></span>
+    <span style="flex: 1"></span>
+    <label style="flex: 0 1 340px; display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 10px; border: 1px solid #30363D; border-radius: 6px">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8B949E" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+      <span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Cerca</span>
+      <input type="search" placeholder="Digita / per cercare" style="flex: 1; min-width: 0; background: transparent; border: 0; color: #E6EDF3; font: inherit; outline: none">
+    </label>
+    <button type="button" style="height: 32px; padding: 0 10px; background: transparent; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; cursor: pointer">IT ▾</button>
+    <a href="20-nuovo-progetto.html" style="height: 32px; padding: 0 12px; display: inline-flex; align-items: center; background: #238636; border: 1px solid rgba(240,246,252,.1); border-radius: 6px; color: #FFF; font-weight: 600; text-decoration: none; box-sizing: border-box">Nuovo progetto</a>
+    <a href="31-impostazioni.html" aria-label="Impostazioni" style="width: 32px; height: 32px; box-sizing: border-box; background: transparent; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; display: grid; place-items: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"></path></svg></a>
+    <span style="width: 32px; height: 32px; border-radius: 50%; background: #1F6FEB; display: grid; place-items: center; font-size: 12px; font-weight: 600">TU</span>
+  </header>
+  <main style="max-width: 760px; margin: 0 auto; padding: 32px 20px 56px; box-sizing: border-box">
+    <h1 style="margin: 0 0 4px; font-size: 24px; font-weight: 400">Nuovo progetto</h1>
+    <p style="margin: 0 0 18px; color: #8B949E">Solo il nome è obbligatorio. Tutto il resto si può completare dopo, anche da Claude.</p>
+    <form style="display: flex; flex-direction: column; gap: 22px; padding-top: 18px; border-top: 1px solid #21262D">
+      <label><span style="display: block; font-weight: 600; margin-bottom: 6px">Nome *</span><input type="text" value="Lampada da scrivania in legno" style="width: 100%; box-sizing: border-box; height: 32px; padding: 0 10px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; max-width: 420px"></label>
+
+      <div>
+        <span style="display: block; font-weight: 600; margin-bottom: 6px">Descrizione</span>
+        <div style="border: 1px solid #30363D; border-radius: 6px">
+          <div style="display: flex; gap: 2px; padding: 6px 6px 0; background: #161B22; border-bottom: 1px solid #30363D; border-radius: 6px 6px 0 0">
+            <button type="button" style="height: 30px; padding: 0 12px; background: #0D1117; border: 1px solid #30363D; border-bottom: 0; border-radius: 6px 6px 0 0; color: #E6EDF3; font: inherit; margin-bottom: -1px; cursor: pointer">Scrivi</button>
+            <button type="button" style="height: 30px; padding: 0 12px; background: transparent; border: 0; color: #8B949E; font: inherit; cursor: pointer">Anteprima</button>
+          </div>
+          <label style="display: block; padding: 8px"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Descrizione in markdown</span><textarea rows="4" style="width: 100%; box-sizing: border-box; padding: 8px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; line-height: 1.5; resize: vertical">Lampada in rovere con braccio snodato e striscia LED **24 V**. Comando a sfioro sul piede.</textarea></label>
+        </div>
+      </div>
+
+      <div style="position: relative">
+        <span style="display: block; font-weight: 600; margin-bottom: 6px">Tag</span>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-height: 32px; padding: 3px 8px; border: 1px solid #1F6FEB; border-radius: 6px; box-shadow: 0 0 0 3px rgba(31,111,235,.3)">
+          <span style="height: 22px; padding: 0 4px 0 10px; display: inline-flex; align-items: center; gap: 4px; border-radius: 11px; background: #121D2F; color: #4493F8; font-size: 12px; font-weight: 500">legno <button type="button" aria-label="Rimuovi legno" style="width: 18px; height: 18px; background: transparent; border: 0; color: #4493F8; cursor: pointer">✕</button></span>
+          <label style="flex: 1; min-width: 120px"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Aggiungi tag</span><input type="text" value="ele" style="width: 100%; height: 24px; background: transparent; border: 0; color: #E6EDF3; font: inherit; outline: none"></label>
+        </div>
+        <div style="position: absolute; left: 0; top: 64px; width: 260px; background: #161B22; border: 1px solid #30363D; border-radius: 6px; box-shadow: 0 8px 24px rgba(1,4,9,.8); z-index: 2">
+          <div style="padding: 8px 12px; background: #1F6FEB33; font-size: 13px"><b style="font-weight: 600">ele</b>ttronica <span style="color: #8B949E">· 2 progetti</span></div>
+          <div style="padding: 8px 12px; font-size: 13px; color: #8B949E">Crea il tag «ele»</div>
+        </div>
+      </div>
+
+      <div>
+        <span style="display: block; font-weight: 600; margin-bottom: 6px">Immagine di copertina</span>
+        <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: stretch">
+          <div style="flex: 0 0 180px; aspect-ratio: 16/10; border: 1px solid #30363D; border-radius: 6px; background: #1C2128; display: grid; place-items: center; font-size: 12px; color: #8B949E">anteprima</div>
+          <div style="flex: 1 1 300px; padding: 16px; border: 1px dashed #30363D; border-radius: 6px; color: #8B949E; display: grid; place-items: center; text-align: center">Trascina una foto oppure <a href="#" style="text-decoration: none">sfoglia</a> · JPG, PNG, WebP</div>
+        </div>
+      </div>
+
+      <div>
+        <span style="display: block; font-weight: 600; margin-bottom: 6px">Collegamenti</span>
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          
+            <div style="display: flex; flex-wrap: wrap; gap: 8px">
+              <label style="flex: 1 1 160px"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Etichetta</span><input type="text" value="Progetto del braccio" style="width: 100%; box-sizing: border-box; height: 32px; padding: 0 10px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit"></label>
+              <label style="flex: 3 1 300px"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Indirizzo</span><input type="text" value="https://www.printables.com/…" style="width: 100%; box-sizing: border-box; height: 32px; padding: 0 10px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit"></label>
+              <button type="button" aria-label="Rimuovi collegamento" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; height: 32px; width: 32px; padding: 0">✕</button>
+            </div>
+          
+            <div style="display: flex; flex-wrap: wrap; gap: 8px">
+              <label style="flex: 1 1 160px"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Etichetta</span><input type="text" value="Striscia LED" style="width: 100%; box-sizing: border-box; height: 32px; padding: 0 10px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit"></label>
+              <label style="flex: 3 1 300px"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Indirizzo</span><input type="text" value="https://…/cob-24v" style="width: 100%; box-sizing: border-box; height: 32px; padding: 0 10px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit"></label>
+              <button type="button" aria-label="Rimuovi collegamento" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; height: 32px; width: 32px; padding: 0">✕</button>
+            </div>
+          
+          <button type="button" style="align-self: flex-start; height: 28px; padding: 0; background: transparent; border: 0; color: #4493F8; font: inherit; cursor: pointer">+ Aggiungi collegamento</button>
+        </div>
+      </div>
+
+      <div>
+        <span style="display: block; font-weight: 600; margin-bottom: 6px">Repository GitHub</span>
+        <div style="border: 1px solid #30363D; border-radius: 6px">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 10px 12px; border-bottom: 1px solid #21262D">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8B949E" stroke-width="2" aria-hidden="true"><path d="M6 3v12M18 9a3 3 0 1 0 0-.01M6 21a3 3 0 1 0 0-.01M18 12c0 4-6 3-12 6"></path></svg>
+            <b style="font-weight: 600">tu/lampada-scrivania</b><span style="font-size: 12px; color: #8B949E">privato · aggiornato 2 giorni fa</span><span style="flex: 1"></span>
+            <button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer">Rimuovi</button>
+          </div>
+          <div style="padding: 10px 12px; display: flex; flex-direction: column; gap: 8px">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer"><input type="checkbox" checked style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">Usa un file del repository come documentazione (sola lettura)</label>
+            <label style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding-left: 24px"><span style="font-size: 13px; color: #8B949E">Percorso</span><input type="text" value="docs/DECISIONI.md" style="width: 100%; box-sizing: border-box; height: 32px; padding: 0 10px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; max-width: 260px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px"></label>
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer"><input type="checkbox" checked style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">Mostra i commit nel diario</label>
+          </div>
+        </div>
+        <button type="button" style="margin-top: 8px; height: 28px; padding: 0; background: transparent; border: 0; color: #4493F8; font: inherit; cursor: pointer">+ Collega un altro repository</button>
+      </div>
+
+      <div>
+        <span style="display: block; font-weight: 600; margin-bottom: 6px">Fasi iniziali <span style="font-weight: 400; color: #8B949E">(facoltative)</span></span>
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          
+            <div style="display: flex; align-items: center; gap: 8px">
+              <svg width="12" height="16" viewBox="0 0 12 16" fill="#484F58" aria-hidden="true"><circle cx="3" cy="3" r="1.4"></circle><circle cx="9" cy="3" r="1.4"></circle><circle cx="3" cy="8" r="1.4"></circle><circle cx="9" cy="8" r="1.4"></circle><circle cx="3" cy="13" r="1.4"></circle><circle cx="9" cy="13" r="1.4"></circle></svg>
+              <span style="width: 18px; font-size: 12px; color: #8B949E">1</span>
+              <label style="flex: 1"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Fase 1</span><input type="text" value="Disegno e misure" style="width: 100%; box-sizing: border-box; height: 32px; padding: 0 10px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit"></label>
+              <button type="button" aria-label="Rimuovi fase" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; height: 32px; width: 32px; padding: 0">✕</button>
+            </div>
+          
+            <div style="display: flex; align-items: center; gap: 8px">
+              <svg width="12" height="16" viewBox="0 0 12 16" fill="#484F58" aria-hidden="true"><circle cx="3" cy="3" r="1.4"></circle><circle cx="9" cy="3" r="1.4"></circle><circle cx="3" cy="8" r="1.4"></circle><circle cx="9" cy="8" r="1.4"></circle><circle cx="3" cy="13" r="1.4"></circle><circle cx="9" cy="13" r="1.4"></circle></svg>
+              <span style="width: 18px; font-size: 12px; color: #8B949E">2</span>
+              <label style="flex: 1"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Fase 2</span><input type="text" value="Taglio e incollaggio" style="width: 100%; box-sizing: border-box; height: 32px; padding: 0 10px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit"></label>
+              <button type="button" aria-label="Rimuovi fase" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; height: 32px; width: 32px; padding: 0">✕</button>
+            </div>
+          
+            <div style="display: flex; align-items: center; gap: 8px">
+              <svg width="12" height="16" viewBox="0 0 12 16" fill="#484F58" aria-hidden="true"><circle cx="3" cy="3" r="1.4"></circle><circle cx="9" cy="3" r="1.4"></circle><circle cx="3" cy="8" r="1.4"></circle><circle cx="9" cy="8" r="1.4"></circle><circle cx="3" cy="13" r="1.4"></circle><circle cx="9" cy="13" r="1.4"></circle></svg>
+              <span style="width: 18px; font-size: 12px; color: #8B949E">3</span>
+              <label style="flex: 1"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Fase 3</span><input type="text" value="Elettronica e LED" style="width: 100%; box-sizing: border-box; height: 32px; padding: 0 10px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit"></label>
+              <button type="button" aria-label="Rimuovi fase" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; height: 32px; width: 32px; padding: 0">✕</button>
+            </div>
+          
+          <button type="button" style="align-self: flex-start; height: 28px; padding: 0; background: transparent; border: 0; color: #4493F8; font: inherit; cursor: pointer">+ Aggiungi fase</button>
+        </div>
+        <div style="font-size: 12px; color: #8B949E; margin-top: 6px; line-height: 1.5">I task si aggiungono dalla Roadmap, una volta creato il progetto.</div>
+      </div>
+
+      <fieldset style="border: 0; margin: 0; padding: 0">
+        <legend style="display: block; font-weight: 600; margin-bottom: 6px; padding: 0">Stato iniziale</legend>
+        <label style="display: flex; gap: 8px; align-items: flex-start; margin-bottom: 8px; cursor: pointer"><input type="radio" name="st" checked style="margin: 2px 0 0; accent-color: #1F6FEB"><span><b style="font-weight: 600">In sviluppo</b><span style="display: block; font-size: 12px; color: #8B949E">Compare tra i progetti attivi.</span></span></label>
+        <label style="display: flex; gap: 8px; align-items: flex-start; cursor: pointer"><input type="radio" name="st" style="margin: 2px 0 0; accent-color: #1F6FEB"><span><b style="font-weight: 600">In pausa</b><span style="display: block; font-size: 12px; color: #8B949E">Te ne ricordi, ma non adesso. Ti chiederemo il motivo.</span></span></label>
+      </fieldset>
+
+      <div style="display: flex; gap: 8px; padding-top: 18px; border-top: 1px solid #21262D">
+        <button type="button" style="height: 32px; padding: 0 14px; background: #238636; border: 1px solid rgba(240,246,252,.1); border-radius: 6px; color: #FFF; font: inherit; font-weight: 600; cursor: pointer">Crea progetto</button>
+        <a href="01-dashboard.html" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; height: 32px; font-size: 14px; display: inline-flex; align-items: center; text-decoration: none; box-sizing: border-box">Annulla</a>
+      </div>
+    </form>
+  </main>
+</div>
+</body>
+</html>

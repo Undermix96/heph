@@ -1,0 +1,106 @@
+/* Heph — design tokens (tema scuro, unico tema per ora).
+   Valori ricavati dai mockup approvati. Usa queste variabili, non i colori letterali. */
+:root {
+  /* Sfondi */
+  --bg-canvas: #0D1117;        /* sfondo pagina, campi di input */
+  --bg-inset: #010409;         /* barra in alto, menu a schede, composer mobile */
+  --bg-subtle: #161B22;        /* intestazione dei riquadri, voce di menu selezionata */
+  --bg-muted: #21262D;         /* bottoni secondari, contatori, skeleton */
+  --bg-hover: #1C2128;         /* riga al passaggio del mouse, anteprime immagini */
+
+  /* Bordi */
+  --border-default: #30363D;
+  --border-muted: #21262D;     /* separatori interni alle liste */
+  --border-strong: #484F58;    /* nodi da fare nel percorso, maniglie */
+
+  /* Testo */
+  --fg-default: #E6EDF3;
+  --fg-secondary: #C9D1D9;     /* testo di corpo secondario, voci del diario */
+  --fg-muted: #8B949E;         /* meta, date, conteggi, etichette di campo secondarie */
+  --fg-on-emphasis: #FFFFFF;
+
+  /* Accento (link, focus, selezione) */
+  --accent-fg: #4493F8;
+  --accent-fg-hover: #79B8FF;
+  --accent-emphasis: #1F6FEB;  /* bordo di selezione, focus, avatar "Tu" */
+  --accent-subtle: #121D2F;    /* chip dei tag, avvisi informativi */
+  --accent-border: #1F4A86;
+
+  /* Successo / azione principale / avanzamento */
+  --success-emphasis: #238636; /* bottone primario (verde) */
+  --success-fg: #3FB950;       /* barre di avanzamento, task aperto, stato "attivo" */
+  --success-subtle: #12261E;
+
+  /* Attenzione (test manuale, prossimo passo) */
+  --attention-fg: #D29922;
+  --attention-text: #E3B341;
+  --attention-subtle: #1C1A10;
+  --attention-border: #6B4F0B;
+  --attention-emphasis: #9E6A03; /* bottone "Esito test" */
+
+  /* Pericolo (fermo, errori, eliminazione) */
+  --danger-fg: #F85149;
+  --danger-text: #FF7B72;
+  --danger-text-soft: #FFA198;
+  --danger-subtle: #25171C;
+  --danger-border: #8E1519;
+
+  /* Claude (IA): sempre viola */
+  --ai-fg: #AB7DF8;
+  --ai-text: #D2BFFF;
+  --ai-subtle: #1E1631;
+  --ai-label-bg: #2E2150;
+  --ai-border: #5B3E99;
+
+  /* Menu a schede: sottolineatura della scheda attiva */
+  --nav-underline: #F78166;
+
+  /* Colori dei tag (pallino nei filtri) */
+  --tag-software: #4493F8;
+  --tag-elettronica: #D29922;
+  --tag-legno: #B08800;
+  --tag-stampa3d: #DB61A2;
+
+  /* Tipografia */
+  --font-sans: -apple-system, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  --text-xs: 11px;   /* solo dentro miniature e avatar */
+  --text-sm: 12px;   /* meta, etichette, contatori */
+  --text-md: 13px;   /* liste dense, eventi del diario */
+  --text-base: 14px; /* corpo */
+  --text-lg: 16px;   /* titoli di sezione */
+  --text-xl: 20px;   /* titolo progetto, sottotitoli impostazioni */
+  --text-2xl: 22px;  /* prossimo passo */
+  --text-3xl: 24px;  /* titolo pagina dei moduli */
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+
+  /* Spazi (base 4px) */
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 20px; --space-6: 24px; --space-8: 32px;
+
+  /* Raggi */
+  --radius-box: 6px;       /* riquadri, bottoni, campi */
+  --radius-pill: 10px;     /* etichette di stato, contatori, chip (altezza 20–22px) */
+  --radius-round: 50%;     /* avatar, icone dei task, nodi del percorso */
+
+  /* Altezze dei controlli */
+  --control-sm: 28px;      /* bottoni dentro righe e intestazioni */
+  --control-md: 32px;      /* bottoni e campi standard */
+  --control-touch: 40px;   /* telefono (area minima di tocco 44px incluso il margine) */
+
+  /* Layout */
+  --header-h: 56px;
+  --sidebar-w: 256px;      /* filtri della dashboard o elenco progetti */
+  --content-max: 1440px;
+  --form-max: 760px;
+  --reading-max: 920px;    /* colonna del diario */
+
+  /* Ombre ed effetti */
+  --shadow-overlay: 0 8px 24px rgba(1, 4, 9, .8);
+  --focus-ring: 0 0 0 3px rgba(31, 111, 235, .3);
+  --highlight-search: rgba(210, 153, 34, .35);
+}
+
+@keyframes heph-pulse { 0%, 100% { opacity: 1 } 50% { opacity: .35 } } /* pallino "Claude al lavoro", 1s infinito */
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; } }

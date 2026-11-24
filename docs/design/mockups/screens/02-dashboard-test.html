@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Heph — Test</title>
+<style>
+body{margin:0;background:#0D1117}
+a{color:#4493F8}a:hover{color:#79B8FF}
+input::placeholder,textarea::placeholder{color:#8B949E}
+mark{background:rgba(210,153,34,.35);color:#E6EDF3;border-radius:2px;padding:0 1px}
+</style>
+</head>
+<body>
+<div style="min-height: 100vh; background: #0D1117; color: #E6EDF3; font-family: -apple-system, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; font-size: 14px">
+  <header style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 12px 20px; background: #010409">
+    <a href="01-dashboard.html" aria-label="Heph, dashboard" style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid #30363D; display: grid; place-items: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E6EDF3" stroke-width="2" aria-hidden="true"><path d="M3 9h12c0 3 2 4 6 4v2h-7l-1 3h2v2H6v-2h2l-1-3H3z"></path></svg></a>
+    <span style="font-weight: 600">Dashboard</span>
+    <span style="flex: 1"></span>
+    <label style="flex: 0 1 340px; display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 10px; border: 1px solid #30363D; border-radius: 6px">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8B949E" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+      <span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Cerca</span>
+      <input type="search" placeholder="Digita / per cercare" style="flex: 1; min-width: 0; background: transparent; border: 0; color: #E6EDF3; font: inherit; outline: none">
+    </label>
+    <button type="button" style="height: 32px; padding: 0 10px; background: transparent; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; cursor: pointer">IT ▾</button>
+    <a href="20-nuovo-progetto.html" style="height: 32px; padding: 0 12px; display: inline-flex; align-items: center; background: #238636; border: 1px solid rgba(240,246,252,.1); border-radius: 6px; color: #FFF; font-weight: 600; text-decoration: none; box-sizing: border-box">Nuovo progetto</a>
+    <a href="31-impostazioni.html" aria-label="Impostazioni" style="width: 32px; height: 32px; box-sizing: border-box; background: transparent; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; display: grid; place-items: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"></path></svg></a>
+    <span style="width: 32px; height: 32px; border-radius: 50%; background: #1F6FEB; display: grid; place-items: center; font-size: 12px; font-weight: 600">TU</span>
+  </header>
+  <nav aria-label="Sezioni" style="display: flex; flex-wrap: wrap; gap: 4px; padding: 0 20px; background: #010409; border-bottom: 1px solid #30363D">
+    <a href="01-dashboard.html" style="padding: 12px 10px 10px; color: #E6EDF3; text-decoration: none">Progetti <span style="padding: 0 6px; border-radius: 10px; background: #30363D; font-size: 12px; font-weight: 400">8</span></a>
+    <a href="02-dashboard-test.html" style="padding: 12px 10px 10px; color: #E6EDF3; text-decoration: none; font-weight: 600; border-bottom: 2px solid #F78166">Test <span style="padding: 0 6px; border-radius: 10px; background: #30363D; font-size: 12px; font-weight: 400">1</span></a>
+    <a href="03-dashboard-proposte.html" style="padding: 12px 10px 10px; color: #E6EDF3; text-decoration: none">Proposte <span style="padding: 0 6px; border-radius: 10px; background: #AB7DF8; color: #0D1117; font-size: 12px; font-weight: 600">2</span></a>
+    <a href="04-dashboard-diario.html" style="padding: 12px 10px 10px; color: #E6EDF3; text-decoration: none">Diario</a>
+  </nav>
+  <div style="max-width: 1100px; margin: 0 auto; padding: 22px 20px 48px; box-sizing: border-box; display: flex; flex-direction: column; gap: 16px">
+    <p style="margin: 0; color: #8B949E; line-height: 1.5">Verifiche che Claude non può fare da solo: provare l'oggetto fisico, guardare un risultato, usare l'app dal telefono. L'esito torna nel diario del progetto.</p>
+    <section style="border: 1px solid #30363D; border-radius: 6px">
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding: 10px 16px; background: #161B22; border-bottom: 1px solid #30363D; border-radius: 6px 6px 0 0">
+        <a href="#" style="color: #E6EDF3; font-weight: 600; text-decoration: none">● 1 in attesa</a>
+        <a href="#" style="color: #8B949E; text-decoration: none">✓ 6 superati</a>
+        <a href="#" style="color: #8B949E; text-decoration: none">✕ 2 falliti</a>
+        <span style="flex: 1"></span>
+        <button type="button" style="height: 28px; padding: 0 8px; background: transparent; border: 0; color: #8B949E; font: inherit; cursor: pointer">Progetto ▾</button>
+      </div>
+      <article style="display: flex; gap: 12px; align-items: flex-start; padding: 16px">
+        <span style="flex: 0 0 18px; height: 18px; margin-top: 2px; border-radius: 50%; border: 2px solid #D29922; box-sizing: border-box"></span>
+        <div style="flex: 1; min-width: 0">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px"><b style="font-weight: 600; font-size: 15px">24 h all'aperto, confronto con ARPA</b><a href="10-progetto-panoramica.html" style="height: 20px; padding: 0 8px; display: inline-flex; align-items: center; border-radius: 10px; background: #121D2F; color: #4493F8; font-size: 12px; font-weight: 500; text-decoration: none; white-space: nowrap">Stazione meteo ESP32</a><span style="font-size: 12px; color: #8B949E">task 3.3 · fase Collaudo sensori</span></div>
+          <div style="font-size: 12px; color: #8B949E; margin-top: 4px">chiesto da Claude 3 giorni fa, alla fine della <a href="12-progetto-diario.html" style="text-decoration: none">sessione del 20/11</a></div>
+          <div style="border: 1px solid #30363D; border-radius: 6px; margin-top: 12px">
+            <div style="padding: 8px 12px; background: #161B22; border-bottom: 1px solid #30363D; border-radius: 6px 6px 0 0; font-size: 12px; font-weight: 600">Cosa verificare</div>
+            <ol style="margin: 0; padding: 12px 16px 12px 34px; line-height: 1.7">
+              <li>Lascia la stazione sul balcone per almeno 24 ore.</li>
+              <li>Confronta temperatura e umidità con la stazione ARPA più vicina (Milano Brera).</li>
+              <li>In Home Assistant controlla che ci siano 144 letture: nessuna persa durante il deep sleep.</li>
+            </ol>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 6px; margin-top: 12px; max-width: 520px">
+            <span style="aspect-ratio: 4/3; border: 1px solid #30363D; border-radius: 6px; background: #1C2128; display: grid; place-items: center; font-size: 11px; color: #8B949E; text-align: center; padding: 4px; box-sizing: border-box">grafico atteso</span><span style="aspect-ratio: 4/3; border: 1px solid #30363D; border-radius: 6px; background: #1C2128; display: grid; place-items: center; font-size: 11px; color: #8B949E; text-align: center; padding: 4px; box-sizing: border-box">entità HA</span><span style="aspect-ratio: 4/3; border: 1px solid #30363D; border-radius: 6px; background: #1C2128; display: grid; place-items: center; font-size: 11px; color: #8B949E; text-align: center; padding: 4px; box-sizing: border-box">dove montarla</span>
+          </div>
+          <label style="display: block; margin-top: 14px"><span style="font-weight: 600; display: block; margin-bottom: 6px">Esito</span><textarea rows="3" placeholder="Com'è andata? Numeri, foto, cose strane… (markdown)" style="width: 100%; box-sizing: border-box; padding: 8px 10px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; resize: vertical"></textarea></label>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; align-items: center">
+            <button type="button" style="height: 32px; padding: 0 14px; background: #238636; border: 1px solid rgba(240,246,252,.1); border-radius: 6px; color: #FFF; font: inherit; font-weight: 600; cursor: pointer">Superato</button>
+            <button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; height: 32px; font-size: 14px; color: #FF7B72">Fallito</button>
+            <button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; height: 32px; font-size: 14px">Allega foto</button>
+            <span style="font-size: 12px; color: #8B949E">Con «Fallito» il progetto torna in sviluppo e Claude legge le tue note.</span>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section style="border: 1px solid #30363D; border-radius: 6px">
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding: 10px 16px; background: #161B22; border-bottom: 1px solid #30363D; border-radius: 6px 6px 0 0"><span style="font-weight: 600">Storico</span></div>
+      
+        <div style="display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: flex-start; padding: 12px 16px; border-top: 1px solid #21262D">
+          <span style="width: 18px; color: #F85149; text-align: center; padding-top: 1px">✕</span>
+          <div style="flex: 1 1 360px; min-width: 0">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px"><span style="font-weight: 600">Confronto notturno con ARPA</span><span style="height: 20px; padding: 0 8px; display: inline-flex; align-items: center; border-radius: 10px; background: #121D2F; color: #4493F8; font-size: 12px; font-weight: 500; text-decoration: none; white-space: nowrap">Stazione meteo ESP32</span></div>
+            <div style="font-size: 13px; color: #C9D1D9; margin-top: 4px; line-height: 1.45">«Umidità +9% in tutte le letture notturne.» Claude ha aggiunto il task 3.4.</div>
+          </div>
+          <span style="font-size: 12px; color: #8B949E; width: 120px; text-align: right">fallito · 19/11</span>
+        </div>
+      
+        <div style="display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: flex-start; padding: 12px 16px; border-top: 1px solid #21262D">
+          <span style="width: 18px; color: #3FB950; text-align: center; padding-top: 1px">✓</span>
+          <div style="flex: 1 1 360px; min-width: 0">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px"><span style="font-weight: 600">Upload foto dal telefono</span><span style="height: 20px; padding: 0 8px; display: inline-flex; align-items: center; border-radius: 10px; background: #121D2F; color: #4493F8; font-size: 12px; font-weight: 500; text-decoration: none; white-space: nowrap">Heph</span></div>
+            <div style="font-size: 13px; color: #C9D1D9; margin-top: 4px; line-height: 1.45">«Funziona con JPG e PNG.» Le HEIC restano un problema a parte.</div>
+          </div>
+          <span style="font-size: 12px; color: #8B949E; width: 120px; text-align: right">superato · 18/11</span>
+        </div>
+      
+        <div style="display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: flex-start; padding: 12px 16px; border-top: 1px solid #21262D">
+          <span style="width: 18px; color: #3FB950; text-align: center; padding-top: 1px">✓</span>
+          <div style="flex: 1 1 360px; min-width: 0">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px"><span style="font-weight: 600">Stampa di prova del supporto, incastro sul tubo</span><span style="height: 20px; padding: 0 8px; display: inline-flex; align-items: center; border-radius: 10px; background: #121D2F; color: #4493F8; font-size: 12px; font-weight: 500; text-decoration: none; white-space: nowrap">Supporto microscopio</span></div>
+            <div style="font-size: 13px; color: #C9D1D9; margin-top: 4px; line-height: 1.45">«Entra con un po’ di forza, va bene così.»</div>
+          </div>
+          <span style="font-size: 12px; color: #8B949E; width: 120px; text-align: right">superato · 16/11</span>
+        </div>
+      
+        <div style="display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: flex-start; padding: 12px 16px; border-top: 1px solid #21262D">
+          <span style="width: 18px; color: #3FB950; text-align: center; padding-top: 1px">✓</span>
+          <div style="flex: 1 1 360px; min-width: 0">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px"><span style="font-weight: 600">Login e cambio password da telefono</span><span style="height: 20px; padding: 0 8px; display: inline-flex; align-items: center; border-radius: 10px; background: #121D2F; color: #4493F8; font-size: 12px; font-weight: 500; text-decoration: none; white-space: nowrap">Heph</span></div>
+            <div style="font-size: 13px; color: #C9D1D9; margin-top: 4px; line-height: 1.45"></div>
+          </div>
+          <span style="font-size: 12px; color: #8B949E; width: 120px; text-align: right">superato · 21/11</span>
+        </div>
+      
+        <div style="display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: flex-start; padding: 12px 16px; border-top: 1px solid #21262D">
+          <span style="width: 18px; color: #F85149; text-align: center; padding-top: 1px">✕</span>
+          <div style="flex: 1 1 360px; min-width: 0">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px"><span style="font-weight: 600">Riconoscimento bolletta Hera di 3 pagine</span><span style="height: 20px; padding: 0 8px; display: inline-flex; align-items: center; border-radius: 10px; background: #121D2F; color: #4493F8; font-size: 12px; font-weight: 500; text-decoration: none; white-space: nowrap">Bot bollette</span></div>
+            <div style="font-size: 13px; color: #C9D1D9; margin-top: 4px; line-height: 1.45">«Legge solo la prima pagina.» Da qui il task sui PDF multipagina.</div>
+          </div>
+          <span style="font-size: 12px; color: #8B949E; width: 120px; text-align: right">fallito · 14/11</span>
+        </div>
+      
+    </section>
+  </div>
+</div>
+</body>
+</html>

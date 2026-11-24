@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Heph — Proposte</title>
+<style>
+body{margin:0;background:#0D1117}
+a{color:#4493F8}a:hover{color:#79B8FF}
+input::placeholder,textarea::placeholder{color:#8B949E}
+mark{background:rgba(210,153,34,.35);color:#E6EDF3;border-radius:2px;padding:0 1px}
+</style>
+</head>
+<body>
+<div style="min-height: 100vh; background: #0D1117; color: #E6EDF3; font-family: -apple-system, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; font-size: 14px">
+  <header style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 12px 20px; background: #010409">
+    <a href="01-dashboard.html" aria-label="Heph, dashboard" style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid #30363D; display: grid; place-items: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E6EDF3" stroke-width="2" aria-hidden="true"><path d="M3 9h12c0 3 2 4 6 4v2h-7l-1 3h2v2H6v-2h2l-1-3H3z"></path></svg></a>
+    <span style="font-weight: 600">Dashboard</span>
+    <span style="flex: 1"></span>
+    <label style="flex: 0 1 340px; display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 10px; border: 1px solid #30363D; border-radius: 6px">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8B949E" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+      <span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Cerca</span>
+      <input type="search" placeholder="Digita / per cercare" style="flex: 1; min-width: 0; background: transparent; border: 0; color: #E6EDF3; font: inherit; outline: none">
+    </label>
+    <button type="button" style="height: 32px; padding: 0 10px; background: transparent; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; cursor: pointer">IT ▾</button>
+    <a href="20-nuovo-progetto.html" style="height: 32px; padding: 0 12px; display: inline-flex; align-items: center; background: #238636; border: 1px solid rgba(240,246,252,.1); border-radius: 6px; color: #FFF; font-weight: 600; text-decoration: none; box-sizing: border-box">Nuovo progetto</a>
+    <a href="31-impostazioni.html" aria-label="Impostazioni" style="width: 32px; height: 32px; box-sizing: border-box; background: transparent; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; display: grid; place-items: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"></path></svg></a>
+    <span style="width: 32px; height: 32px; border-radius: 50%; background: #1F6FEB; display: grid; place-items: center; font-size: 12px; font-weight: 600">TU</span>
+  </header>
+  <nav aria-label="Sezioni" style="display: flex; flex-wrap: wrap; gap: 4px; padding: 0 20px; background: #010409; border-bottom: 1px solid #30363D">
+    <a href="01-dashboard.html" style="padding: 12px 10px 10px; color: #E6EDF3; text-decoration: none">Progetti <span style="padding: 0 6px; border-radius: 10px; background: #30363D; font-size: 12px; font-weight: 400">8</span></a>
+    <a href="02-dashboard-test.html" style="padding: 12px 10px 10px; color: #E6EDF3; text-decoration: none">Test <span style="padding: 0 6px; border-radius: 10px; background: #30363D; font-size: 12px; font-weight: 400">1</span></a>
+    <a href="03-dashboard-proposte.html" style="padding: 12px 10px 10px; color: #E6EDF3; text-decoration: none; font-weight: 600; border-bottom: 2px solid #F78166">Proposte <span style="padding: 0 6px; border-radius: 10px; background: #AB7DF8; color: #0D1117; font-size: 12px; font-weight: 600">2</span></a>
+    <a href="04-dashboard-diario.html" style="padding: 12px 10px 10px; color: #E6EDF3; text-decoration: none">Diario</a>
+  </nav>
+  <div style="max-width: 1100px; margin: 0 auto; padding: 22px 20px 48px; box-sizing: border-box; display: flex; flex-direction: column; gap: 16px">
+    <p style="margin: 0; color: #8B949E; line-height: 1.5">Modifiche che Claude vuole fare ma che richiedono il tuo consenso: eliminare fasi, spostare task, chiudere un progetto.</p>
+    <section style="border: 1px solid #30363D; border-radius: 6px">
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding: 10px 16px; background: #161B22; border-bottom: 1px solid #30363D; border-radius: 6px 6px 0 0">
+        <a href="#" style="color: #E6EDF3; font-weight: 600; text-decoration: none">● 2 in attesa</a>
+        <a href="#" style="color: #8B949E; text-decoration: none">✓ 14 approvate</a>
+        <a href="#" style="color: #8B949E; text-decoration: none">✕ 3 rifiutate</a>
+        <span style="flex: 1"></span>
+        <button type="button" style="height: 28px; padding: 0 8px; background: transparent; border: 0; color: #8B949E; font: inherit; cursor: pointer">Progetto ▾</button>
+        <button type="button" style="height: 28px; padding: 0 8px; background: transparent; border: 0; color: #8B949E; font: inherit; cursor: pointer">Tipo ▾</button>
+      </div>
+
+      <article style="border-top: 0">
+        <div style="display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px">
+          <span style="flex: 0 0 18px; height: 18px; margin-top: 2px; border-radius: 50%; border: 2px solid #AB7DF8; box-sizing: border-box; display: grid; place-items: center"><span style="width: 6px; height: 6px; border-radius: 50%; background: #AB7DF8"></span></span>
+          <div style="flex: 1; min-width: 0">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px"><b style="font-weight: 600; font-size: 15px">Eliminare la fase «Import da Trello»</b><a href="10-progetto-panoramica.html" style="height: 20px; padding: 0 8px; display: inline-flex; align-items: center; border-radius: 10px; background: #121D2F; color: #4493F8; font-size: 12px; font-weight: 500; text-decoration: none">Heph</a><span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; border: 1px solid #F85149; border-radius: 10px; color: #F85149; font-size: 12px">elimina</span></div>
+            <div style="font-size: 12px; color: #8B949E; margin-top: 4px">Claude · ieri alle 21:50 · durante la sessione del 22/11</div>
+            <div style="margin-top: 12px; padding: 10px 14px; border-left: 3px solid #30363D; color: #C9D1D9; line-height: 1.55">Il 12 novembre hai scritto nel diario «non importerò mai da Trello, ho pochi progetti». La fase ha 3 task, nessuno iniziato.</div>
+            <div style="border: 1px solid #30363D; border-radius: 6px; margin-top: 12px; overflow: hidden">
+              <div style="padding: 8px 12px; background: #161B22; border-bottom: 1px solid #30363D; font-size: 12px; font-weight: 600">Cosa cambia</div>
+              <div style="font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; line-height: 1.9">
+                <div style="padding: 0 12px; background: rgba(248,81,73,.12); color: #FFA198">− Fase 7 · Import da Trello</div>
+                <div style="padding: 0 12px 0 28px; background: rgba(248,81,73,.08); color: #FFA198">− Leggere l'export JSON di Trello</div>
+                <div style="padding: 0 12px 0 28px; background: rgba(248,81,73,.08); color: #FFA198">− Mappare liste e card su fasi e task</div>
+                <div style="padding: 0 12px 0 28px; background: rgba(248,81,73,.08); color: #FFA198">− Importare gli allegati</div>
+              </div>
+            </div>
+            <label style="display: block; margin-top: 12px"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Nota per Claude</span><textarea rows="2" placeholder="Nota per Claude (facoltativa), es. «tienila ma spostala in fondo»" style="width: 100%; box-sizing: border-box; padding: 8px 10px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; resize: vertical"></textarea></label>
+            <div style="display: flex; gap: 8px; margin-top: 10px"><button type="button" style="height: 32px; padding: 0 14px; background: #238636; border: 1px solid rgba(240,246,252,.1); border-radius: 6px; color: #FFF; font: inherit; font-weight: 600; cursor: pointer">Approva</button><button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; height: 32px; font-size: 14px">Rifiuta</button></div>
+          </div>
+        </div>
+      </article>
+
+      <article style="border-top: 1px solid #21262D">
+        <div style="display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; padding: 14px 16px">
+          <span style="flex: 0 0 18px; height: 18px; border-radius: 50%; border: 2px solid #AB7DF8; box-sizing: border-box; display: grid; place-items: center"><span style="width: 6px; height: 6px; border-radius: 50%; background: #AB7DF8"></span></span>
+          <div style="flex: 1 1 360px; min-width: 0">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px"><b style="font-weight: 600; font-size: 15px">Segnare il progetto come completato</b><a href="#" style="height: 20px; padding: 0 8px; display: inline-flex; align-items: center; border-radius: 10px; background: #121D2F; color: #4493F8; font-size: 12px; font-weight: 500; text-decoration: none">Bot bollette</a><span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; border: 1px solid #3FB950; border-radius: 10px; color: #3FB950; font-size: 12px">stato</span></div>
+            <div style="font-size: 12px; color: #8B949E; margin-top: 4px">Claude · 12 minuti fa · quando i test in corso passano</div>
+          </div>
+          <button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer">Dettagli</button><button type="button" style="height: 32px; padding: 0 14px; background: #238636; border: 1px solid rgba(240,246,252,.1); border-radius: 6px; color: #FFF; font: inherit; font-weight: 600; cursor: pointer; height: 28px; font-size: 12px; padding: 0 10px">Approva</button><button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer">Rifiuta</button>
+        </div>
+      </article>
+    </section>
+
+    <section style="border: 1px solid #30363D; border-radius: 6px">
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding: 10px 16px; background: #161B22; border-bottom: 1px solid #30363D; border-radius: 6px 6px 0 0"><span style="font-weight: 600">Decise di recente</span></div>
+      
+        <div style="display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; padding: 10px 16px; border-top: 1px solid #21262D">
+          <span style="width: 18px; color: #AB7DF8; text-align: center">✓</span>
+          <span style="flex: 1 1 300px">Spostare «Docker compose» dopo «Comando /riepilogo»</span>
+          <span style="height: 20px; padding: 0 8px; display: inline-flex; align-items: center; border-radius: 10px; background: #121D2F; color: #4493F8; font-size: 12px; font-weight: 500">Bot bollette</span>
+          <span style="font-size: 12px; color: #8B949E; width: 150px; text-align: right">approvata · 19/11</span>
+        </div>
+      
+        <div style="display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; padding: 10px 16px; border-top: 1px solid #21262D">
+          <span style="width: 18px; color: #AB7DF8; text-align: center">✓</span>
+          <span style="flex: 1 1 300px">Dividere la fase «Firmware» in «Prototipo» e «Collaudo»</span>
+          <span style="height: 20px; padding: 0 8px; display: inline-flex; align-items: center; border-radius: 10px; background: #121D2F; color: #4493F8; font-size: 12px; font-weight: 500">Stazione meteo</span>
+          <span style="font-size: 12px; color: #8B949E; width: 150px; text-align: right">approvata · 30/10</span>
+        </div>
+      
+        <div style="display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; padding: 10px 16px; border-top: 1px solid #21262D">
+          <span style="width: 18px; color: #F85149; text-align: center">✕</span>
+          <span style="flex: 1 1 300px">Segnare il progetto come abbandonato</span>
+          <span style="height: 20px; padding: 0 8px; display: inline-flex; align-items: center; border-radius: 10px; background: #121D2F; color: #4493F8; font-size: 12px; font-weight: 500">Libreria in noce</span>
+          <span style="font-size: 12px; color: #8B949E; width: 150px; text-align: right">rifiutata · 21/10 · con nota</span>
+        </div>
+      
+        <div style="display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; padding: 10px 16px; border-top: 1px solid #21262D">
+          <span style="width: 18px; color: #AB7DF8; text-align: center">✓</span>
+          <span style="flex: 1 1 300px">Eliminare il task duplicato «Login form»</span>
+          <span style="height: 20px; padding: 0 8px; display: inline-flex; align-items: center; border-radius: 10px; background: #121D2F; color: #4493F8; font-size: 12px; font-weight: 500">Heph</span>
+          <span style="font-size: 12px; color: #8B949E; width: 150px; text-align: right">approvata · 8/10</span>
+        </div>
+      
+    </section>
+  </div>
+</div>
+</body>
+</html>

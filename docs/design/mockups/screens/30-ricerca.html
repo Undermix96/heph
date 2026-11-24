@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Heph — Ricerca</title>
+<style>
+body{margin:0;background:#0D1117}
+a{color:#4493F8}a:hover{color:#79B8FF}
+input::placeholder,textarea::placeholder{color:#8B949E}
+mark{background:rgba(210,153,34,.35);color:#E6EDF3;border-radius:2px;padding:0 1px}
+</style>
+</head>
+<body>
+<div style="min-height: 100vh; background: #0D1117; color: #E6EDF3; font-family: -apple-system, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; font-size: 14px">
+  <header style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 12px 20px; background: #010409; border-bottom: 1px solid #30363D">
+    <a href="01-dashboard.html" aria-label="Heph, dashboard" style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid #30363D; display: grid; place-items: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E6EDF3" stroke-width="2" aria-hidden="true"><path d="M3 9h12c0 3 2 4 6 4v2h-7l-1 3h2v2H6v-2h2l-1-3H3z"></path></svg></a>
+    <label style="display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 10px; width: 380px; max-width: 60vw; border: 1px solid #1F6FEB; border-radius: 6px; box-shadow: 0 0 0 3px rgba(31,111,235,.3)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8B949E" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Cerca</span><input type="search" value="BME280" style="flex: 1; min-width: 0; background: transparent; border: 0; color: #E6EDF3; font: inherit; outline: none"></label>
+    <span style="flex: 1"></span>
+    <label style="flex: 0 1 340px; display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 10px; border: 1px solid #30363D; border-radius: 6px">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8B949E" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+      <span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Cerca</span>
+      <input type="search" placeholder="Digita / per cercare" style="flex: 1; min-width: 0; background: transparent; border: 0; color: #E6EDF3; font: inherit; outline: none">
+    </label>
+    <button type="button" style="height: 32px; padding: 0 10px; background: transparent; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; cursor: pointer">IT ▾</button>
+    <a href="20-nuovo-progetto.html" style="height: 32px; padding: 0 12px; display: inline-flex; align-items: center; background: #238636; border: 1px solid rgba(240,246,252,.1); border-radius: 6px; color: #FFF; font-weight: 600; text-decoration: none; box-sizing: border-box">Nuovo progetto</a>
+    <a href="31-impostazioni.html" aria-label="Impostazioni" style="width: 32px; height: 32px; box-sizing: border-box; background: transparent; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; display: grid; place-items: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"></path></svg></a>
+    <span style="width: 32px; height: 32px; border-radius: 50%; background: #1F6FEB; display: grid; place-items: center; font-size: 12px; font-weight: 600">TU</span>
+  </header>
+  <div style="max-width: 1280px; margin: 0 auto; padding: 20px 20px 48px; box-sizing: border-box; display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+    <aside aria-label="Filtra i risultati" style="flex: 1 1 200px; max-width: 240px">
+      <h2 style="margin: 0 0 8px; font-size: 14px; font-weight: 600">Filtra per</h2>
+      
+        <a href="#" style="display: flex; align-items: center; gap: 8px; min-height: 34px; padding: 0 10px; border-radius: 6px; color: #E6EDF3; text-decoration: none; background: #161B22; font-weight: 600"><span style="flex: 1">Tutto</span><span style="padding: 0 6px; border-radius: 10px; background: #30363D; font-size: 12px; font-weight: 400">25</span></a>
+      
+        <a href="#" style="display: flex; align-items: center; gap: 8px; min-height: 34px; padding: 0 10px; border-radius: 6px; color: #E6EDF3; text-decoration: none; background: transparent; font-weight: 400"><span style="flex: 1">Progetti</span><span style="padding: 0 6px; border-radius: 10px; background: #30363D; font-size: 12px; font-weight: 400">2</span></a>
+      
+        <a href="#" style="display: flex; align-items: center; gap: 8px; min-height: 34px; padding: 0 10px; border-radius: 6px; color: #E6EDF3; text-decoration: none; background: transparent; font-weight: 400"><span style="flex: 1">Task</span><span style="padding: 0 6px; border-radius: 10px; background: #30363D; font-size: 12px; font-weight: 400">6</span></a>
+      
+        <a href="#" style="display: flex; align-items: center; gap: 8px; min-height: 34px; padding: 0 10px; border-radius: 6px; color: #E6EDF3; text-decoration: none; background: transparent; font-weight: 400"><span style="flex: 1">Diario</span><span style="padding: 0 6px; border-radius: 10px; background: #30363D; font-size: 12px; font-weight: 400">14</span></a>
+      
+        <a href="#" style="display: flex; align-items: center; gap: 8px; min-height: 34px; padding: 0 10px; border-radius: 6px; color: #E6EDF3; text-decoration: none; background: transparent; font-weight: 400"><span style="flex: 1">Documentazione</span><span style="padding: 0 6px; border-radius: 10px; background: #30363D; font-size: 12px; font-weight: 400">3</span></a>
+      
+      <h2 style="margin: 18px 0 8px; font-size: 14px; font-weight: 600">Progetto</h2>
+      
+        <label style="display: flex; align-items: center; gap: 8px; min-height: 30px; font-size: 13px; cursor: pointer"><input type="checkbox" checked style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB"><span style="flex: 1">Stazione meteo ESP32</span><span style="font-size: 12px; color: #8B949E">23</span></label>
+      
+        <label style="display: flex; align-items: center; gap: 8px; min-height: 30px; font-size: 13px; cursor: pointer"><input type="checkbox" checked style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB"><span style="flex: 1">Heph</span><span style="font-size: 12px; color: #8B949E">2</span></label>
+      
+    </aside>
+    <main style="flex: 999 1 620px; min-width: 0; display: flex; flex-direction: column; gap: 18px">
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+        <h1 style="margin: 0; font-size: 16px; font-weight: 600">25 risultati per «BME280»</h1>
+        <span style="flex: 1"></span>
+        <button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; height: 32px; font-size: 14px">Ordina: pertinenza ▾</button>
+      </div>
+      
+        <section style="border: 1px solid #30363D; border-radius: 6px">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding: 10px 16px; background: #161B22; border-bottom: 1px solid #30363D; border-radius: 6px 6px 0 0"><span style="font-weight: 600">Task</span><span style="padding: 0 6px; border-radius: 10px; background: #30363D; font-size: 12px">6</span><span style="flex: 1"></span><a href="#" style="font-size: 13px; text-decoration: none">Tutti i 6 task</a></div>
+          
+            <a href="10-progetto-panoramica.html" style="display: flex; gap: 12px; align-items: flex-start; padding: 12px 16px; border-top: 1px solid #21262D; color: #E6EDF3; text-decoration: none">
+              <span style="flex: 0 0 22px; height: 22px; border-radius: 50%; background: transparent; color: #3FB950; border: 1.5px solid #3FB950; box-sizing: border-box; display: grid; place-items: center; font-size: 9px; font-weight: 700"></span>
+              <span style="flex: 1; min-width: 0">
+                <span style="display: block; font-weight: 600; color: #4493F8"><span style="background: transparent; color: inherit; border-radius: 2px">Calibrare l'offset di umidità del </span><span style="background: rgba(210,153,34,.35); color: #E6EDF3; border-radius: 2px">BME280</span></span>
+                <span style="display: block; font-size: 13px; line-height: 1.5; color: #C9D1D9; margin-top: 3px"><span style="background: transparent; color: inherit; border-radius: 2px">Fase 3 · Collaudo sensori · prossimo passo</span></span>
+                <span style="display: block; font-size: 12px; color: #8B949E; margin-top: 4px">Stazione meteo ESP32 · aperto</span>
+              </span>
+            </a>
+          
+            <a href="10-progetto-panoramica.html" style="display: flex; gap: 12px; align-items: flex-start; padding: 12px 16px; border-top: 1px solid #21262D; color: #E6EDF3; text-decoration: none">
+              <span style="flex: 0 0 22px; height: 22px; border-radius: 50%; background: transparent; color: #AB7DF8; border: 1.5px solid #AB7DF8; box-sizing: border-box; display: grid; place-items: center; font-size: 9px; font-weight: 700">✓</span>
+              <span style="flex: 1; min-width: 0">
+                <span style="display: block; font-weight: 600; color: #4493F8"><span style="background: transparent; color: inherit; border-radius: 2px">Lettura </span><span style="background: rgba(210,153,34,.35); color: #E6EDF3; border-radius: 2px">BME280</span><span style="background: transparent; color: inherit; border-radius: 2px"> via I²C</span></span>
+                <span style="display: block; font-size: 13px; line-height: 1.5; color: #C9D1D9; margin-top: 3px"><span style="background: transparent; color: inherit; border-radius: 2px">Fase 3 · Collaudo sensori · chiuso da te il 4/11</span></span>
+                <span style="display: block; font-size: 12px; color: #8B949E; margin-top: 4px">Stazione meteo ESP32 · 2 file</span>
+              </span>
+            </a>
+          
+            <a href="10-progetto-panoramica.html" style="display: flex; gap: 12px; align-items: flex-start; padding: 12px 16px; border-top: 1px solid #21262D; color: #E6EDF3; text-decoration: none">
+              <span style="flex: 0 0 22px; height: 22px; border-radius: 50%; background: transparent; color: #3FB950; border: 1.5px solid #3FB950; box-sizing: border-box; display: grid; place-items: center; font-size: 9px; font-weight: 700"></span>
+              <span style="flex: 1; min-width: 0">
+                <span style="display: block; font-weight: 600; color: #4493F8"><span style="background: transparent; color: inherit; border-radius: 2px">Procedura di calibrazione del </span><span style="background: rgba(210,153,34,.35); color: #E6EDF3; border-radius: 2px">BME280</span><span style="background: transparent; color: inherit; border-radius: 2px"> nella documentazione</span></span>
+                <span style="display: block; font-size: 13px; line-height: 1.5; color: #C9D1D9; margin-top: 3px"><span style="background: transparent; color: inherit; border-radius: 2px">Fase 3 · Collaudo sensori</span></span>
+                <span style="display: block; font-size: 12px; color: #8B949E; margin-top: 4px">Stazione meteo ESP32 · aperto</span>
+              </span>
+            </a>
+          
+        </section>
+      
+        <section style="border: 1px solid #30363D; border-radius: 6px">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding: 10px 16px; background: #161B22; border-bottom: 1px solid #30363D; border-radius: 6px 6px 0 0"><span style="font-weight: 600">Diario</span><span style="padding: 0 6px; border-radius: 10px; background: #30363D; font-size: 12px">14</span><span style="flex: 1"></span><a href="#" style="font-size: 13px; text-decoration: none">Tutte le 14 voci</a></div>
+          
+            <a href="10-progetto-panoramica.html" style="display: flex; gap: 12px; align-items: flex-start; padding: 12px 16px; border-top: 1px solid #21262D; color: #E6EDF3; text-decoration: none">
+              <span style="flex: 0 0 22px; height: 22px; border-radius: 50%; background: #AB7DF8; color: #0D1117; border: 1.5px solid #AB7DF8; box-sizing: border-box; display: grid; place-items: center; font-size: 9px; font-weight: 700">IA</span>
+              <span style="flex: 1; min-width: 0">
+                <span style="display: block; font-weight: 600; color: #4493F8"><span style="background: transparent; color: inherit; border-radius: 2px">Sessione di Claude · 20/11</span></span>
+                <span style="display: block; font-size: 13px; line-height: 1.5; color: #C9D1D9; margin-top: 3px"><span style="background: transparent; color: inherit; border-radius: 2px">Il </span><span style="background: rgba(210,153,34,.35); color: #E6EDF3; border-radius: 2px">BME280</span><span style="background: transparent; color: inherit; border-radius: 2px"> resta alimentato da GPIO4 solo durante la lettura: consumo in sleep sceso a 11 µA.</span></span>
+                <span style="display: block; font-size: 12px; color: #8B949E; margin-top: 4px">Stazione meteo ESP32 · 8 eventi</span>
+              </span>
+            </a>
+          
+            <a href="10-progetto-panoramica.html" style="display: flex; gap: 12px; align-items: flex-start; padding: 12px 16px; border-top: 1px solid #21262D; color: #E6EDF3; text-decoration: none">
+              <span style="flex: 0 0 22px; height: 22px; border-radius: 50%; background: #1F6FEB; color: #FFF; border: 1.5px solid #1F6FEB; box-sizing: border-box; display: grid; place-items: center; font-size: 9px; font-weight: 700">TU</span>
+              <span style="flex: 1; min-width: 0">
+                <span style="display: block; font-weight: 600; color: #4493F8"><span style="background: transparent; color: inherit; border-radius: 2px">Nota · 4/11</span></span>
+                <span style="display: block; font-size: 13px; line-height: 1.5; color: #C9D1D9; margin-top: 3px"><span style="background: transparent; color: inherit; border-radius: 2px">Il </span><span style="background: rgba(210,153,34,.35); color: #E6EDF3; border-radius: 2px">BME280</span><span style="background: transparent; color: inherit; border-radius: 2px"> cinese risponde all’indirizzo 0x76 e non 0x77: corretto nel firmware.</span></span>
+                <span style="display: block; font-size: 12px; color: #8B949E; margin-top: 4px">Stazione meteo ESP32 · 1 immagine</span>
+              </span>
+            </a>
+          
+        </section>
+      
+        <section style="border: 1px solid #30363D; border-radius: 6px">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding: 10px 16px; background: #161B22; border-bottom: 1px solid #30363D; border-radius: 6px 6px 0 0"><span style="font-weight: 600">Documentazione</span><span style="padding: 0 6px; border-radius: 10px; background: #30363D; font-size: 12px">3</span><span style="flex: 1"></span><a href="#" style="font-size: 13px; text-decoration: none">Tutti i 3 risultati</a></div>
+          
+            <a href="10-progetto-panoramica.html" style="display: flex; gap: 12px; align-items: flex-start; padding: 12px 16px; border-top: 1px solid #21262D; color: #E6EDF3; text-decoration: none">
+              <span style="flex: 0 0 22px; height: 22px; border-radius: 50%; background: #21262D; color: #8B949E; border: 1.5px solid #30363D; box-sizing: border-box; display: grid; place-items: center; font-size: 9px; font-weight: 700">MD</span>
+              <span style="flex: 1; min-width: 0">
+                <span style="display: block; font-weight: 600; color: #4493F8"><span style="background: transparent; color: inherit; border-radius: 2px">DECISIONI.md › Perché il </span><span style="background: rgba(210,153,34,.35); color: #E6EDF3; border-radius: 2px">BME280</span><span style="background: transparent; color: inherit; border-radius: 2px"> e non il DHT22</span></span>
+                <span style="display: block; font-size: 13px; line-height: 1.5; color: #C9D1D9; margin-top: 3px"><span style="background: transparent; color: inherit; border-radius: 2px">Il DHT22 è più economico ma legge male sotto i 5 °C. Il </span><span style="background: rgba(210,153,34,.35); color: #E6EDF3; border-radius: 2px">BME280</span><span style="background: transparent; color: inherit; border-radius: 2px"> consuma 3,6 µA in modalità forced…</span></span>
+                <span style="display: block; font-size: 12px; color: #8B949E; margin-top: 4px">Stazione meteo ESP32 · da tu/meteo-esp32</span>
+              </span>
+            </a>
+          
+        </section>
+      
+        <section style="border: 1px solid #30363D; border-radius: 6px">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding: 10px 16px; background: #161B22; border-bottom: 1px solid #30363D; border-radius: 6px 6px 0 0"><span style="font-weight: 600">Progetti</span><span style="padding: 0 6px; border-radius: 10px; background: #30363D; font-size: 12px">2</span><span style="flex: 1"></span><a href="#" style="font-size: 13px; text-decoration: none"></a></div>
+          
+            <a href="10-progetto-panoramica.html" style="display: flex; gap: 12px; align-items: flex-start; padding: 12px 16px; border-top: 1px solid #21262D; color: #E6EDF3; text-decoration: none">
+              <span style="flex: 0 0 22px; height: 22px; border-radius: 50%; background: #21262D; color: #E6EDF3; border: 1.5px solid #30363D; box-sizing: border-box; display: grid; place-items: center; font-size: 9px; font-weight: 700">P</span>
+              <span style="flex: 1; min-width: 0">
+                <span style="display: block; font-weight: 600; color: #4493F8"><span style="background: transparent; color: inherit; border-radius: 2px">Stazione meteo ESP32</span></span>
+                <span style="display: block; font-size: 13px; line-height: 1.5; color: #C9D1D9; margin-top: 3px"><span style="background: transparent; color: inherit; border-radius: 2px">Stazione da balcone a batteria: </span><span style="background: rgba(210,153,34,.35); color: #E6EDF3; border-radius: 2px">BME280</span><span style="background: transparent; color: inherit; border-radius: 2px">, ESP32-C3, deep sleep, MQTT verso Home Assistant.</span></span>
+                <span style="display: block; font-size: 12px; color: #8B949E; margin-top: 4px">da testare · 65%</span>
+              </span>
+            </a>
+          
+        </section>
+      
+    </main>
+  </div>
+</div>
+</body>
+</html>

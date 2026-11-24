@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Heph — Molti progetti</title>
+<style>
+body{margin:0;background:#0D1117}
+a{color:#4493F8}a:hover{color:#79B8FF}
+input::placeholder,textarea::placeholder{color:#8B949E}
+mark{background:rgba(210,153,34,.35);color:#E6EDF3;border-radius:2px;padding:0 1px}
+</style>
+</head>
+<body>
+<div style="min-height: 100vh; background: #0D1117; color: #E6EDF3; font-family: -apple-system, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; font-size: 14px">
+  <header style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 12px 20px; background: #010409">
+    <a href="../screens/01-dashboard.html" aria-label="Heph, dashboard" style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid #30363D; display: grid; place-items: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E6EDF3" stroke-width="2" aria-hidden="true"><path d="M3 9h12c0 3 2 4 6 4v2h-7l-1 3h2v2H6v-2h2l-1-3H3z"></path></svg></a>
+    <span style="font-weight: 600">Dashboard</span>
+    <span style="flex: 1"></span>
+    <label style="flex: 0 1 340px; display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 10px; border: 1px solid #30363D; border-radius: 6px">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8B949E" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+      <span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Cerca</span>
+      <input type="search" placeholder="Digita / per cercare" style="flex: 1; min-width: 0; background: transparent; border: 0; color: #E6EDF3; font: inherit; outline: none">
+    </label>
+    <button type="button" style="height: 32px; padding: 0 10px; background: transparent; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; cursor: pointer">IT ▾</button>
+    <a href="../screens/20-nuovo-progetto.html" style="height: 32px; padding: 0 12px; display: inline-flex; align-items: center; background: #238636; border: 1px solid rgba(240,246,252,.1); border-radius: 6px; color: #FFF; font-weight: 600; text-decoration: none; box-sizing: border-box">Nuovo progetto</a>
+    <a href="../screens/31-impostazioni.html" aria-label="Impostazioni" style="width: 32px; height: 32px; box-sizing: border-box; background: transparent; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; display: grid; place-items: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"></path></svg></a>
+    <span style="width: 32px; height: 32px; border-radius: 50%; background: #1F6FEB; display: grid; place-items: center; font-size: 12px; font-weight: 600">TU</span>
+  </header>
+  <nav aria-label="Sezioni" style="display: flex; flex-wrap: wrap; gap: 4px; padding: 0 20px; background: #010409; border-bottom: 1px solid #30363D">
+    <a href="../screens/01-dashboard.html" style="padding: 12px 10px 10px; color: #E6EDF3; text-decoration: none; font-weight: 600; border-bottom: 2px solid #F78166">Progetti <span style="padding: 0 6px; border-radius: 10px; background: #30363D; font-size: 12px; font-weight: 400">8</span></a>
+    <a href="../screens/02-dashboard-test.html" style="padding: 12px 10px 10px; color: #E6EDF3; text-decoration: none">Test <span style="padding: 0 6px; border-radius: 10px; background: #30363D; font-size: 12px; font-weight: 400">1</span></a>
+    <a href="../screens/03-dashboard-proposte.html" style="padding: 12px 10px 10px; color: #E6EDF3; text-decoration: none">Proposte <span style="padding: 0 6px; border-radius: 10px; background: #AB7DF8; color: #0D1117; font-size: 12px; font-weight: 600">2</span></a>
+    <a href="../screens/04-dashboard-diario.html" style="padding: 12px 10px 10px; color: #E6EDF3; text-decoration: none">Diario</a>
+  </nav>
+  <div style="max-width: 1440px; margin: 0 auto; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; gap: 12px">
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+      <label style="flex: 1 1 260px"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Filtra</span><input type="search" placeholder="Filtra 46 progetti…" style="width: 100%; box-sizing: border-box; height: 32px; padding: 0 10px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit"></label>
+      <button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; height: 32px; font-size: 14px">Tag ▾</button>
+      <button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; height: 32px; font-size: 14px">Stato: attivi ▾</button>
+      <button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; height: 32px; font-size: 14px">Ordina: attenzione ▾</button>
+      <div role="group" aria-label="Vista" style="display: flex; border: 1px solid #30363D; border-radius: 6px; overflow: hidden"><button type="button" style="height: 30px; padding: 0 12px; background: transparent; border: 0; border-left: 1px solid #30363D; color: #8B949E; font: inherit; cursor: pointer; border-left: 0">Riquadri</button><button type="button" style="height: 30px; padding: 0 12px; background: #30363D; border: 0; color: #E6EDF3; font: inherit; font-weight: 600; cursor: pointer">Tabella</button></div>
+    </div>
+    <section style="border: 1px solid #30363D; border-radius: 6px; overflow-x: auto">
+      <div style="min-width: 1100px">
+        <div style="display: grid; grid-template-columns: 36px minmax(0, 1.4fr) 150px minmax(0, 1.5fr) 170px 110px; gap: 0 14px; align-items: center; padding: 8px 16px; background: #161B22; border-bottom: 1px solid #30363D; font-size: 12px; font-weight: 600; color: #8B949E; position: sticky; top: 0">
+          <input type="checkbox" aria-label="Seleziona tutti" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB"><span>Progetto</span><span>Stato</span><span>Prossimo passo</span><span>Fase</span><span style="text-align: right">Attività</span>
+        </div>
+        
+          <button type="button" style="width: 100%; display: flex; align-items: center; gap: 8px; padding: 6px 16px; background: #0D1117; border: 0; border-bottom: 1px solid #21262D; color: #D29922; font: inherit; font-size: 12px; font-weight: 600; text-align: left; cursor: pointer">▾ Tocca a te <span style="color: #8B949E; font-weight: 400">3</span></button>
+          
+            <div style="display: grid; grid-template-columns: 36px minmax(0, 1.4fr) 150px minmax(0, 1.5fr) 170px 110px; gap: 0 14px; align-items: center; min-height: 40px; padding: 0 16px; border-bottom: 1px solid #21262D; font-size: 13px">
+              <input type="checkbox" aria-label="Seleziona Orologio a nixie con ESP32 e sincronizzazione NTP" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <a href="../screens/10-progetto-panoramica.html" title="Orologio a nixie con ESP32 e sincronizzazione NTP" style="font-weight: 600; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Orologio a nixie con ESP32 e sincronizzazione NTP</a>
+              <span><span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #D29922; border-radius: 10px; color: #D29922; font-size: 12px; font-weight: 500; white-space: nowrap">da testare</span></span>
+              <span title="Ordinare i tubi IN-14 rimasti" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #E6EDF3">Ordinare i tubi IN-14 rimasti</span>
+              <span style="display: flex; align-items: center; gap: 8px"><span style="flex: 1; height: 6px; background: #30363D; border-radius: 3px; overflow: hidden"><span style="display: block; width: 3%; height: 100%; background: #3FB950"></span></span><span style="font-size: 12px; color: #8B949E; width: 34px; text-align: right">3%</span></span>
+              <span style="font-size: 12px; color: #8B949E; text-align: right">oggi</span>
+            </div>
+          
+            <div style="display: grid; grid-template-columns: 36px minmax(0, 1.4fr) 150px minmax(0, 1.5fr) 170px 110px; gap: 0 14px; align-items: center; min-height: 40px; padding: 0 16px; border-bottom: 1px solid #21262D; font-size: 13px">
+              <input type="checkbox" aria-label="Seleziona Tavolino da caffè in olmo" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <a href="../screens/10-progetto-panoramica.html" title="Tavolino da caffè in olmo" style="font-weight: 600; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Tavolino da caffè in olmo</a>
+              <span><span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #D29922; border-radius: 10px; color: #D29922; font-size: 12px; font-weight: 500; white-space: nowrap">da testare</span></span>
+              <span title="Levigare a grana 240 e oliare" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #E6EDF3">Levigare a grana 240 e oliare</span>
+              <span style="display: flex; align-items: center; gap: 8px"><span style="flex: 1; height: 6px; background: #30363D; border-radius: 3px; overflow: hidden"><span style="display: block; width: 40%; height: 100%; background: #3FB950"></span></span><span style="font-size: 12px; color: #8B949E; width: 34px; text-align: right">40%</span></span>
+              <span style="font-size: 12px; color: #8B949E; text-align: right">ieri</span>
+            </div>
+          
+            <div style="display: grid; grid-template-columns: 36px minmax(0, 1.4fr) 150px minmax(0, 1.5fr) 170px 110px; gap: 0 14px; align-items: center; min-height: 40px; padding: 0 16px; border-bottom: 1px solid #21262D; font-size: 13px">
+              <input type="checkbox" aria-label="Seleziona Script backup del NAS su Backblaze B2" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <a href="../screens/10-progetto-panoramica.html" title="Script backup del NAS su Backblaze B2" style="font-weight: 600; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Script backup del NAS su Backblaze B2</a>
+              <span><span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #D29922; border-radius: 10px; color: #D29922; font-size: 12px; font-weight: 500; white-space: nowrap">da testare</span></span>
+              <span title="Provare il ripristino di una cartella" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #E6EDF3">Provare il ripristino di una cartella</span>
+              <span style="display: flex; align-items: center; gap: 8px"><span style="flex: 1; height: 6px; background: #30363D; border-radius: 3px; overflow: hidden"><span style="display: block; width: 77%; height: 100%; background: #3FB950"></span></span><span style="font-size: 12px; color: #8B949E; width: 34px; text-align: right">77%</span></span>
+              <span style="font-size: 12px; color: #8B949E; text-align: right">3 g fa</span>
+            </div>
+          
+        
+          <button type="button" style="width: 100%; display: flex; align-items: center; gap: 8px; padding: 6px 16px; background: #0D1117; border: 0; border-bottom: 1px solid #21262D; color: #AB7DF8; font: inherit; font-size: 12px; font-weight: 600; text-align: left; cursor: pointer">▾ Claude al lavoro <span style="color: #8B949E; font-weight: 400">2</span></button>
+          
+            <div style="display: grid; grid-template-columns: 36px minmax(0, 1.4fr) 150px minmax(0, 1.5fr) 170px 110px; gap: 0 14px; align-items: center; min-height: 40px; padding: 0 16px; border-bottom: 1px solid #21262D; font-size: 13px">
+              <input type="checkbox" aria-label="Seleziona Plugin Home Assistant per la caldaia" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <a href="../screens/10-progetto-panoramica.html" title="Plugin Home Assistant per la caldaia" style="font-weight: 600; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Plugin Home Assistant per la caldaia</a>
+              <span><span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #AB7DF8; border-radius: 10px; color: #AB7DF8; font-size: 12px; font-weight: 500; white-space: nowrap">Claude al lavoro</span></span>
+              <span title="Leggere la temperatura di mandata via OpenTherm" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #E6EDF3">Leggere la temperatura di mandata via OpenTherm</span>
+              <span style="display: flex; align-items: center; gap: 8px"><span style="flex: 1; height: 6px; background: #30363D; border-radius: 3px; overflow: hidden"><span style="display: block; width: 56%; height: 100%; background: #3FB950"></span></span><span style="font-size: 12px; color: #8B949E; width: 34px; text-align: right">56%</span></span>
+              <span style="font-size: 12px; color: #AB7DF8; text-align: right">adesso</span>
+            </div>
+          
+            <div style="display: grid; grid-template-columns: 36px minmax(0, 1.4fr) 150px minmax(0, 1.5fr) 170px 110px; gap: 0 14px; align-items: center; min-height: 40px; padding: 0 16px; border-bottom: 1px solid #21262D; font-size: 13px">
+              <input type="checkbox" aria-label="Seleziona Portachiavi stampati per il gruppo di arrampicata" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <a href="../screens/10-progetto-panoramica.html" title="Portachiavi stampati per il gruppo di arrampicata" style="font-weight: 600; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Portachiavi stampati per il gruppo di arrampicata</a>
+              <span><span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #AB7DF8; border-radius: 10px; color: #AB7DF8; font-size: 12px; font-weight: 500; white-space: nowrap">Claude al lavoro</span></span>
+              <span title="Stampare il lotto da 20 in PLA nero" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #E6EDF3">Stampare il lotto da 20 in PLA nero</span>
+              <span style="display: flex; align-items: center; gap: 8px"><span style="flex: 1; height: 6px; background: #30363D; border-radius: 3px; overflow: hidden"><span style="display: block; width: 93%; height: 100%; background: #3FB950"></span></span><span style="font-size: 12px; color: #8B949E; width: 34px; text-align: right">93%</span></span>
+              <span style="font-size: 12px; color: #AB7DF8; text-align: right">adesso</span>
+            </div>
+          
+        
+          <button type="button" style="width: 100%; display: flex; align-items: center; gap: 8px; padding: 6px 16px; background: #0D1117; border: 0; border-bottom: 1px solid #21262D; color: #F85149; font: inherit; font-size: 12px; font-weight: 600; text-align: left; cursor: pointer">▾ Fermi o senza prossimo passo <span style="color: #8B949E; font-weight: 400">6</span></button>
+          
+            <div style="display: grid; grid-template-columns: 36px minmax(0, 1.4fr) 150px minmax(0, 1.5fr) 170px 110px; gap: 0 14px; align-items: center; min-height: 40px; padding: 0 16px; border-bottom: 1px solid #21262D; font-size: 13px">
+              <input type="checkbox" aria-label="Seleziona Riparazione Amiga 500 (condensatori e RTC)" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <a href="../screens/10-progetto-panoramica.html" title="Riparazione Amiga 500 (condensatori e RTC)" style="font-weight: 600; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Riparazione Amiga 500 (condensatori e RTC)</a>
+              <span><span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #F85149; border-radius: 10px; color: #F85149; font-size: 12px; font-weight: 500; white-space: nowrap">fermo da 22 g</span></span>
+              <span title="Sostituire la batteria della RTC" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #E6EDF3">Sostituire la batteria della RTC</span>
+              <span style="display: flex; align-items: center; gap: 8px"><span style="flex: 1; height: 6px; background: #30363D; border-radius: 3px; overflow: hidden"><span style="display: block; width: 35%; height: 100%; background: #3FB950"></span></span><span style="font-size: 12px; color: #8B949E; width: 34px; text-align: right">35%</span></span>
+              <span style="font-size: 12px; color: #F85149; text-align: right">22 g fa</span>
+            </div>
+          
+            <div style="display: grid; grid-template-columns: 36px minmax(0, 1.4fr) 150px minmax(0, 1.5fr) 170px 110px; gap: 0 14px; align-items: center; min-height: 40px; padding: 0 16px; border-bottom: 1px solid #21262D; font-size: 13px">
+              <input type="checkbox" aria-label="Seleziona App per il tracciamento delle piante" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <a href="../screens/10-progetto-panoramica.html" title="App per il tracciamento delle piante" style="font-weight: 600; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">App per il tracciamento delle piante</a>
+              <span><span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #F85149; border-radius: 10px; color: #F85149; font-size: 12px; font-weight: 500; white-space: nowrap">fermo da 27 g</span></span>
+              <span title="Schermata di dettaglio della pianta" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #E6EDF3">Schermata di dettaglio della pianta</span>
+              <span style="display: flex; align-items: center; gap: 8px"><span style="flex: 1; height: 6px; background: #30363D; border-radius: 3px; overflow: hidden"><span style="display: block; width: 72%; height: 100%; background: #3FB950"></span></span><span style="font-size: 12px; color: #8B949E; width: 34px; text-align: right">72%</span></span>
+              <span style="font-size: 12px; color: #F85149; text-align: right">27 g fa</span>
+            </div>
+          
+            <div style="display: grid; grid-template-columns: 36px minmax(0, 1.4fr) 150px minmax(0, 1.5fr) 170px 110px; gap: 0 14px; align-items: center; min-height: 40px; padding: 0 16px; border-bottom: 1px solid #21262D; font-size: 13px">
+              <input type="checkbox" aria-label="Seleziona Generatore di colori per il sito" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <a href="../screens/10-progetto-panoramica.html" title="Generatore di colori per il sito" style="font-weight: 600; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Generatore di colori per il sito</a>
+              <span><span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #F85149; border-radius: 10px; color: #F85149; font-size: 12px; font-weight: 500; white-space: nowrap">fermo da 32 g</span></span>
+              <span title="Ordinare i tubi IN-14 rimasti" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #E6EDF3">Ordinare i tubi IN-14 rimasti</span>
+              <span style="display: flex; align-items: center; gap: 8px"><span style="flex: 1; height: 6px; background: #30363D; border-radius: 3px; overflow: hidden"><span style="display: block; width: 14%; height: 100%; background: #3FB950"></span></span><span style="font-size: 12px; color: #8B949E; width: 34px; text-align: right">14%</span></span>
+              <span style="font-size: 12px; color: #F85149; text-align: right">32 g fa</span>
+            </div>
+          
+            <div style="display: grid; grid-template-columns: 36px minmax(0, 1.4fr) 150px minmax(0, 1.5fr) 170px 110px; gap: 0 14px; align-items: center; min-height: 40px; padding: 0 16px; border-bottom: 1px solid #21262D; font-size: 13px">
+              <input type="checkbox" aria-label="Seleziona Panca per l’ingresso con contenitore" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <a href="../screens/10-progetto-panoramica.html" title="Panca per l’ingresso con contenitore" style="font-weight: 600; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Panca per l’ingresso con contenitore</a>
+              <span><span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #F85149; border-radius: 10px; color: #F85149; font-size: 12px; font-weight: 500; white-space: nowrap">fermo da 37 g</span></span>
+              <span title="Levigare a grana 240 e oliare" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #E6EDF3">Levigare a grana 240 e oliare</span>
+              <span style="display: flex; align-items: center; gap: 8px"><span style="flex: 1; height: 6px; background: #30363D; border-radius: 3px; overflow: hidden"><span style="display: block; width: 51%; height: 100%; background: #3FB950"></span></span><span style="font-size: 12px; color: #8B949E; width: 34px; text-align: right">51%</span></span>
+              <span style="font-size: 12px; color: #F85149; text-align: right">37 g fa</span>
+            </div>
+          
+            <div style="display: grid; grid-template-columns: 36px minmax(0, 1.4fr) 150px minmax(0, 1.5fr) 170px 110px; gap: 0 14px; align-items: center; min-height: 40px; padding: 0 16px; border-bottom: 1px solid #21262D; font-size: 13px">
+              <input type="checkbox" aria-label="Seleziona Bot Discord per la lega di calcetto" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <a href="../screens/10-progetto-panoramica.html" title="Bot Discord per la lega di calcetto" style="font-weight: 600; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Bot Discord per la lega di calcetto</a>
+              <span><span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #F85149; border-radius: 10px; color: #F85149; font-size: 12px; font-weight: 500; white-space: nowrap">fermo da 42 g</span></span>
+              <span title="Provare il ripristino di una cartella" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #E6EDF3">Provare il ripristino di una cartella</span>
+              <span style="display: flex; align-items: center; gap: 8px"><span style="flex: 1; height: 6px; background: #30363D; border-radius: 3px; overflow: hidden"><span style="display: block; width: 88%; height: 100%; background: #3FB950"></span></span><span style="font-size: 12px; color: #8B949E; width: 34px; text-align: right">88%</span></span>
+              <span style="font-size: 12px; color: #F85149; text-align: right">42 g fa</span>
+            </div>
+          
+            <div style="display: grid; grid-template-columns: 36px minmax(0, 1.4fr) 150px minmax(0, 1.5fr) 170px 110px; gap: 0 14px; align-items: center; min-height: 40px; padding: 0 16px; border-bottom: 1px solid #21262D; font-size: 13px">
+              <input type="checkbox" aria-label="Seleziona Vaso autoirrigante stampato in PETG" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <a href="../screens/10-progetto-panoramica.html" title="Vaso autoirrigante stampato in PETG" style="font-weight: 600; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Vaso autoirrigante stampato in PETG</a>
+              <span><span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #F85149; border-radius: 10px; color: #F85149; font-size: 12px; font-weight: 500; white-space: nowrap">fermo da 47 g</span></span>
+              <span title="Nessun prossimo passo" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #FF7B72">Nessun prossimo passo</span>
+              <span style="display: flex; align-items: center; gap: 8px"><span style="flex: 1; height: 6px; background: #30363D; border-radius: 3px; overflow: hidden"><span style="display: block; width: 30%; height: 100%; background: #3FB950"></span></span><span style="font-size: 12px; color: #8B949E; width: 34px; text-align: right">30%</span></span>
+              <span style="font-size: 12px; color: #F85149; text-align: right">47 g fa</span>
+            </div>
+          
+        
+          <button type="button" style="width: 100%; display: flex; align-items: center; gap: 8px; padding: 6px 16px; background: #0D1117; border: 0; border-bottom: 1px solid #21262D; color: #3FB950; font: inherit; font-size: 12px; font-weight: 600; text-align: left; cursor: pointer">▾ Attivi <span style="color: #8B949E; font-weight: 400">19</span></button>
+          
+            <div style="display: grid; grid-template-columns: 36px minmax(0, 1.4fr) 150px minmax(0, 1.5fr) 170px 110px; gap: 0 14px; align-items: center; min-height: 40px; padding: 0 16px; border-bottom: 1px solid #21262D; font-size: 13px">
+              <input type="checkbox" aria-label="Seleziona Ricevitore SDR per meteo satellitari NOAA" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <a href="../screens/10-progetto-panoramica.html" title="Ricevitore SDR per meteo satellitari NOAA" style="font-weight: 600; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Ricevitore SDR per meteo satellitari NOAA</a>
+              <span><span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #3FB950; border-radius: 10px; color: #3FB950; font-size: 12px; font-weight: 500; white-space: nowrap">attivo</span></span>
+              <span title="Leggere la temperatura di mandata via OpenTherm" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #E6EDF3">Leggere la temperatura di mandata via OpenTherm</span>
+              <span style="display: flex; align-items: center; gap: 8px"><span style="flex: 1; height: 6px; background: #30363D; border-radius: 3px; overflow: hidden"><span style="display: block; width: 67%; height: 100%; background: #3FB950"></span></span><span style="font-size: 12px; color: #8B949E; width: 34px; text-align: right">67%</span></span>
+              <span style="font-size: 12px; color: #8B949E; text-align: right">oggi</span>
+            </div>
+          
+            <div style="display: grid; grid-template-columns: 36px minmax(0, 1.4fr) 150px minmax(0, 1.5fr) 170px 110px; gap: 0 14px; align-items: center; min-height: 40px; padding: 0 16px; border-bottom: 1px solid #21262D; font-size: 13px">
+              <input type="checkbox" aria-label="Seleziona Configurazione dotfiles e Neovim" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <a href="../screens/10-progetto-panoramica.html" title="Configurazione dotfiles e Neovim" style="font-weight: 600; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Configurazione dotfiles e Neovim</a>
+              <span><span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #3FB950; border-radius: 10px; color: #3FB950; font-size: 12px; font-weight: 500; white-space: nowrap">attivo</span></span>
+              <span title="Stampare il lotto da 20 in PLA nero" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #E6EDF3">Stampare il lotto da 20 in PLA nero</span>
+              <span style="display: flex; align-items: center; gap: 8px"><span style="flex: 1; height: 6px; background: #30363D; border-radius: 3px; overflow: hidden"><span style="display: block; width: 9%; height: 100%; background: #3FB950"></span></span><span style="font-size: 12px; color: #8B949E; width: 34px; text-align: right">9%</span></span>
+              <span style="font-size: 12px; color: #8B949E; text-align: right">ieri</span>
+            </div>
+          
+            <div style="display: grid; grid-template-columns: 36px minmax(0, 1.4fr) 150px minmax(0, 1.5fr) 170px 110px; gap: 0 14px; align-items: center; min-height: 40px; padding: 0 16px; border-bottom: 1px solid #21262D; font-size: 13px">
+              <input type="checkbox" aria-label="Seleziona Scaffale per il garage con ruote" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <a href="../screens/10-progetto-panoramica.html" title="Scaffale per il garage con ruote" style="font-weight: 600; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Scaffale per il garage con ruote</a>
+              <span><span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #3FB950; border-radius: 10px; color: #3FB950; font-size: 12px; font-weight: 500; white-space: nowrap">attivo</span></span>
+              <span title="Sostituire la batteria della RTC" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #E6EDF3">Sostituire la batteria della RTC</span>
+              <span style="display: flex; align-items: center; gap: 8px"><span style="flex: 1; height: 6px; background: #30363D; border-radius: 3px; overflow: hidden"><span style="display: block; width: 46%; height: 100%; background: #3FB950"></span></span><span style="font-size: 12px; color: #8B949E; width: 34px; text-align: right">46%</span></span>
+              <span style="font-size: 12px; color: #8B949E; text-align: right">3 g fa</span>
+            </div>
+          
+            <div style="display: grid; grid-template-columns: 36px minmax(0, 1.4fr) 150px minmax(0, 1.5fr) 170px 110px; gap: 0 14px; align-items: center; min-height: 40px; padding: 0 16px; border-bottom: 1px solid #21262D; font-size: 13px">
+              <input type="checkbox" aria-label="Seleziona Contatore Geiger con display e-ink" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <a href="../screens/10-progetto-panoramica.html" title="Contatore Geiger con display e-ink" style="font-weight: 600; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Contatore Geiger con display e-ink</a>
+              <span><span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #3FB950; border-radius: 10px; color: #3FB950; font-size: 12px; font-weight: 500; white-space: nowrap">attivo</span></span>
+              <span title="Schermata di dettaglio della pianta" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #E6EDF3">Schermata di dettaglio della pianta</span>
+              <span style="display: flex; align-items: center; gap: 8px"><span style="flex: 1; height: 6px; background: #30363D; border-radius: 3px; overflow: hidden"><span style="display: block; width: 83%; height: 100%; background: #3FB950"></span></span><span style="font-size: 12px; color: #8B949E; width: 34px; text-align: right">83%</span></span>
+              <span style="font-size: 12px; color: #8B949E; text-align: right">9 g fa</span>
+            </div>
+          
+            <div style="display: grid; grid-template-columns: 36px minmax(0, 1.4fr) 150px minmax(0, 1.5fr) 170px 110px; gap: 0 14px; align-items: center; min-height: 40px; padding: 0 16px; border-bottom: 1px solid #21262D; font-size: 13px">
+              <input type="checkbox" aria-label="Seleziona API per il ricettario di famiglia" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <a href="../screens/10-progetto-panoramica.html" title="API per il ricettario di famiglia" style="font-weight: 600; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">API per il ricettario di famiglia</a>
+              <span><span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #3FB950; border-radius: 10px; color: #3FB950; font-size: 12px; font-weight: 500; white-space: nowrap">attivo</span></span>
+              <span title="Ordinare i tubi IN-14 rimasti" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #E6EDF3">Ordinare i tubi IN-14 rimasti</span>
+              <span style="display: flex; align-items: center; gap: 8px"><span style="flex: 1; height: 6px; background: #30363D; border-radius: 3px; overflow: hidden"><span style="display: block; width: 25%; height: 100%; background: #3FB950"></span></span><span style="font-size: 12px; color: #8B949E; width: 34px; text-align: right">25%</span></span>
+              <span style="font-size: 12px; color: #8B949E; text-align: right">2 sett.</span>
+            </div>
+          
+            <div style="display: grid; grid-template-columns: 36px minmax(0, 1.4fr) 150px minmax(0, 1.5fr) 170px 110px; gap: 0 14px; align-items: center; min-height: 40px; padding: 0 16px; border-bottom: 1px solid #21262D; font-size: 13px">
+              <input type="checkbox" aria-label="Seleziona Tagliere end grain a scacchi" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <a href="../screens/10-progetto-panoramica.html" title="Tagliere end grain a scacchi" style="font-weight: 600; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Tagliere end grain a scacchi</a>
+              <span><span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #3FB950; border-radius: 10px; color: #3FB950; font-size: 12px; font-weight: 500; white-space: nowrap">attivo</span></span>
+              <span title="Levigare a grana 240 e oliare" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #E6EDF3">Levigare a grana 240 e oliare</span>
+              <span style="display: flex; align-items: center; gap: 8px"><span style="flex: 1; height: 6px; background: #30363D; border-radius: 3px; overflow: hidden"><span style="display: block; width: 62%; height: 100%; background: #3FB950"></span></span><span style="font-size: 12px; color: #8B949E; width: 34px; text-align: right">62%</span></span>
+              <span style="font-size: 12px; color: #F85149; text-align: right">41 g fa</span>
+            </div>
+          
+            <div style="display: grid; grid-template-columns: 36px minmax(0, 1.4fr) 150px minmax(0, 1.5fr) 170px 110px; gap: 0 14px; align-items: center; min-height: 40px; padding: 0 16px; border-bottom: 1px solid #21262D; font-size: 13px">
+              <input type="checkbox" aria-label="Seleziona Supporto monitor regolabile" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <a href="../screens/10-progetto-panoramica.html" title="Supporto monitor regolabile" style="font-weight: 600; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Supporto monitor regolabile</a>
+              <span><span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #3FB950; border-radius: 10px; color: #3FB950; font-size: 12px; font-weight: 500; white-space: nowrap">attivo</span></span>
+              <span title="Provare il ripristino di una cartella" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #E6EDF3">Provare il ripristino di una cartella</span>
+              <span style="display: flex; align-items: center; gap: 8px"><span style="flex: 1; height: 6px; background: #30363D; border-radius: 3px; overflow: hidden"><span style="display: block; width: 4%; height: 100%; background: #3FB950"></span></span><span style="font-size: 12px; color: #8B949E; width: 34px; text-align: right">4%</span></span>
+              <span style="font-size: 12px; color: #8B949E; text-align: right">oggi</span>
+            </div>
+          
+            <div style="display: grid; grid-template-columns: 36px minmax(0, 1.4fr) 150px minmax(0, 1.5fr) 170px 110px; gap: 0 14px; align-items: center; min-height: 40px; padding: 0 16px; border-bottom: 1px solid #21262D; font-size: 13px">
+              <input type="checkbox" aria-label="Seleziona Termostato per la camera di fermentazione della birra" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <a href="../screens/10-progetto-panoramica.html" title="Termostato per la camera di fermentazione della birra" style="font-weight: 600; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Termostato per la camera di fermentazione della birra</a>
+              <span><span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #3FB950; border-radius: 10px; color: #3FB950; font-size: 12px; font-weight: 500; white-space: nowrap">attivo</span></span>
+              <span title="Nessun prossimo passo" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #FF7B72">Nessun prossimo passo</span>
+              <span style="display: flex; align-items: center; gap: 8px"><span style="flex: 1; height: 6px; background: #30363D; border-radius: 3px; overflow: hidden"><span style="display: block; width: 41%; height: 100%; background: #3FB950"></span></span><span style="font-size: 12px; color: #8B949E; width: 34px; text-align: right">41%</span></span>
+              <span style="font-size: 12px; color: #8B949E; text-align: right">ieri</span>
+            </div>
+          
+            <div style="display: grid; grid-template-columns: 36px minmax(0, 1.4fr) 150px minmax(0, 1.5fr) 170px 110px; gap: 0 14px; align-items: center; min-height: 40px; padding: 0 16px; border-bottom: 1px solid #21262D; font-size: 13px">
+              <input type="checkbox" aria-label="Seleziona Restauro sedia anni 60" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <a href="../screens/10-progetto-panoramica.html" title="Restauro sedia anni 60" style="font-weight: 600; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Restauro sedia anni 60</a>
+              <span><span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #3FB950; border-radius: 10px; color: #3FB950; font-size: 12px; font-weight: 500; white-space: nowrap">attivo</span></span>
+              <span title="Leggere la temperatura di mandata via OpenTherm" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #E6EDF3">Leggere la temperatura di mandata via OpenTherm</span>
+              <span style="display: flex; align-items: center; gap: 8px"><span style="flex: 1; height: 6px; background: #30363D; border-radius: 3px; overflow: hidden"><span style="display: block; width: 78%; height: 100%; background: #3FB950"></span></span><span style="font-size: 12px; color: #8B949E; width: 34px; text-align: right">78%</span></span>
+              <span style="font-size: 12px; color: #8B949E; text-align: right">3 g fa</span>
+            </div>
+          
+            <div style="display: grid; grid-template-columns: 36px minmax(0, 1.4fr) 150px minmax(0, 1.5fr) 170px 110px; gap: 0 14px; align-items: center; min-height: 40px; padding: 0 16px; border-bottom: 1px solid #21262D; font-size: 13px">
+              <input type="checkbox" aria-label="Seleziona Visualizzatore dei consumi di casa" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <a href="../screens/10-progetto-panoramica.html" title="Visualizzatore dei consumi di casa" style="font-weight: 600; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Visualizzatore dei consumi di casa</a>
+              <span><span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #3FB950; border-radius: 10px; color: #3FB950; font-size: 12px; font-weight: 500; white-space: nowrap">attivo</span></span>
+              <span title="Stampare il lotto da 20 in PLA nero" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #E6EDF3">Stampare il lotto da 20 in PLA nero</span>
+              <span style="display: flex; align-items: center; gap: 8px"><span style="flex: 1; height: 6px; background: #30363D; border-radius: 3px; overflow: hidden"><span style="display: block; width: 20%; height: 100%; background: #3FB950"></span></span><span style="font-size: 12px; color: #8B949E; width: 34px; text-align: right">20%</span></span>
+              <span style="font-size: 12px; color: #8B949E; text-align: right">9 g fa</span>
+            </div>
+          
+            <div style="display: grid; grid-template-columns: 36px minmax(0, 1.4fr) 150px minmax(0, 1.5fr) 170px 110px; gap: 0 14px; align-items: center; min-height: 40px; padding: 0 16px; border-bottom: 1px solid #21262D; font-size: 13px">
+              <input type="checkbox" aria-label="Seleziona Custodia per Raspberry Pi 5 con ventola" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <a href="../screens/10-progetto-panoramica.html" title="Custodia per Raspberry Pi 5 con ventola" style="font-weight: 600; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Custodia per Raspberry Pi 5 con ventola</a>
+              <span><span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #3FB950; border-radius: 10px; color: #3FB950; font-size: 12px; font-weight: 500; white-space: nowrap">attivo</span></span>
+              <span title="Sostituire la batteria della RTC" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #E6EDF3">Sostituire la batteria della RTC</span>
+              <span style="display: flex; align-items: center; gap: 8px"><span style="flex: 1; height: 6px; background: #30363D; border-radius: 3px; overflow: hidden"><span style="display: block; width: 57%; height: 100%; background: #3FB950"></span></span><span style="font-size: 12px; color: #8B949E; width: 34px; text-align: right">57%</span></span>
+              <span style="font-size: 12px; color: #8B949E; text-align: right">2 sett.</span>
+            </div>
+          
+            <div style="display: grid; grid-template-columns: 36px minmax(0, 1.4fr) 150px minmax(0, 1.5fr) 170px 110px; gap: 0 14px; align-items: center; min-height: 40px; padding: 0 16px; border-bottom: 1px solid #21262D; font-size: 13px">
+              <input type="checkbox" aria-label="Seleziona Libreria di componenti per KiCad" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <a href="../screens/10-progetto-panoramica.html" title="Libreria di componenti per KiCad" style="font-weight: 600; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Libreria di componenti per KiCad</a>
+              <span><span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #3FB950; border-radius: 10px; color: #3FB950; font-size: 12px; font-weight: 500; white-space: nowrap">attivo</span></span>
+              <span title="Schermata di dettaglio della pianta" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #E6EDF3">Schermata di dettaglio della pianta</span>
+              <span style="display: flex; align-items: center; gap: 8px"><span style="flex: 1; height: 6px; background: #30363D; border-radius: 3px; overflow: hidden"><span style="display: block; width: 94%; height: 100%; background: #3FB950"></span></span><span style="font-size: 12px; color: #8B949E; width: 34px; text-align: right">94%</span></span>
+              <span style="font-size: 12px; color: #F85149; text-align: right">41 g fa</span>
+            </div>
+          
+            <div style="display: grid; grid-template-columns: 36px minmax(0, 1.4fr) 150px minmax(0, 1.5fr) 170px 110px; gap: 0 14px; align-items: center; min-height: 40px; padding: 0 16px; border-bottom: 1px solid #21262D; font-size: 13px">
+              <input type="checkbox" aria-label="Seleziona Orologio a nixie con ESP32 e sincronizzazione NTP" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <a href="../screens/10-progetto-panoramica.html" title="Orologio a nixie con ESP32 e sincronizzazione NTP" style="font-weight: 600; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Orologio a nixie con ESP32 e sincronizzazione NTP</a>
+              <span><span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #3FB950; border-radius: 10px; color: #3FB950; font-size: 12px; font-weight: 500; white-space: nowrap">attivo</span></span>
+              <span title="Ordinare i tubi IN-14 rimasti" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #E6EDF3">Ordinare i tubi IN-14 rimasti</span>
+              <span style="display: flex; align-items: center; gap: 8px"><span style="flex: 1; height: 6px; background: #30363D; border-radius: 3px; overflow: hidden"><span style="display: block; width: 36%; height: 100%; background: #3FB950"></span></span><span style="font-size: 12px; color: #8B949E; width: 34px; text-align: right">36%</span></span>
+              <span style="font-size: 12px; color: #8B949E; text-align: right">oggi</span>
+            </div>
+          
+            <div style="display: grid; grid-template-columns: 36px minmax(0, 1.4fr) 150px minmax(0, 1.5fr) 170px 110px; gap: 0 14px; align-items: center; min-height: 40px; padding: 0 16px; border-bottom: 1px solid #21262D; font-size: 13px">
+              <input type="checkbox" aria-label="Seleziona Tavolino da caffè in olmo" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <a href="../screens/10-progetto-panoramica.html" title="Tavolino da caffè in olmo" style="font-weight: 600; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Tavolino da caffè in olmo</a>
+              <span><span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #3FB950; border-radius: 10px; color: #3FB950; font-size: 12px; font-weight: 500; white-space: nowrap">attivo</span></span>
+              <span title="Levigare a grana 240 e oliare" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #E6EDF3">Levigare a grana 240 e oliare</span>
+              <span style="display: flex; align-items: center; gap: 8px"><span style="flex: 1; height: 6px; background: #30363D; border-radius: 3px; overflow: hidden"><span style="display: block; width: 73%; height: 100%; background: #3FB950"></span></span><span style="font-size: 12px; color: #8B949E; width: 34px; text-align: right">73%</span></span>
+              <span style="font-size: 12px; color: #8B949E; text-align: right">ieri</span>
+            </div>
+          
+            <div style="display: grid; grid-template-columns: 36px minmax(0, 1.4fr) 150px minmax(0, 1.5fr) 170px 110px; gap: 0 14px; align-items: center; min-height: 40px; padding: 0 16px; border-bottom: 1px solid #21262D; font-size: 13px">
+              <input type="checkbox" aria-label="Seleziona Script backup del NAS su Backblaze B2" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <a href="../screens/10-progetto-panoramica.html" title="Script backup del NAS su Backblaze B2" style="font-weight: 600; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Script backup del NAS su Backblaze B2</a>
+              <span><span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #3FB950; border-radius: 10px; color: #3FB950; font-size: 12px; font-weight: 500; white-space: nowrap">attivo</span></span>
+              <span title="Provare il ripristino di una cartella" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #E6EDF3">Provare il ripristino di una cartella</span>
+              <span style="display: flex; align-items: center; gap: 8px"><span style="flex: 1; height: 6px; background: #30363D; border-radius: 3px; overflow: hidden"><span style="display: block; width: 15%; height: 100%; background: #3FB950"></span></span><span style="font-size: 12px; color: #8B949E; width: 34px; text-align: right">15%</span></span>
+              <span style="font-size: 12px; color: #8B949E; text-align: right">3 g fa</span>
+            </div>
+          
+            <div style="display: grid; grid-template-columns: 36px minmax(0, 1.4fr) 150px minmax(0, 1.5fr) 170px 110px; gap: 0 14px; align-items: center; min-height: 40px; padding: 0 16px; border-bottom: 1px solid #21262D; font-size: 13px">
+              <input type="checkbox" aria-label="Seleziona Mobile TV sospeso in rovere con vano per subwoofer e passacavi nascosti" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <a href="../screens/10-progetto-panoramica.html" title="Mobile TV sospeso in rovere con vano per subwoofer e passacavi nascosti" style="font-weight: 600; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Mobile TV sospeso in rovere con vano per subwoofer e passacavi nascosti</a>
+              <span><span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #3FB950; border-radius: 10px; color: #3FB950; font-size: 12px; font-weight: 500; white-space: nowrap">attivo</span></span>
+              <span title="Nessun prossimo passo" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #FF7B72">Nessun prossimo passo</span>
+              <span style="display: flex; align-items: center; gap: 8px"><span style="flex: 1; height: 6px; background: #30363D; border-radius: 3px; overflow: hidden"><span style="display: block; width: 52%; height: 100%; background: #3FB950"></span></span><span style="font-size: 12px; color: #8B949E; width: 34px; text-align: right">52%</span></span>
+              <span style="font-size: 12px; color: #8B949E; text-align: right">9 g fa</span>
+            </div>
+          
+            <div style="display: grid; grid-template-columns: 36px minmax(0, 1.4fr) 150px minmax(0, 1.5fr) 170px 110px; gap: 0 14px; align-items: center; min-height: 40px; padding: 0 16px; border-bottom: 1px solid #21262D; font-size: 13px">
+              <input type="checkbox" aria-label="Seleziona Plugin Home Assistant per la caldaia" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <a href="../screens/10-progetto-panoramica.html" title="Plugin Home Assistant per la caldaia" style="font-weight: 600; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Plugin Home Assistant per la caldaia</a>
+              <span><span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #3FB950; border-radius: 10px; color: #3FB950; font-size: 12px; font-weight: 500; white-space: nowrap">attivo</span></span>
+              <span title="Leggere la temperatura di mandata via OpenTherm" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #E6EDF3">Leggere la temperatura di mandata via OpenTherm</span>
+              <span style="display: flex; align-items: center; gap: 8px"><span style="flex: 1; height: 6px; background: #30363D; border-radius: 3px; overflow: hidden"><span style="display: block; width: 89%; height: 100%; background: #3FB950"></span></span><span style="font-size: 12px; color: #8B949E; width: 34px; text-align: right">89%</span></span>
+              <span style="font-size: 12px; color: #8B949E; text-align: right">2 sett.</span>
+            </div>
+          
+            <div style="display: grid; grid-template-columns: 36px minmax(0, 1.4fr) 150px minmax(0, 1.5fr) 170px 110px; gap: 0 14px; align-items: center; min-height: 40px; padding: 0 16px; border-bottom: 1px solid #21262D; font-size: 13px">
+              <input type="checkbox" aria-label="Seleziona Portachiavi stampati per il gruppo di arrampicata" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <a href="../screens/10-progetto-panoramica.html" title="Portachiavi stampati per il gruppo di arrampicata" style="font-weight: 600; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Portachiavi stampati per il gruppo di arrampicata</a>
+              <span><span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #3FB950; border-radius: 10px; color: #3FB950; font-size: 12px; font-weight: 500; white-space: nowrap">attivo</span></span>
+              <span title="Stampare il lotto da 20 in PLA nero" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #E6EDF3">Stampare il lotto da 20 in PLA nero</span>
+              <span style="display: flex; align-items: center; gap: 8px"><span style="flex: 1; height: 6px; background: #30363D; border-radius: 3px; overflow: hidden"><span style="display: block; width: 31%; height: 100%; background: #3FB950"></span></span><span style="font-size: 12px; color: #8B949E; width: 34px; text-align: right">31%</span></span>
+              <span style="font-size: 12px; color: #F85149; text-align: right">41 g fa</span>
+            </div>
+          
+            <div style="display: grid; grid-template-columns: 36px minmax(0, 1.4fr) 150px minmax(0, 1.5fr) 170px 110px; gap: 0 14px; align-items: center; min-height: 40px; padding: 0 16px; border-bottom: 1px solid #21262D; font-size: 13px">
+              <input type="checkbox" aria-label="Seleziona Riparazione Amiga 500 (condensatori e RTC)" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <a href="../screens/10-progetto-panoramica.html" title="Riparazione Amiga 500 (condensatori e RTC)" style="font-weight: 600; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Riparazione Amiga 500 (condensatori e RTC)</a>
+              <span><span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #3FB950; border-radius: 10px; color: #3FB950; font-size: 12px; font-weight: 500; white-space: nowrap">attivo</span></span>
+              <span title="Sostituire la batteria della RTC" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #E6EDF3">Sostituire la batteria della RTC</span>
+              <span style="display: flex; align-items: center; gap: 8px"><span style="flex: 1; height: 6px; background: #30363D; border-radius: 3px; overflow: hidden"><span style="display: block; width: 68%; height: 100%; background: #3FB950"></span></span><span style="font-size: 12px; color: #8B949E; width: 34px; text-align: right">68%</span></span>
+              <span style="font-size: 12px; color: #8B949E; text-align: right">oggi</span>
+            </div>
+          
+        
+          <button type="button" style="width: 100%; display: flex; align-items: center; gap: 8px; padding: 6px 16px; background: #0D1117; border: 0; border-bottom: 1px solid #21262D; color: #8B949E; font: inherit; font-size: 12px; font-weight: 600; text-align: left; cursor: pointer">▸ In pausa <span style="color: #8B949E; font-weight: 400">16</span></button>
+          
+        
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 10px 16px; font-size: 13px; color: #8B949E">
+          <span style="flex: 1">Mostrati 30 di 46 · i chiusi sono nascosti dal filtro</span>
+          <button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer">Mostra altri 16</button>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+</body>
+</html>

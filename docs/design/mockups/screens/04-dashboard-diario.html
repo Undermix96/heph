@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Heph — Diario</title>
+<style>
+body{margin:0;background:#0D1117}
+a{color:#4493F8}a:hover{color:#79B8FF}
+input::placeholder,textarea::placeholder{color:#8B949E}
+mark{background:rgba(210,153,34,.35);color:#E6EDF3;border-radius:2px;padding:0 1px}
+</style>
+</head>
+<body>
+<div style="min-height: 100vh; background: #0D1117; color: #E6EDF3; font-family: -apple-system, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; font-size: 14px">
+  <header style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 12px 20px; background: #010409">
+    <a href="01-dashboard.html" aria-label="Heph, dashboard" style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid #30363D; display: grid; place-items: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E6EDF3" stroke-width="2" aria-hidden="true"><path d="M3 9h12c0 3 2 4 6 4v2h-7l-1 3h2v2H6v-2h2l-1-3H3z"></path></svg></a>
+    <span style="font-weight: 600">Dashboard</span>
+    <span style="flex: 1"></span>
+    <label style="flex: 0 1 340px; display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 10px; border: 1px solid #30363D; border-radius: 6px">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8B949E" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+      <span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Cerca</span>
+      <input type="search" placeholder="Digita / per cercare" style="flex: 1; min-width: 0; background: transparent; border: 0; color: #E6EDF3; font: inherit; outline: none">
+    </label>
+    <button type="button" style="height: 32px; padding: 0 10px; background: transparent; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; cursor: pointer">IT ▾</button>
+    <a href="20-nuovo-progetto.html" style="height: 32px; padding: 0 12px; display: inline-flex; align-items: center; background: #238636; border: 1px solid rgba(240,246,252,.1); border-radius: 6px; color: #FFF; font-weight: 600; text-decoration: none; box-sizing: border-box">Nuovo progetto</a>
+    <a href="31-impostazioni.html" aria-label="Impostazioni" style="width: 32px; height: 32px; box-sizing: border-box; background: transparent; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; display: grid; place-items: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"></path></svg></a>
+    <span style="width: 32px; height: 32px; border-radius: 50%; background: #1F6FEB; display: grid; place-items: center; font-size: 12px; font-weight: 600">TU</span>
+  </header>
+  <nav aria-label="Sezioni" style="display: flex; flex-wrap: wrap; gap: 4px; padding: 0 20px; background: #010409; border-bottom: 1px solid #30363D">
+    <a href="01-dashboard.html" style="padding: 12px 10px 10px; color: #E6EDF3; text-decoration: none">Progetti <span style="padding: 0 6px; border-radius: 10px; background: #30363D; font-size: 12px; font-weight: 400">8</span></a>
+    <a href="02-dashboard-test.html" style="padding: 12px 10px 10px; color: #E6EDF3; text-decoration: none">Test <span style="padding: 0 6px; border-radius: 10px; background: #30363D; font-size: 12px; font-weight: 400">1</span></a>
+    <a href="03-dashboard-proposte.html" style="padding: 12px 10px 10px; color: #E6EDF3; text-decoration: none">Proposte <span style="padding: 0 6px; border-radius: 10px; background: #AB7DF8; color: #0D1117; font-size: 12px; font-weight: 600">2</span></a>
+    <a href="04-dashboard-diario.html" style="padding: 12px 10px 10px; color: #E6EDF3; text-decoration: none; font-weight: 600; border-bottom: 2px solid #F78166">Diario</a>
+  </nav>
+  <div style="max-width: 1100px; margin: 0 auto; padding: 22px 20px 48px; box-sizing: border-box; display: flex; flex-direction: column; gap: 16px">
+    <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center">
+      <div role="group" aria-label="Fonte" style="display: flex; flex-wrap: wrap; border: 1px solid #30363D; border-radius: 6px; overflow: hidden">
+        <button type="button" style="height: 30px; padding: 0 12px; background: #30363D; border: 0; color: #E6EDF3; font: inherit; font-weight: 600; cursor: pointer">Tutto</button><button type="button" style="height: 30px; padding: 0 12px; background: transparent; border: 0; border-left: 1px solid #30363D; color: #8B949E; font: inherit; cursor: pointer">Tu</button><button type="button" style="height: 30px; padding: 0 12px; background: transparent; border: 0; border-left: 1px solid #30363D; color: #8B949E; font: inherit; cursor: pointer">Claude</button><button type="button" style="height: 30px; padding: 0 12px; background: transparent; border: 0; border-left: 1px solid #30363D; color: #8B949E; font: inherit; cursor: pointer">GitHub</button><button type="button" style="height: 30px; padding: 0 12px; background: transparent; border: 0; border-left: 1px solid #30363D; color: #8B949E; font: inherit; cursor: pointer">Sistema</button>
+      </div>
+      <button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; height: 32px; font-size: 14px">Progetto: tutti ▾</button>
+      <button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; height: 32px; font-size: 14px">Tipo ▾</button>
+      <span style="flex: 1"></span>
+      <label style="flex: 0 1 240px"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Cerca nel diario</span><input type="search" placeholder="Cerca in tutti i diari…" style="width: 100%; box-sizing: border-box; height: 32px; padding: 0 10px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit"></label>
+    </div>
+
+    
+      <section>
+        <div style="display: flex; align-items: center; gap: 10px; margin: 4px 0 10px; font-size: 13px; color: #8B949E"><span style="width: 16px; height: 16px; border-radius: 50%; border: 2px solid #30363D; box-sizing: border-box"></span><b style="color: #E6EDF3; font-weight: 600">Oggi · lunedì 23 novembre</b> · 4 progetti · 31 voci</div>
+        <div style="margin-left: 7px; padding-left: 22px; border-left: 2px solid #21262D; display: flex; flex-direction: column; gap: 10px">
+          
+            <div>
+              
+                <article style="border: 1px solid #30363D; border-radius: 6px; border-color: #5B3E99">
+                  <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding: 10px 16px; background: #161B22; border-bottom: 1px solid #30363D; border-radius: 6px 6px 0 0; background: #1E1631; border-bottom-color: #5B3E99">
+                    <span style="width: 22px; height: 22px; border-radius: 50%; background: #AB7DF8; color: #0D1117; display: grid; place-items: center; font-size: 9px; font-weight: 700">IA</span>
+                    <b style="font-weight: 600">Sessione di Claude</b>
+                    <a href="10-progetto-panoramica.html" style="height: 20px; padding: 0 8px; display: inline-flex; align-items: center; border-radius: 10px; background: #121D2F; color: #4493F8; font-size: 12px; font-weight: 500; text-decoration: none; white-space: nowrap">Heph</a>
+                    <span style="font-size: 12px; color: #8B949E">18:03 → ora · 9 eventi</span>
+                    <span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #AB7DF8; border-radius: 10px; color: #AB7DF8; font-size: 12px"><span style="width: 6px; height: 6px; border-radius: 50%; background: #AB7DF8; animation: heph-dot 1s infinite"></span>in corso</span>
+                  </div>
+                  <div style="padding: 12px 16px; line-height: 1.55">Lavora su POST /api/diary con upload multiplo. 1 task chiuso, 31/31 test, 6 screenshot.
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 6px; margin-top: 10px; max-width: 520px"><span style="aspect-ratio: 4/3; border: 1px solid #30363D; border-radius: 6px; background: #1C2128; display: grid; place-items: center; font-size: 11px; color: #8B949E; text-align: center; padding: 4px; box-sizing: border-box">201 Created</span><span style="aspect-ratio: 4/3; border: 1px solid #30363D; border-radius: 6px; background: #1C2128; display: grid; place-items: center; font-size: 11px; color: #8B949E; text-align: center; padding: 4px; box-sizing: border-box">form upload</span><span style="aspect-ratio: 4/3; border: 1px solid #30363D; border-radius: 6px; background: #1C2128; display: grid; place-items: center; font-size: 11px; color: #8B949E; text-align: center; padding: 4px; box-sizing: border-box">errore 413</span></div>
+                  </div>
+                </article>
+              
+              
+            </div>
+          
+            <div>
+              
+                <article style="border: 1px solid #30363D; border-radius: 6px; border-color: #5B3E99">
+                  <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding: 10px 16px; background: #161B22; border-bottom: 1px solid #30363D; border-radius: 6px 6px 0 0; background: #1E1631; border-bottom-color: #5B3E99">
+                    <span style="width: 22px; height: 22px; border-radius: 50%; background: #AB7DF8; color: #0D1117; display: grid; place-items: center; font-size: 9px; font-weight: 700">IA</span>
+                    <b style="font-weight: 600">Sessione di Claude</b>
+                    <a href="10-progetto-panoramica.html" style="height: 20px; padding: 0 8px; display: inline-flex; align-items: center; border-radius: 10px; background: #121D2F; color: #4493F8; font-size: 12px; font-weight: 500; text-decoration: none; white-space: nowrap">Bot bollette</a>
+                    <span style="font-size: 12px; color: #8B949E">17:52 → ora · 7 eventi</span>
+                    <span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #AB7DF8; border-radius: 10px; color: #AB7DF8; font-size: 12px"><span style="width: 6px; height: 6px; border-radius: 50%; background: #AB7DF8; animation: heph-dot 1s infinite"></span>in corso</span>
+                  </div>
+                  <div style="padding: 12px 16px; line-height: 1.55">Esegue pytest: 42/58 superati. Ha proposto di segnare il progetto come completato.
+                    
+                  </div>
+                </article>
+              
+              
+            </div>
+          
+            <div>
+              
+                <article style="border: 1px solid #30363D; border-radius: 6px; border-color: #30363D">
+                  <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding: 10px 16px; background: #161B22; border-bottom: 1px solid #30363D; border-radius: 6px 6px 0 0; background: #161B22; border-bottom-color: #30363D">
+                    <span style="width: 22px; height: 22px; border-radius: 50%; background: #30363D; color: #E6EDF3; display: grid; place-items: center; font-size: 9px; font-weight: 700">GH</span>
+                    <b style="font-weight: 600">3 commit su main</b>
+                    <a href="10-progetto-panoramica.html" style="height: 20px; padding: 0 8px; display: inline-flex; align-items: center; border-radius: 10px; background: #121D2F; color: #4493F8; font-size: 12px; font-weight: 500; text-decoration: none; white-space: nowrap">Heph</a>
+                    <span style="font-size: 12px; color: #8B949E">17:40</span>
+                    
+                  </div>
+                  <div style="padding: 12px 16px; line-height: 1.55">feat(diary): group entries by session · test(diary): pagination edge cases · chore: bump fastapi
+                    
+                  </div>
+                </article>
+              
+              
+            </div>
+          
+            <div>
+              
+                <article style="border: 1px solid #30363D; border-radius: 6px; border-color: #30363D">
+                  <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding: 10px 16px; background: #161B22; border-bottom: 1px solid #30363D; border-radius: 6px 6px 0 0; background: #161B22; border-bottom-color: #30363D">
+                    <span style="width: 22px; height: 22px; border-radius: 50%; background: #1F6FEB; color: #FFF; display: grid; place-items: center; font-size: 9px; font-weight: 700">TU</span>
+                    <b style="font-weight: 600">Nota</b>
+                    <a href="10-progetto-panoramica.html" style="height: 20px; padding: 0 8px; display: inline-flex; align-items: center; border-radius: 10px; background: #121D2F; color: #4493F8; font-size: 12px; font-weight: 500; text-decoration: none; white-space: nowrap">Heph</a>
+                    <span style="font-size: 12px; color: #8B949E">16:20</span>
+                    
+                  </div>
+                  <div style="padding: 12px 16px; line-height: 1.55">Le foto HEIC dal telefono non passano: da gestire prima di chiudere la fase.
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 6px; margin-top: 10px; max-width: 520px"><span style="aspect-ratio: 4/3; border: 1px solid #30363D; border-radius: 6px; background: #1C2128; display: grid; place-items: center; font-size: 11px; color: #8B949E; text-align: center; padding: 4px; box-sizing: border-box">IMG_2231.heic</span></div>
+                  </div>
+                </article>
+              
+              
+            </div>
+          
+            <div>
+              
+                <article style="border: 1px solid #30363D; border-radius: 6px; border-color: #5B3E99">
+                  <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding: 10px 16px; background: #161B22; border-bottom: 1px solid #30363D; border-radius: 6px 6px 0 0; background: #1E1631; border-bottom-color: #5B3E99">
+                    <span style="width: 22px; height: 22px; border-radius: 50%; background: #AB7DF8; color: #0D1117; display: grid; place-items: center; font-size: 9px; font-weight: 700">IA</span>
+                    <b style="font-weight: 600">Sessione di Claude</b>
+                    <a href="10-progetto-panoramica.html" style="height: 20px; padding: 0 8px; display: inline-flex; align-items: center; border-radius: 10px; background: #121D2F; color: #4493F8; font-size: 12px; font-weight: 500; text-decoration: none; white-space: nowrap">Supporto microscopio</a>
+                    <span style="font-size: 12px; color: #8B949E">14:10 → 15:02 · 12 eventi</span>
+                    
+                  </div>
+                  <div style="padding: 12px 16px; line-height: 1.55">3 task chiusi, 4 render del supporto v2 caricati, prossimo passo: stampa in PETG.
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 6px; margin-top: 10px; max-width: 520px"><span style="aspect-ratio: 4/3; border: 1px solid #30363D; border-radius: 6px; background: #1C2128; display: grid; place-items: center; font-size: 11px; color: #8B949E; text-align: center; padding: 4px; box-sizing: border-box">render fronte</span><span style="aspect-ratio: 4/3; border: 1px solid #30363D; border-radius: 6px; background: #1C2128; display: grid; place-items: center; font-size: 11px; color: #8B949E; text-align: center; padding: 4px; box-sizing: border-box">render lato</span><span style="aspect-ratio: 4/3; border: 1px solid #30363D; border-radius: 6px; background: #1C2128; display: grid; place-items: center; font-size: 11px; color: #8B949E; text-align: center; padding: 4px; box-sizing: border-box">sezione</span><span style="aspect-ratio: 4/3; border: 1px solid #30363D; border-radius: 6px; background: #1C2128; display: grid; place-items: center; font-size: 11px; color: #8B949E; text-align: center; padding: 4px; box-sizing: border-box">+1</span></div>
+                  </div>
+                </article>
+              
+              
+            </div>
+          
+        </div>
+      </section>
+    
+      <section>
+        <div style="display: flex; align-items: center; gap: 10px; margin: 4px 0 10px; font-size: 13px; color: #8B949E"><span style="width: 16px; height: 16px; border-radius: 50%; border: 2px solid #30363D; box-sizing: border-box"></span><b style="color: #E6EDF3; font-weight: 600">Ieri · domenica 22 novembre</b> · 2 progetti · 6 voci</div>
+        <div style="margin-left: 7px; padding-left: 22px; border-left: 2px solid #21262D; display: flex; flex-direction: column; gap: 10px">
+          
+            <div>
+              
+              
+                <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; min-height: 32px; margin-left: -34px; font-size: 13px">
+                  <span style="width: 22px; height: 22px; border-radius: 50%; background: #21262D; border: 2px solid #0D1117; color: #D29922; display: grid; place-items: center; font-size: 11px">◆</span>
+                  <span style="color: #C9D1D9">Stato cambiato: In pausa → In sviluppo</span><span style="height: 20px; padding: 0 8px; display: inline-flex; align-items: center; border-radius: 10px; background: #121D2F; color: #4493F8; font-size: 12px; font-weight: 500; text-decoration: none; white-space: nowrap">Heph</span><span style="font-size: 12px; color: #8B949E">da te · 22:10</span>
+                </div>
+              
+            </div>
+          
+            <div>
+              
+              
+                <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; min-height: 32px; margin-left: -34px; font-size: 13px">
+                  <span style="width: 22px; height: 22px; border-radius: 50%; background: #21262D; border: 2px solid #0D1117; color: #AB7DF8; display: grid; place-items: center; font-size: 11px">?</span>
+                  <span style="color: #C9D1D9">Claude ha proposto di eliminare la fase «Import da Trello»</span><span style="height: 20px; padding: 0 8px; display: inline-flex; align-items: center; border-radius: 10px; background: #121D2F; color: #4493F8; font-size: 12px; font-weight: 500; text-decoration: none; white-space: nowrap">Heph</span><span style="font-size: 12px; color: #8B949E">21:50</span>
+                </div>
+              
+            </div>
+          
+            <div>
+              
+              
+                <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; min-height: 32px; margin-left: -34px; font-size: 13px">
+                  <span style="width: 22px; height: 22px; border-radius: 50%; background: #21262D; border: 2px solid #0D1117; color: #AB7DF8; display: grid; place-items: center; font-size: 11px">✓</span>
+                  <span style="color: #C9D1D9">Claude ha chiuso «GET /api/diary paginato»</span><span style="height: 20px; padding: 0 8px; display: inline-flex; align-items: center; border-radius: 10px; background: #121D2F; color: #4493F8; font-size: 12px; font-weight: 500; text-decoration: none; white-space: nowrap">Heph</span><span style="font-size: 12px; color: #8B949E">21:48</span>
+                </div>
+              
+            </div>
+          
+            <div>
+              
+              
+                <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; min-height: 32px; margin-left: -34px; font-size: 13px">
+                  <span style="width: 22px; height: 22px; border-radius: 50%; background: #21262D; border: 2px solid #0D1117; color: #8B949E; display: grid; place-items: center; font-size: 11px">▣</span>
+                  <span style="color: #C9D1D9">Materiale ordinato: condensatori di filtro (Mouser)</span><span style="height: 20px; padding: 0 8px; display: inline-flex; align-items: center; border-radius: 10px; background: #121D2F; color: #4493F8; font-size: 12px; font-weight: 500; text-decoration: none; white-space: nowrap">Radio Grundig 1958</span><span style="font-size: 12px; color: #8B949E">sistema · 10:02</span>
+                </div>
+              
+            </div>
+          
+        </div>
+      </section>
+    
+    <button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; height: 36px; font-size: 14px; align-self: flex-start">Carica i giorni precedenti</button>
+  </div>
+</div>
+</body>
+</html>

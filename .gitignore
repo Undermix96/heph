@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output
+dist/
+build/
+*.tsbuildinfo
+coverage/
+
+# Runtime data (SQLite DB, uploads) — never commit
+/data/
+
+# Environment / secrets
+.env*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editors / OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+
+# Local Claude Code settings
+.claude/settings.local.json

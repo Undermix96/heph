@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Heph — Dashboard</title>
+<style>
+body{margin:0;background:#0D1117}
+a{color:#4493F8}a:hover{color:#79B8FF}
+input::placeholder{color:#8B949E}
+@keyframes heph-dot{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes heph-run{0%{transform:translateX(-100%)}100%{transform:translateX(260%)}}
+</style>
+</head>
+<body>
+<div style="min-height: 100vh; background: #0D1117; color: #E6EDF3; font-family: -apple-system, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; font-size: 14px; position: relative">
+
+  <header style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 12px 20px; background: #010409">
+    <a href="#" aria-label="Heph" style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid #30363D; display: grid; place-items: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E6EDF3" stroke-width="2" aria-hidden="true"><path d="M3 9h12c0 3 2 4 6 4v2h-7l-1 3h2v2H6v-2h2l-1-3H3z"></path></svg></a>
+    <span style="font-weight: 600">Dashboard</span>
+    <span style="flex: 1"></span>
+    <label style="flex: 0 1 340px; display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 10px; border: 1px solid #30363D; border-radius: 6px">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8B949E" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+      <span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Cerca</span>
+      <input type="search" placeholder="Digita / per cercare" style="flex: 1; min-width: 0; background: transparent; border: 0; color: #E6EDF3; font: inherit; outline: none">
+    </label>
+    <button type="button" style="height: 32px; padding: 0 10px; background: transparent; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; cursor: pointer">IT ▾</button>
+    <a href="20-nuovo-progetto.html" style="height: 32px; padding: 0 12px; display: inline-flex; align-items: center; background: #238636; border: 1px solid rgba(240,246,252,.1); border-radius: 6px; color: #FFF; font-weight: 600; text-decoration: none; box-sizing: border-box">Nuovo progetto</a>
+    <a href="31-impostazioni.html" aria-label="Impostazioni" style="width: 32px; height: 32px; box-sizing: border-box; background: transparent; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; display: grid; place-items: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"></path></svg></a>
+    <span style="width: 32px; height: 32px; border-radius: 50%; background: #1F6FEB; display: grid; place-items: center; font-size: 12px; font-weight: 600">TU</span>
+  </header>
+  <nav aria-label="Sezioni" style="display: flex; flex-wrap: wrap; gap: 4px; padding: 0 20px; background: #010409; border-bottom: 1px solid #30363D">
+    <a href="#" style="padding: 12px 10px 10px; color: #E6EDF3; text-decoration: none; font-weight: 600; border-bottom: 2px solid #F78166">Progetti <span style="padding: 0 6px; border-radius: 10px; background: #30363D; font-size: 12px; font-weight: 400">8</span></a>
+    <a href="02-dashboard-test.html" style="padding: 12px 10px 10px; color: #E6EDF3; text-decoration: none">Test <span style="padding: 0 6px; border-radius: 10px; background: #30363D; font-size: 12px">1</span></a>
+    <a href="03-dashboard-proposte.html" style="padding: 12px 10px 10px; color: #E6EDF3; text-decoration: none">Proposte <span style="padding: 0 6px; border-radius: 10px; background: #AB7DF8; color: #0D1117; font-size: 12px; font-weight: 600">2</span></a>
+    <a href="04-dashboard-diario.html" style="padding: 12px 10px 10px; color: #E6EDF3; text-decoration: none">Diario</a>
+  </nav>
+
+  <div style="display: flex; flex-wrap: wrap; align-items: flex-start; max-width: 1440px; margin: 0 auto">
+    <aside aria-label="Filtri" style="flex: 1 1 220px; max-width: 256px; box-sizing: border-box; padding: 20px 16px 20px 20px">
+      
+        <fieldset style="border: 0; margin: 0 0 16px; padding: 0 0 16px; border-bottom: 1px solid #21262D">
+          <legend style="font-size: 14px; font-weight: 600; margin-bottom: 6px; padding: 0">Stato</legend>
+          
+            <label style="display: flex; align-items: center; gap: 8px; min-height: 30px; font-size: 13px; cursor: pointer">
+              <input type="checkbox" checked style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <span style="width: 10px; height: 10px; border-radius: 50%; background: #4493F8"></span>
+              <span style="flex: 1">In sviluppo</span>
+              <span style="padding: 0 6px; border-radius: 10px; background: #21262D; font-size: 12px; color: #8B949E">4</span>
+            </label>
+          
+            <label style="display: flex; align-items: center; gap: 8px; min-height: 30px; font-size: 13px; cursor: pointer">
+              <input type="checkbox" checked style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <span style="width: 10px; height: 10px; border-radius: 50%; background: #D29922"></span>
+              <span style="flex: 1">Da testare</span>
+              <span style="padding: 0 6px; border-radius: 10px; background: #21262D; font-size: 12px; color: #8B949E">1</span>
+            </label>
+          
+            <label style="display: flex; align-items: center; gap: 8px; min-height: 30px; font-size: 13px; cursor: pointer">
+              <input type="checkbox" checked style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <span style="width: 10px; height: 10px; border-radius: 50%; background: #8B949E"></span>
+              <span style="flex: 1">In pausa</span>
+              <span style="padding: 0 6px; border-radius: 10px; background: #21262D; font-size: 12px; color: #8B949E">1</span>
+            </label>
+          
+            <label style="display: flex; align-items: center; gap: 8px; min-height: 30px; font-size: 13px; cursor: pointer">
+              <input type="checkbox" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <span style="width: 10px; height: 10px; border-radius: 50%; background: #AB7DF8"></span>
+              <span style="flex: 1">Completati</span>
+              <span style="padding: 0 6px; border-radius: 10px; background: #21262D; font-size: 12px; color: #8B949E">2</span>
+            </label>
+          
+            <label style="display: flex; align-items: center; gap: 8px; min-height: 30px; font-size: 13px; cursor: pointer">
+              <input type="checkbox" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <span style="width: 10px; height: 10px; border-radius: 50%; background: #6E7681"></span>
+              <span style="flex: 1">Abbandonati</span>
+              <span style="padding: 0 6px; border-radius: 10px; background: #21262D; font-size: 12px; color: #8B949E">1</span>
+            </label>
+          
+        </fieldset>
+      
+        <fieldset style="border: 0; margin: 0 0 16px; padding: 0 0 16px; border-bottom: 1px solid #21262D">
+          <legend style="font-size: 14px; font-weight: 600; margin-bottom: 6px; padding: 0">Attività</legend>
+          
+            <label style="display: flex; align-items: center; gap: 8px; min-height: 30px; font-size: 13px; cursor: pointer">
+              <input type="checkbox" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <span style="width: 10px; height: 10px; border-radius: 50%; background: #AB7DF8"></span>
+              <span style="flex: 1">Claude al lavoro</span>
+              <span style="padding: 0 6px; border-radius: 10px; background: #21262D; font-size: 12px; color: #8B949E">2</span>
+            </label>
+          
+            <label style="display: flex; align-items: center; gap: 8px; min-height: 30px; font-size: 13px; cursor: pointer">
+              <input type="checkbox" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <span style="width: 10px; height: 10px; border-radius: 50%; background: #3FB950"></span>
+              <span style="flex: 1">Recente</span>
+              <span style="padding: 0 6px; border-radius: 10px; background: #21262D; font-size: 12px; color: #8B949E">2</span>
+            </label>
+          
+            <label style="display: flex; align-items: center; gap: 8px; min-height: 30px; font-size: 13px; cursor: pointer">
+              <input type="checkbox" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <span style="width: 10px; height: 10px; border-radius: 50%; background: #F85149"></span>
+              <span style="flex: 1">Ferma da tempo</span>
+              <span style="padding: 0 6px; border-radius: 10px; background: #21262D; font-size: 12px; color: #8B949E">1</span>
+            </label>
+          
+        </fieldset>
+      
+        <fieldset style="border: 0; margin: 0 0 16px; padding: 0 0 16px; border-bottom: 1px solid #21262D">
+          <legend style="font-size: 14px; font-weight: 600; margin-bottom: 6px; padding: 0">Tag</legend>
+          
+            <label style="display: flex; align-items: center; gap: 8px; min-height: 30px; font-size: 13px; cursor: pointer">
+              <input type="checkbox" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <span style="width: 10px; height: 10px; border-radius: 50%; background: #4493F8"></span>
+              <span style="flex: 1">software</span>
+              <span style="padding: 0 6px; border-radius: 10px; background: #21262D; font-size: 12px; color: #8B949E">3</span>
+            </label>
+          
+            <label style="display: flex; align-items: center; gap: 8px; min-height: 30px; font-size: 13px; cursor: pointer">
+              <input type="checkbox" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <span style="width: 10px; height: 10px; border-radius: 50%; background: #D29922"></span>
+              <span style="flex: 1">elettronica</span>
+              <span style="padding: 0 6px; border-radius: 10px; background: #21262D; font-size: 12px; color: #8B949E">2</span>
+            </label>
+          
+            <label style="display: flex; align-items: center; gap: 8px; min-height: 30px; font-size: 13px; cursor: pointer">
+              <input type="checkbox" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <span style="width: 10px; height: 10px; border-radius: 50%; background: #B08800"></span>
+              <span style="flex: 1">legno</span>
+              <span style="padding: 0 6px; border-radius: 10px; background: #21262D; font-size: 12px; color: #8B949E">1</span>
+            </label>
+          
+            <label style="display: flex; align-items: center; gap: 8px; min-height: 30px; font-size: 13px; cursor: pointer">
+              <input type="checkbox" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <span style="width: 10px; height: 10px; border-radius: 50%; background: #DB61A2"></span>
+              <span style="flex: 1">stampa 3D</span>
+              <span style="padding: 0 6px; border-radius: 10px; background: #21262D; font-size: 12px; color: #8B949E">1</span>
+            </label>
+          
+        </fieldset>
+      
+      <button type="button" style="height: 28px; padding: 0; background: transparent; border: 0; color: #4493F8; font: inherit; font-size: 13px; cursor: pointer">Azzera filtri</button>
+    </aside>
+
+    <main style="flex: 999 1 640px; min-width: 0; padding: 20px 20px 130px 8px; box-sizing: border-box">
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 16px">
+        <label style="flex: 1 1 260px"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Filtra</span><input type="search" placeholder="Filtra progetti…" style="width: 100%; box-sizing: border-box; height: 32px; padding: 0 10px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit"></label>
+        <button type="button" style="height: 32px; padding: 0 12px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-weight: 500; cursor: pointer">Ordina: attenzione ▾</button>
+        <div role="group" aria-label="Vista" style="display: flex; border: 1px solid #30363D; border-radius: 6px; overflow: hidden">
+          <button type="button" style="height: 30px; padding: 0 12px; background: #30363D; border: 0; color: #E6EDF3; font: inherit; font-weight: 600; cursor: pointer">Riquadri</button>
+          <button type="button" style="height: 30px; padding: 0 12px; background: transparent; border: 0; border-left: 1px solid #30363D; color: #8B949E; font: inherit; cursor: pointer">Tabella</button>
+        </div>
+      </div>
+      <div style="font-size: 12px; color: #8B949E; margin-bottom: 10px">6 progetti attivi · 3 chiusi nascosti dai filtri</div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px">
+        
+          <article style="display: flex; flex-direction: column; border: 1px solid #6B4F0B; border-radius: 6px; box-shadow: none">
+            <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #161B22; border-bottom: 1px solid #30363D; border-radius: 6px 6px 0 0">
+              <input type="checkbox" aria-label="Seleziona Stazione meteo ESP32" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <a href="10-progetto-panoramica.html" style="flex: 1; min-width: 0; font-weight: 600; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Stazione meteo ESP32</a>
+              <span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #D29922; border-radius: 10px; color: #D29922; font-size: 12px; font-weight: 500; white-space: nowrap"><span style="width: 6px; height: 6px; border-radius: 50%; background: #D29922; animation: none"></span>da testare</span>
+            </div>
+            <div style="padding: 12px 14px; flex: 1; display: flex; flex-direction: column; gap: 10px">
+              <div style="line-height: 1.45"><span style="color: #8B949E">Prossimo:</span> <span style="color: #E6EDF3">Calibrare l'offset di umidità del BME280</span></div>
+              
+                <div style="padding: 8px 10px; border: 1px solid #6B4F0B; border-radius: 6px; background: #1C1A10; font-size: 13px; line-height: 1.4; color: #E3B341">Test: 24 h all'aperto, confronta con ARPA.</div>
+              
+              <div>
+                <div style="display: flex; gap: 1px; height: 8px; border-radius: 4px; overflow: hidden" aria-hidden="true">
+                  <span style="flex: 4 1 0; background: #30363D"><span style="display: block; width: 100%; height: 100%; background: #3FB950"></span></span><span style="flex: 6 1 0; background: #30363D"><span style="display: block; width: 100%; height: 100%; background: #3FB950"></span></span><span style="flex: 5 1 0; background: #30363D"><span style="display: block; width: 60%; height: 100%; background: #3FB950"></span></span><span style="flex: 3 1 0; background: #30363D"><span style="display: block; width: 0%; height: 100%; background: #3FB950"></span></span><span style="flex: 2 1 0; background: #30363D"><span style="display: block; width: 0%; height: 100%; background: #3FB950"></span></span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 12px; color: #8B949E; margin-top: 5px"><span>Collaudo sensori · 3/5</span><span>65%</span></div>
+              </div>
+              <div style="display: flex; flex-wrap: wrap; gap: 4px">
+                <span style="height: 22px; padding: 0 10px; display: inline-flex; align-items: center; border-radius: 11px; background: #121D2F; color: #4493F8; font-size: 12px; font-weight: 500">elettronica</span><span style="height: 22px; padding: 0 10px; display: inline-flex; align-items: center; border-radius: 11px; background: #121D2F; color: #4493F8; font-size: 12px; font-weight: 500">firmware</span>
+              </div>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 8px 14px; border-top: 1px solid #21262D">
+              <span style="flex: 1 1 120px; font-size: 12px; color: #8B949E">Aggiornato 3 giorni fa</span>
+              <button type="button" style="height: 28px; padding: 0 10px; background: #9E6A03; border: 1px solid rgba(240,246,252,.1); border-radius: 6px; color: #FFF; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer">Esito test</button>
+              <a href="12-progetto-diario.html" style="height: 28px; padding: 0 10px; display: inline-flex; align-items: center; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font-size: 12px; font-weight: 500; text-decoration: none">Diario</a>
+              <button type="button" aria-label="Altre azioni" style="width: 28px; height: 28px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; cursor: pointer">⋯</button>
+            </div>
+          </article>
+        
+          <article style="display: flex; flex-direction: column; border: 1px solid #1F6FEB; border-radius: 6px; box-shadow: 0 0 0 1px #1F6FEB">
+            <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #161B22; border-bottom: 1px solid #30363D; border-radius: 6px 6px 0 0">
+              <input type="checkbox" checked aria-label="Seleziona Heph — tracker progetti" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <a href="10-progetto-panoramica.html" style="flex: 1; min-width: 0; font-weight: 600; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Heph — tracker progetti</a>
+              <span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #AB7DF8; border-radius: 10px; color: #AB7DF8; font-size: 12px; font-weight: 500; white-space: nowrap"><span style="width: 6px; height: 6px; border-radius: 50%; background: #AB7DF8; animation: heph-dot 1s infinite"></span>Claude al lavoro</span>
+            </div>
+            <div style="padding: 12px 14px; flex: 1; display: flex; flex-direction: column; gap: 10px">
+              <div style="line-height: 1.45"><span style="color: #8B949E">Prossimo:</span> <span style="color: #E6EDF3">POST /api/diary con upload multiplo</span></div>
+              
+              <div>
+                <div style="display: flex; gap: 1px; height: 8px; border-radius: 4px; overflow: hidden" aria-hidden="true">
+                  <span style="flex: 8 1 0; background: #30363D"><span style="display: block; width: 100%; height: 100%; background: #3FB950"></span></span><span style="flex: 6 1 0; background: #30363D"><span style="display: block; width: 100%; height: 100%; background: #3FB950"></span></span><span style="flex: 9 1 0; background: #30363D"><span style="display: block; width: 44%; height: 100%; background: #3FB950"></span></span><span style="flex: 7 1 0; background: #30363D"><span style="display: block; width: 0%; height: 100%; background: #3FB950"></span></span><span style="flex: 6 1 0; background: #30363D"><span style="display: block; width: 0%; height: 100%; background: #3FB950"></span></span><span style="flex: 8 1 0; background: #30363D"><span style="display: block; width: 0%; height: 100%; background: #3FB950"></span></span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 12px; color: #8B949E; margin-top: 5px"><span>API diario · 3/6</span><span>41%</span></div>
+              </div>
+              <div style="display: flex; flex-wrap: wrap; gap: 4px">
+                <span style="height: 22px; padding: 0 10px; display: inline-flex; align-items: center; border-radius: 11px; background: #121D2F; color: #4493F8; font-size: 12px; font-weight: 500">software</span>
+              </div>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 8px 14px; border-top: 1px solid #21262D">
+              <span style="flex: 1 1 120px; font-size: 12px; color: #8B949E">Aggiornato adesso · 1 proposta</span>
+              
+              <a href="12-progetto-diario.html" style="height: 28px; padding: 0 10px; display: inline-flex; align-items: center; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font-size: 12px; font-weight: 500; text-decoration: none">Diario</a>
+              <button type="button" aria-label="Altre azioni" style="width: 28px; height: 28px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; cursor: pointer">⋯</button>
+            </div>
+          </article>
+        
+          <article style="display: flex; flex-direction: column; border: 1px solid #30363D; border-radius: 6px; box-shadow: none">
+            <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #161B22; border-bottom: 1px solid #30363D; border-radius: 6px 6px 0 0">
+              <input type="checkbox" aria-label="Seleziona Bot Telegram bollette" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <a href="10-progetto-panoramica.html" style="flex: 1; min-width: 0; font-weight: 600; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Bot Telegram bollette</a>
+              <span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #AB7DF8; border-radius: 10px; color: #AB7DF8; font-size: 12px; font-weight: 500; white-space: nowrap"><span style="width: 6px; height: 6px; border-radius: 50%; background: #AB7DF8; animation: heph-dot 1s infinite"></span>Claude esegue test</span>
+            </div>
+            <div style="padding: 12px 14px; flex: 1; display: flex; flex-direction: column; gap: 10px">
+              <div style="line-height: 1.45"><span style="color: #8B949E">Prossimo:</span> <span style="color: #E6EDF3">Leggere le bollette PDF su più pagine</span></div>
+              
+              <div>
+                <div style="display: flex; gap: 1px; height: 8px; border-radius: 4px; overflow: hidden" aria-hidden="true">
+                  <span style="flex: 5 1 0; background: #30363D"><span style="display: block; width: 100%; height: 100%; background: #3FB950"></span></span><span style="flex: 6 1 0; background: #30363D"><span style="display: block; width: 100%; height: 100%; background: #3FB950"></span></span><span style="flex: 4 1 0; background: #30363D"><span style="display: block; width: 100%; height: 100%; background: #3FB950"></span></span><span style="flex: 5 1 0; background: #30363D"><span style="display: block; width: 20%; height: 100%; background: #3FB950"></span></span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 12px; color: #8B949E; margin-top: 5px"><span>Rifinitura · 4/4</span><span>80%</span></div>
+              </div>
+              <div style="display: flex; flex-wrap: wrap; gap: 4px">
+                <span style="height: 22px; padding: 0 10px; display: inline-flex; align-items: center; border-radius: 11px; background: #121D2F; color: #4493F8; font-size: 12px; font-weight: 500">software</span><span style="height: 22px; padding: 0 10px; display: inline-flex; align-items: center; border-radius: 11px; background: #121D2F; color: #4493F8; font-size: 12px; font-weight: 500">automazione</span>
+              </div>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 8px 14px; border-top: 1px solid #21262D">
+              <span style="flex: 1 1 120px; font-size: 12px; color: #8B949E">Aggiornato adesso · 1 proposta</span>
+              
+              <a href="12-progetto-diario.html" style="height: 28px; padding: 0 10px; display: inline-flex; align-items: center; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font-size: 12px; font-weight: 500; text-decoration: none">Diario</a>
+              <button type="button" aria-label="Altre azioni" style="width: 28px; height: 28px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; cursor: pointer">⋯</button>
+            </div>
+          </article>
+        
+          <article style="display: flex; flex-direction: column; border: 1px solid #30363D; border-radius: 6px; box-shadow: none">
+            <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #161B22; border-bottom: 1px solid #30363D; border-radius: 6px 6px 0 0">
+              <input type="checkbox" aria-label="Seleziona Libreria in noce per lo studio" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <a href="10-progetto-panoramica.html" style="flex: 1; min-width: 0; font-weight: 600; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Libreria in noce per lo studio</a>
+              <span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #F85149; border-radius: 10px; color: #F85149; font-size: 12px; font-weight: 500; white-space: nowrap"><span style="width: 6px; height: 6px; border-radius: 50%; background: #F85149; animation: none"></span>fermo da 34 g</span>
+            </div>
+            <div style="padding: 12px 14px; flex: 1; display: flex; flex-direction: column; gap: 10px">
+              <div style="line-height: 1.45"><span style="color: #8B949E">Prossimo:</span> <span style="color: #FF7B72">Nessun prossimo passo</span></div>
+              
+              <div>
+                <div style="display: flex; gap: 1px; height: 8px; border-radius: 4px; overflow: hidden" aria-hidden="true">
+                  <span style="flex: 3 1 0; background: #30363D"><span style="display: block; width: 100%; height: 100%; background: #3FB950"></span></span><span style="flex: 5 1 0; background: #30363D"><span style="display: block; width: 100%; height: 100%; background: #3FB950"></span></span><span style="flex: 6 1 0; background: #30363D"><span style="display: block; width: 30%; height: 100%; background: #3FB950"></span></span><span style="flex: 4 1 0; background: #30363D"><span style="display: block; width: 0%; height: 100%; background: #3FB950"></span></span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 12px; color: #8B949E; margin-top: 5px"><span>Assemblaggio · 3/4</span><span>55%</span></div>
+              </div>
+              <div style="display: flex; flex-wrap: wrap; gap: 4px">
+                <span style="height: 22px; padding: 0 10px; display: inline-flex; align-items: center; border-radius: 11px; background: #121D2F; color: #4493F8; font-size: 12px; font-weight: 500">legno</span>
+              </div>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 8px 14px; border-top: 1px solid #21262D">
+              <span style="flex: 1 1 120px; font-size: 12px; color: #8B949E">Aggiornato il 20 ott</span>
+              <button type="button" style="height: 28px; padding: 0 10px; background: #238636; border: 1px solid rgba(240,246,252,.1); border-radius: 6px; color: #FFF; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer">Scegli passo</button>
+              <a href="12-progetto-diario.html" style="height: 28px; padding: 0 10px; display: inline-flex; align-items: center; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font-size: 12px; font-weight: 500; text-decoration: none">Diario</a>
+              <button type="button" aria-label="Altre azioni" style="width: 28px; height: 28px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; cursor: pointer">⋯</button>
+            </div>
+          </article>
+        
+          <article style="display: flex; flex-direction: column; border: 1px solid #1F6FEB; border-radius: 6px; box-shadow: 0 0 0 1px #1F6FEB">
+            <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #161B22; border-bottom: 1px solid #30363D; border-radius: 6px 6px 0 0">
+              <input type="checkbox" checked aria-label="Seleziona Supporto 3D per microscopio" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <a href="10-progetto-panoramica.html" style="flex: 1; min-width: 0; font-weight: 600; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Supporto 3D per microscopio</a>
+              <span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #3FB950; border-radius: 10px; color: #3FB950; font-size: 12px; font-weight: 500; white-space: nowrap"><span style="width: 6px; height: 6px; border-radius: 50%; background: #3FB950; animation: none"></span>attivo</span>
+            </div>
+            <div style="padding: 12px 14px; flex: 1; display: flex; flex-direction: column; gap: 10px">
+              <div style="line-height: 1.45"><span style="color: #8B949E">Prossimo:</span> <span style="color: #E6EDF3">Stampare il prototipo v2 in PETG</span></div>
+              
+              <div>
+                <div style="display: flex; gap: 1px; height: 8px; border-radius: 4px; overflow: hidden" aria-hidden="true">
+                  <span style="flex: 5 1 0; background: #30363D"><span style="display: block; width: 60%; height: 100%; background: #3FB950"></span></span><span style="flex: 4 1 0; background: #30363D"><span style="display: block; width: 0%; height: 100%; background: #3FB950"></span></span><span style="flex: 3 1 0; background: #30363D"><span style="display: block; width: 0%; height: 100%; background: #3FB950"></span></span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 12px; color: #8B949E; margin-top: 5px"><span>Modellazione · 1/3</span><span>30%</span></div>
+              </div>
+              <div style="display: flex; flex-wrap: wrap; gap: 4px">
+                <span style="height: 22px; padding: 0 10px; display: inline-flex; align-items: center; border-radius: 11px; background: #121D2F; color: #4493F8; font-size: 12px; font-weight: 500">stampa 3D</span>
+              </div>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 8px 14px; border-top: 1px solid #21262D">
+              <span style="flex: 1 1 120px; font-size: 12px; color: #8B949E">Aggiornato ieri</span>
+              
+              <a href="12-progetto-diario.html" style="height: 28px; padding: 0 10px; display: inline-flex; align-items: center; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font-size: 12px; font-weight: 500; text-decoration: none">Diario</a>
+              <button type="button" aria-label="Altre azioni" style="width: 28px; height: 28px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; cursor: pointer">⋯</button>
+            </div>
+          </article>
+        
+          <article style="display: flex; flex-direction: column; border: 1px solid #30363D; border-radius: 6px; box-shadow: none">
+            <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #161B22; border-bottom: 1px solid #30363D; border-radius: 6px 6px 0 0">
+              <input type="checkbox" aria-label="Seleziona Restauro radio Grundig 1958" style="width: 16px; height: 16px; margin: 0; accent-color: #1F6FEB">
+              <a href="10-progetto-panoramica.html" style="flex: 1; min-width: 0; font-weight: 600; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Restauro radio Grundig 1958</a>
+              <span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #8B949E; border-radius: 10px; color: #8B949E; font-size: 12px; font-weight: 500; white-space: nowrap"><span style="width: 6px; height: 6px; border-radius: 50%; background: #8B949E; animation: none"></span>in pausa</span>
+            </div>
+            <div style="padding: 12px 14px; flex: 1; display: flex; flex-direction: column; gap: 10px">
+              <div style="line-height: 1.45"><span style="color: #8B949E">Prossimo:</span> <span style="color: #E6EDF3">Sostituire i condensatori di filtro</span></div>
+              
+                <div style="padding: 8px 10px; border: 1px solid #30363D; border-radius: 6px; background: #161B22; font-size: 13px; line-height: 1.4; color: #C9D1D9">In attesa: condensatori Mouser, arrivo previsto il 28 nov.</div>
+              
+              <div>
+                <div style="display: flex; gap: 1px; height: 8px; border-radius: 4px; overflow: hidden" aria-hidden="true">
+                  <span style="flex: 4 1 0; background: #30363D"><span style="display: block; width: 100%; height: 100%; background: #3FB950"></span></span><span style="flex: 6 1 0; background: #30363D"><span style="display: block; width: 50%; height: 100%; background: #3FB950"></span></span><span style="flex: 5 1 0; background: #30363D"><span style="display: block; width: 0%; height: 100%; background: #3FB950"></span></span><span style="flex: 3 1 0; background: #30363D"><span style="display: block; width: 0%; height: 100%; background: #3FB950"></span></span><span style="flex: 2 1 0; background: #30363D"><span style="display: block; width: 0%; height: 100%; background: #3FB950"></span></span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 12px; color: #8B949E; margin-top: 5px"><span>Ricondizionamento · 2/5</span><span>45%</span></div>
+              </div>
+              <div style="display: flex; flex-wrap: wrap; gap: 4px">
+                <span style="height: 22px; padding: 0 10px; display: inline-flex; align-items: center; border-radius: 11px; background: #121D2F; color: #4493F8; font-size: 12px; font-weight: 500">elettronica</span><span style="height: 22px; padding: 0 10px; display: inline-flex; align-items: center; border-radius: 11px; background: #121D2F; color: #4493F8; font-size: 12px; font-weight: 500">restauro</span>
+              </div>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 8px 14px; border-top: 1px solid #21262D">
+              <span style="flex: 1 1 120px; font-size: 12px; color: #8B949E">Aggiornato 12 giorni fa</span>
+              
+              <a href="12-progetto-diario.html" style="height: 28px; padding: 0 10px; display: inline-flex; align-items: center; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font-size: 12px; font-weight: 500; text-decoration: none">Diario</a>
+              <button type="button" aria-label="Altre azioni" style="width: 28px; height: 28px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; cursor: pointer">⋯</button>
+            </div>
+          </article>
+        
+        <button type="button" style="min-height: 220px; background: transparent; border: 1px dashed #30363D; border-radius: 6px; color: #8B949E; font: inherit; cursor: pointer">+ Nuovo progetto</button>
+      </div>
+    </main>
+  </div>
+
+  <div style="position: absolute; left: 50%; bottom: 24px; transform: translateX(-50%); display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 8px 8px 8px 14px; background: #161B22; border: 1px solid #30363D; border-radius: 6px; box-shadow: 0 8px 24px rgba(1,4,9,.8)">
+    <span style="font-weight: 600; margin-right: 6px">2 selezionati</span>
+    <button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer">Metti in pausa</button>
+    <button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer">Aggiungi tag</button>
+    <button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer">Esporta</button>
+    <button type="button" aria-label="Annulla selezione" style="width: 28px; height: 28px; background: transparent; border: 0; color: #8B949E; cursor: pointer">✕</button>
+  </div>
+
+  <aside aria-label="Coda di Claude" style="position: absolute; right: 20px; bottom: 24px; width: 330px; background: #0D1117; border: 1px solid #5B3E99; border-radius: 6px; box-shadow: 0 8px 24px rgba(1,4,9,.8)">
+    <div style="display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: #1E1631; border-bottom: 1px solid #5B3E99; border-radius: 6px 6px 0 0">
+      <span style="width: 8px; height: 8px; border-radius: 50%; background: #AB7DF8; animation: heph-dot 1s infinite"></span>
+      <span style="font-weight: 600">Coda di Claude</span>
+      <span style="font-size: 12px; color: #8B949E">2 in corso · 5 oggi</span>
+      <span style="flex: 1"></span>
+      <button type="button" aria-label="Riduci" style="width: 24px; height: 24px; background: transparent; border: 0; color: #8B949E; cursor: pointer">▾</button>
+    </div>
+    
+      <div style="padding: 10px 14px; border-bottom: 1px solid #21262D">
+        <div style="display: flex; justify-content: space-between; gap: 8px; font-size: 13px"><a href="10-progetto-panoramica.html" style="font-weight: 600; text-decoration: none">Bot Telegram bollette</a><span style="font-size: 12px; color: #AB7DF8">test 42/58</span></div>
+        <div style="font-size: 12px; color: #C9D1D9; margin: 2px 0 6px">pytest · nessun errore</div>
+        <div style="height: 4px; background: #21262D; border-radius: 2px; overflow: hidden" aria-hidden="true"><div style="width: 72%; height: 100%; background: #AB7DF8; animation: none"></div></div>
+      </div>
+    
+      <div style="padding: 10px 14px; border-bottom: 1px solid #21262D">
+        <div style="display: flex; justify-content: space-between; gap: 8px; font-size: 13px"><a href="10-progetto-panoramica.html" style="font-weight: 600; text-decoration: none">Heph</a><span style="font-size: 12px; color: #AB7DF8">in corso</span></div>
+        <div style="font-size: 12px; color: #C9D1D9; margin: 2px 0 6px">Scrive i test per POST /api/diary</div>
+        <div style="height: 4px; background: #21262D; border-radius: 2px; overflow: hidden" aria-hidden="true"><div style="width: 40%; height: 100%; background: #AB7DF8; animation: heph-run 1.6s linear infinite"></div></div>
+      </div>
+    
+      <div style="padding: 10px 14px; border-bottom: 1px solid #21262D">
+        <div style="display: flex; justify-content: space-between; gap: 8px; font-size: 13px"><a href="10-progetto-panoramica.html" style="font-weight: 600; text-decoration: none">Supporto microscopio</a><span style="font-size: 12px; color: #3FB950">finita 2 h fa</span></div>
+        <div style="font-size: 12px; color: #C9D1D9; margin: 2px 0 6px">3 task chiusi · 4 render caricati</div>
+        <div style="height: 4px; background: #21262D; border-radius: 2px; overflow: hidden" aria-hidden="true"><div style="width: 100%; height: 100%; background: #3FB950; animation: none"></div></div>
+      </div>
+    
+  </aside>
+</div>
+</body>
+</html>

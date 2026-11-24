@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Heph — Roadmap</title>
+<style>
+body{margin:0;background:#0D1117}
+a{color:#4493F8}a:hover{color:#79B8FF}
+input::placeholder,textarea::placeholder{color:#8B949E}
+@keyframes heph-dot{0%,100%{opacity:1}50%{opacity:.35}}
+</style>
+</head>
+<body>
+<div style="min-height: 100vh; background: #0D1117; color: #E6EDF3; font-family: -apple-system, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; font-size: 14px">
+
+  <header style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 12px 20px; background: #010409; border-bottom: 1px solid #30363D">
+    <a href="01-dashboard.html" aria-label="Heph, dashboard" style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid #30363D; display: grid; place-items: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E6EDF3" stroke-width="2" aria-hidden="true"><path d="M3 9h12c0 3 2 4 6 4v2h-7l-1 3h2v2H6v-2h2l-1-3H3z"></path></svg></a>
+    <span><a href="01-dashboard.html" style="color: #E6EDF3; text-decoration: none">progetti</a> <span style="color: #8B949E">/</span> <b style="font-weight: 600">stazione-meteo-esp32</b></span>
+    <span style="flex: 1"></span>
+    <label style="flex: 0 1 340px; display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 10px; border: 1px solid #30363D; border-radius: 6px">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8B949E" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+      <span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Cerca</span>
+      <input type="search" placeholder="Digita / per cercare" style="flex: 1; min-width: 0; background: transparent; border: 0; color: #E6EDF3; font: inherit; outline: none">
+    </label>
+    <button type="button" style="height: 32px; padding: 0 10px; background: transparent; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; cursor: pointer">IT ▾</button>
+    <a href="20-nuovo-progetto.html" style="height: 32px; padding: 0 12px; display: inline-flex; align-items: center; background: #238636; border: 1px solid rgba(240,246,252,.1); border-radius: 6px; color: #FFF; font-weight: 600; text-decoration: none; box-sizing: border-box">Nuovo progetto</a>
+    <a href="31-impostazioni.html" aria-label="Impostazioni" style="width: 32px; height: 32px; box-sizing: border-box; background: transparent; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; display: grid; place-items: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"></path></svg></a>
+    <span style="width: 32px; height: 32px; border-radius: 50%; background: #1F6FEB; display: grid; place-items: center; font-size: 12px; font-weight: 600">TU</span>
+  </header>
+
+  <div style="display: flex; flex-wrap: wrap; align-items: flex-start">
+    <nav aria-label="Progetti" style="flex: 1 1 220px; max-width: 256px; box-sizing: border-box; padding: 16px 12px; border-right: 1px solid #21262D; align-self: stretch">
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 0 8px; margin-bottom: 8px"><span style="font-weight: 600">Progetti</span><span style="font-size: 12px; color: #8B949E">6 attivi</span></div>
+      <label style="display: block; margin-bottom: 8px"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Trova un progetto</span><input type="search" placeholder="Trova un progetto…" style="width: 100%; box-sizing: border-box; height: 30px; padding: 0 10px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 13px"></label>
+      
+        <a href="10-progetto-panoramica.html" style="display: flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 8px; border-radius: 6px; color: #E6EDF3; text-decoration: none; background: #161B22; font-weight: 600">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #D29922; animation: none"></span>
+          <span style="flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Stazione meteo ESP32</span>
+          <span style="font-size: 12px; color: #8B949E; font-weight: 400">65%</span>
+        </a>
+      
+        <a href="10-progetto-panoramica.html" style="display: flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 8px; border-radius: 6px; color: #E6EDF3; text-decoration: none; background: transparent; font-weight: 400">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #AB7DF8; animation: heph-dot 1s infinite"></span>
+          <span style="flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Heph — tracker progetti</span>
+          <span style="font-size: 12px; color: #8B949E; font-weight: 400">41%</span>
+        </a>
+      
+        <a href="10-progetto-panoramica.html" style="display: flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 8px; border-radius: 6px; color: #E6EDF3; text-decoration: none; background: transparent; font-weight: 400">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #AB7DF8; animation: heph-dot 1s infinite"></span>
+          <span style="flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Bot Telegram bollette</span>
+          <span style="font-size: 12px; color: #8B949E; font-weight: 400">80%</span>
+        </a>
+      
+        <a href="10-progetto-panoramica.html" style="display: flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 8px; border-radius: 6px; color: #E6EDF3; text-decoration: none; background: transparent; font-weight: 400">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #F85149; animation: none"></span>
+          <span style="flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Libreria in noce</span>
+          <span style="font-size: 12px; color: #8B949E; font-weight: 400">55%</span>
+        </a>
+      
+        <a href="10-progetto-panoramica.html" style="display: flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 8px; border-radius: 6px; color: #E6EDF3; text-decoration: none; background: transparent; font-weight: 400">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #3FB950; animation: none"></span>
+          <span style="flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Supporto microscopio</span>
+          <span style="font-size: 12px; color: #8B949E; font-weight: 400">30%</span>
+        </a>
+      
+        <a href="10-progetto-panoramica.html" style="display: flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 8px; border-radius: 6px; color: #E6EDF3; text-decoration: none; background: transparent; font-weight: 400">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #8B949E; animation: none"></span>
+          <span style="flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Radio Grundig 1958</span>
+          <span style="font-size: 12px; color: #8B949E; font-weight: 400">45%</span>
+        </a>
+      
+      <a href="#" style="display: block; padding: 8px; font-size: 13px; text-decoration: none">Mostra chiusi (3)</a>
+    </nav>
+
+    <main style="flex: 999 1 640px; min-width: 0; box-sizing: border-box">
+      <div style="padding: 16px 24px 0; border-bottom: 1px solid #30363D">
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 4px">
+          <h1 style="margin: 0; font-size: 20px; font-weight: 600">Stazione meteo ESP32</h1>
+          <span style="height: 22px; padding: 0 8px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #D29922; border-radius: 11px; color: #D29922; font-size: 12px; font-weight: 500"><span style="width: 6px; height: 6px; border-radius: 50%; background: #D29922"></span>da testare</span>
+          <span style="font-size: 12px; color: #8B949E">13/20 · 65%</span>
+          <span style="flex: 1"></span>
+          <a href="21-modifica-progetto.html" style="height: 28px; padding: 0 10px; display: inline-flex; align-items: center; box-sizing: border-box; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font-size: 12px; font-weight: 500; text-decoration: none">Modifica</a>
+          <button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer">Stato ▾</button>
+          <button type="button" aria-label="Altre azioni" style="width: 28px; height: 28px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; cursor: pointer">⋯</button>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: center; font-size: 13px; color: #8B949E; margin-bottom: 10px">
+          <span>Stazione da balcone a batteria, letture ogni 10 min verso Home Assistant.</span>
+          <a href="#" style="text-decoration: none">tu/meteo-esp32</a>
+          <a href="#" style="text-decoration: none">Datasheet BME280</a>
+          <a href="#" style="text-decoration: none">Dashboard HA</a>
+          <span style="display: inline-flex; gap: 4px"><span style="height: 20px; padding: 0 8px; display: inline-flex; align-items: center; border-radius: 10px; background: #121D2F; color: #4493F8; font-size: 12px; font-weight: 500">elettronica</span><span style="height: 20px; padding: 0 8px; display: inline-flex; align-items: center; border-radius: 10px; background: #121D2F; color: #4493F8; font-size: 12px; font-weight: 500">firmware</span></span>
+        </div>
+        <nav aria-label="Sezioni del progetto" style="display: flex; flex-wrap: wrap; gap: 4px">
+          <a href="10-progetto-panoramica.html" style="padding: 8px 10px 10px; color: #E6EDF3; text-decoration: none">Panoramica</a>
+          <a href="11-progetto-roadmap.html" style="padding: 8px 10px 10px; color: #E6EDF3; text-decoration: none; font-weight: 600; border-bottom: 2px solid #F78166">Roadmap <span style="padding: 0 6px; border-radius: 10px; background: #30363D; font-size: 12px; font-weight: 400">7</span></a>
+          <a href="12-progetto-diario.html" style="padding: 8px 10px 10px; color: #E6EDF3; text-decoration: none">Diario <span style="padding: 0 6px; border-radius: 10px; background: #30363D; font-size: 12px; font-weight: 400">47</span></a>
+          <a href="13-progetto-documentazione.html" style="padding: 8px 10px 10px; color: #E6EDF3; text-decoration: none">Documentazione</a>
+          <a href="14-progetto-materiali.html" style="padding: 8px 10px 10px; color: #E6EDF3; text-decoration: none">Materiali <span style="padding: 0 6px; border-radius: 10px; background: #30363D; font-size: 12px; font-weight: 400">11</span></a>
+          <a href="15-progetto-file.html" style="padding: 8px 10px 10px; color: #E6EDF3; text-decoration: none">File <span style="padding: 0 6px; border-radius: 10px; background: #30363D; font-size: 12px; font-weight: 400">38</span></a>
+        </nav>
+      </div>
+      <div style="padding: 20px 24px 40px; display: flex; flex-direction: column; gap: 16px">
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center">
+          <label style="flex: 1 1 240px"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Filtra task</span><input type="search" placeholder="Filtra task…" style="width: 100%; box-sizing: border-box; height: 32px; padding: 0 10px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit"></label>
+          <div role="group" aria-label="Mostra" style="display: flex; border: 1px solid #30363D; border-radius: 6px; overflow: hidden">
+            <button type="button" style="height: 30px; padding: 0 12px; background: #30363D; border: 0; color: #E6EDF3; font: inherit; font-weight: 600; cursor: pointer">7 aperti</button>
+            <button type="button" style="height: 30px; padding: 0 12px; background: transparent; border: 0; border-left: 1px solid #30363D; color: #8B949E; font: inherit; cursor: pointer">13 chiusi</button>
+            <button type="button" style="height: 30px; padding: 0 12px; background: transparent; border: 0; border-left: 1px solid #30363D; color: #8B949E; font: inherit; cursor: pointer">Tutti</button>
+          </div>
+          <button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; height: 32px; font-size: 14px">Espandi tutto</button>
+          <button type="button" style="height: 32px; padding: 0 14px; background: #238636; border: 1px solid rgba(240,246,252,.1); border-radius: 6px; color: #FFF; font: inherit; font-weight: 600; cursor: pointer">Nuova fase</button>
+        </div>
+
+        
+          <section style="border: 1px solid #30363D; border-radius: 6px; border-color: #30363D">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding: 10px 12px; background: #161B22; border-radius: 6px 6px 0 0">
+              <svg width="12" height="16" viewBox="0 0 12 16" fill="#484F58" aria-hidden="true"><circle cx="3" cy="3" r="1.4"></circle><circle cx="9" cy="3" r="1.4"></circle><circle cx="3" cy="8" r="1.4"></circle><circle cx="9" cy="8" r="1.4"></circle><circle cx="3" cy="13" r="1.4"></circle><circle cx="9" cy="13" r="1.4"></circle></svg>
+              <button type="button" aria-label="Espandi o chiudi la fase" style="width: 24px; height: 24px; background: transparent; border: 0; color: #8B949E; cursor: pointer">▸</button>
+              <span style="flex: 1 1 220px; font-weight: 600; font-size: 15px; color: #8B949E">1 · Schema elettrico</span>
+              <span style="font-size: 12px; color: #8B949E">chiusa il 2/09</span>
+              <span style="flex: 0 0 140px; height: 8px; background: #30363D; border-radius: 4px; overflow: hidden" aria-hidden="true"><span style="display: block; width: 100%; height: 100%; background: #3FB950"></span></span>
+              <span style="font-size: 12px; color: #8B949E; width: 110px">4 chiusi · 0 aperti</span>
+              <button type="button" aria-label="Azioni sulla fase" style="width: 28px; height: 28px; background: transparent; border: 0; border-radius: 6px; color: #8B949E; cursor: pointer">⋯</button>
+            </div>
+            
+          </section>
+        
+          <section style="border: 1px solid #30363D; border-radius: 6px; border-color: #30363D">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding: 10px 12px; background: #161B22; border-radius: 6px 6px 0 0">
+              <svg width="12" height="16" viewBox="0 0 12 16" fill="#484F58" aria-hidden="true"><circle cx="3" cy="3" r="1.4"></circle><circle cx="9" cy="3" r="1.4"></circle><circle cx="3" cy="8" r="1.4"></circle><circle cx="9" cy="8" r="1.4"></circle><circle cx="3" cy="13" r="1.4"></circle><circle cx="9" cy="13" r="1.4"></circle></svg>
+              <button type="button" aria-label="Espandi o chiudi la fase" style="width: 24px; height: 24px; background: transparent; border: 0; color: #8B949E; cursor: pointer">▸</button>
+              <span style="flex: 1 1 220px; font-weight: 600; font-size: 15px; color: #8B949E">2 · Prototipo su breadboard</span>
+              <span style="font-size: 12px; color: #8B949E">chiusa il 30/10</span>
+              <span style="flex: 0 0 140px; height: 8px; background: #30363D; border-radius: 4px; overflow: hidden" aria-hidden="true"><span style="display: block; width: 100%; height: 100%; background: #3FB950"></span></span>
+              <span style="font-size: 12px; color: #8B949E; width: 110px">6 chiusi · 0 aperti</span>
+              <button type="button" aria-label="Azioni sulla fase" style="width: 28px; height: 28px; background: transparent; border: 0; border-radius: 6px; color: #8B949E; cursor: pointer">⋯</button>
+            </div>
+            
+          </section>
+        
+          <section style="border: 1px solid #30363D; border-radius: 6px; border-color: #6B4F0B">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding: 10px 12px; background: #161B22; border-radius: 6px 6px 0 0">
+              <svg width="12" height="16" viewBox="0 0 12 16" fill="#484F58" aria-hidden="true"><circle cx="3" cy="3" r="1.4"></circle><circle cx="9" cy="3" r="1.4"></circle><circle cx="3" cy="8" r="1.4"></circle><circle cx="9" cy="8" r="1.4"></circle><circle cx="3" cy="13" r="1.4"></circle><circle cx="9" cy="13" r="1.4"></circle></svg>
+              <button type="button" aria-label="Espandi o chiudi la fase" style="width: 24px; height: 24px; background: transparent; border: 0; color: #8B949E; cursor: pointer">▾</button>
+              <span style="flex: 1 1 220px; font-weight: 600; font-size: 15px; color: #E6EDF3">3 · Collaudo sensori</span>
+              <span style="font-size: 12px; color: #E3B341">in corso · test manuale in attesa</span>
+              <span style="flex: 0 0 140px; height: 8px; background: #30363D; border-radius: 4px; overflow: hidden" aria-hidden="true"><span style="display: block; width: 60%; height: 100%; background: #3FB950"></span></span>
+              <span style="font-size: 12px; color: #8B949E; width: 110px">3 chiusi · 2 aperti</span>
+              <button type="button" aria-label="Azioni sulla fase" style="width: 28px; height: 28px; background: transparent; border: 0; border-radius: 6px; color: #8B949E; cursor: pointer">⋯</button>
+            </div>
+            
+              <ul style="list-style: none; margin: 0; padding: 0">
+                
+                  <li style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; min-height: 42px; padding: 4px 12px 4px 20px; border-top: 1px solid #21262D; background: transparent">
+                    <svg width="12" height="16" viewBox="0 0 12 16" fill="#484F58" aria-hidden="true"><circle cx="3" cy="3" r="1.4"></circle><circle cx="9" cy="3" r="1.4"></circle><circle cx="3" cy="8" r="1.4"></circle><circle cx="9" cy="8" r="1.4"></circle><circle cx="3" cy="13" r="1.4"></circle><circle cx="9" cy="13" r="1.4"></circle></svg>
+                    <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="#AB7DF8" stroke-width="1.5"></circle><path d="M5 8.2l2 2 4-4.2" stroke="#AB7DF8" stroke-width="1.6" fill="none"></path></svg>
+                    <span style="font-size: 12px; color: #8B949E; width: 24px">3.1</span>
+                    <span style="flex: 1 1 240px; color: #8B949E">Lettura BME280 via I²C</span>
+                    <span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; border-radius: 10px; font-size: 12px; font-weight: 500; border: 1px solid #8B949E; color: #8B949E">2 file</span>
+                    <span style="font-size: 12px; color: #8B949E">tu · 4/11</span>
+                    
+                    <button type="button" aria-label="Azioni sul task" style="width: 28px; height: 28px; background: transparent; border: 0; border-radius: 6px; color: #8B949E; cursor: pointer">⋯</button>
+                  </li>
+                
+                  <li style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; min-height: 42px; padding: 4px 12px 4px 20px; border-top: 1px solid #21262D; background: transparent">
+                    <svg width="12" height="16" viewBox="0 0 12 16" fill="#484F58" aria-hidden="true"><circle cx="3" cy="3" r="1.4"></circle><circle cx="9" cy="3" r="1.4"></circle><circle cx="3" cy="8" r="1.4"></circle><circle cx="9" cy="8" r="1.4"></circle><circle cx="3" cy="13" r="1.4"></circle><circle cx="9" cy="13" r="1.4"></circle></svg>
+                    <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="#AB7DF8" stroke-width="1.5"></circle><path d="M5 8.2l2 2 4-4.2" stroke="#AB7DF8" stroke-width="1.6" fill="none"></path></svg>
+                    <span style="font-size: 12px; color: #8B949E; width: 24px">3.2</span>
+                    <span style="flex: 1 1 240px; color: #8B949E">Deep sleep 10 min con RTC</span>
+                    <span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; border-radius: 10px; font-size: 12px; font-weight: 500; border: 1px solid #AB7DF8; color: #AB7DF8">Claude</span>
+                    <span style="font-size: 12px; color: #8B949E">Claude · 20/11</span>
+                    
+                    <button type="button" aria-label="Azioni sul task" style="width: 28px; height: 28px; background: transparent; border: 0; border-radius: 6px; color: #8B949E; cursor: pointer">⋯</button>
+                  </li>
+                
+                  <li style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; min-height: 42px; padding: 4px 12px 4px 20px; border-top: 1px solid #21262D; background: transparent">
+                    <svg width="12" height="16" viewBox="0 0 12 16" fill="#484F58" aria-hidden="true"><circle cx="3" cy="3" r="1.4"></circle><circle cx="9" cy="3" r="1.4"></circle><circle cx="3" cy="8" r="1.4"></circle><circle cx="9" cy="8" r="1.4"></circle><circle cx="3" cy="13" r="1.4"></circle><circle cx="9" cy="13" r="1.4"></circle></svg>
+                    <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="#AB7DF8" stroke-width="1.5"></circle><path d="M5 8.2l2 2 4-4.2" stroke="#AB7DF8" stroke-width="1.6" fill="none"></path></svg>
+                    <span style="font-size: 12px; color: #8B949E; width: 24px">3.3</span>
+                    <span style="flex: 1 1 240px; color: #8B949E">Invio MQTT a Home Assistant</span>
+                    <span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; border-radius: 10px; font-size: 12px; font-weight: 500; border: 1px solid #AB7DF8; color: #AB7DF8">Claude</span><span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; border-radius: 10px; font-size: 12px; font-weight: 500; border: 1px solid #8B949E; color: #8B949E">3 file</span>
+                    <span style="font-size: 12px; color: #8B949E">Claude · 20/11</span>
+                    
+                    <button type="button" aria-label="Azioni sul task" style="width: 28px; height: 28px; background: transparent; border: 0; border-radius: 6px; color: #8B949E; cursor: pointer">⋯</button>
+                  </li>
+                
+                  <li style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; min-height: 42px; padding: 4px 12px 4px 20px; border-top: 1px solid #21262D; background: #1C1A10">
+                    <svg width="12" height="16" viewBox="0 0 12 16" fill="#484F58" aria-hidden="true"><circle cx="3" cy="3" r="1.4"></circle><circle cx="9" cy="3" r="1.4"></circle><circle cx="3" cy="8" r="1.4"></circle><circle cx="9" cy="8" r="1.4"></circle><circle cx="3" cy="13" r="1.4"></circle><circle cx="9" cy="13" r="1.4"></circle></svg>
+                    <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="#3FB950" stroke-width="1.5"></circle><path d="M8 8h0" stroke="#3FB950" stroke-width="1.6" fill="#3FB950"></path></svg>
+                    <span style="font-size: 12px; color: #8B949E; width: 24px">3.4</span>
+                    <span style="flex: 1 1 240px; color: #E6EDF3">Calibrare l'offset di umidità del BME280</span>
+                    <span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; border-radius: 10px; font-size: 12px; font-weight: 500; border: 1px solid #D29922; color: #D29922">prossimo</span><span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; border-radius: 10px; font-size: 12px; font-weight: 500; border: 1px solid #8B949E; color: #8B949E">nota</span>
+                    <span style="font-size: 12px; color: #8B949E"></span>
+                    
+                    <button type="button" aria-label="Azioni sul task" style="width: 28px; height: 28px; background: transparent; border: 0; border-radius: 6px; color: #8B949E; cursor: pointer">⋯</button>
+                  </li>
+                
+                  <li style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; min-height: 42px; padding: 4px 12px 4px 20px; border-top: 1px solid #21262D; background: #161B22">
+                    <svg width="12" height="16" viewBox="0 0 12 16" fill="#484F58" aria-hidden="true"><circle cx="3" cy="3" r="1.4"></circle><circle cx="9" cy="3" r="1.4"></circle><circle cx="3" cy="8" r="1.4"></circle><circle cx="9" cy="8" r="1.4"></circle><circle cx="3" cy="13" r="1.4"></circle><circle cx="9" cy="13" r="1.4"></circle></svg>
+                    <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="#3FB950" stroke-width="1.5"></circle><path d="M8 8h0" stroke="#3FB950" stroke-width="1.6" fill="#3FB950"></path></svg>
+                    <span style="font-size: 12px; color: #8B949E; width: 24px">3.5</span>
+                    <span style="flex: 1 1 240px; color: #E6EDF3">Procedura di calibrazione nella documentazione</span>
+                    
+                    <span style="font-size: 12px; color: #8B949E"></span>
+                    <button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer">Imposta come prossimo</button><button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer">Modifica</button>
+                    <button type="button" aria-label="Azioni sul task" style="width: 28px; height: 28px; background: transparent; border: 0; border-radius: 6px; color: #8B949E; cursor: pointer">⋯</button>
+                  </li>
+                
+                
+                <li style="padding: 6px 12px 8px 46px; border-top: 1px solid #21262D"><button type="button" style="height: 28px; padding: 0; background: transparent; border: 0; color: #4493F8; font: inherit; cursor: pointer">+ Aggiungi task</button></li>
+              </ul>
+            
+          </section>
+        
+          <section style="border: 1px solid #30363D; border-radius: 6px; border-color: #30363D">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding: 10px 12px; background: #161B22; border-radius: 6px 6px 0 0">
+              <svg width="12" height="16" viewBox="0 0 12 16" fill="#484F58" aria-hidden="true"><circle cx="3" cy="3" r="1.4"></circle><circle cx="9" cy="3" r="1.4"></circle><circle cx="3" cy="8" r="1.4"></circle><circle cx="9" cy="8" r="1.4"></circle><circle cx="3" cy="13" r="1.4"></circle><circle cx="9" cy="13" r="1.4"></circle></svg>
+              <button type="button" aria-label="Espandi o chiudi la fase" style="width: 24px; height: 24px; background: transparent; border: 0; color: #8B949E; cursor: pointer">▾</button>
+              <span style="flex: 1 1 220px; font-weight: 600; font-size: 15px; color: #E6EDF3">4 · Contenitore stampato (schermo solare)</span>
+              <span style="font-size: 12px; color: #8B949E">da iniziare</span>
+              <span style="flex: 0 0 140px; height: 8px; background: #30363D; border-radius: 4px; overflow: hidden" aria-hidden="true"><span style="display: block; width: 0%; height: 100%; background: #3FB950"></span></span>
+              <span style="font-size: 12px; color: #8B949E; width: 110px">0 chiusi · 3 aperti</span>
+              <button type="button" aria-label="Azioni sulla fase" style="width: 28px; height: 28px; background: transparent; border: 0; border-radius: 6px; color: #8B949E; cursor: pointer">⋯</button>
+            </div>
+            
+              <ul style="list-style: none; margin: 0; padding: 0">
+                
+                  <li style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; min-height: 42px; padding: 4px 12px 4px 20px; border-top: 1px solid #21262D; background: transparent">
+                    <svg width="12" height="16" viewBox="0 0 12 16" fill="#484F58" aria-hidden="true"><circle cx="3" cy="3" r="1.4"></circle><circle cx="9" cy="3" r="1.4"></circle><circle cx="3" cy="8" r="1.4"></circle><circle cx="9" cy="8" r="1.4"></circle><circle cx="3" cy="13" r="1.4"></circle><circle cx="9" cy="13" r="1.4"></circle></svg>
+                    <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="#3FB950" stroke-width="1.5"></circle><path d="M8 8h0" stroke="#3FB950" stroke-width="1.6" fill="#3FB950"></path></svg>
+                    <span style="font-size: 12px; color: #8B949E; width: 24px">4.1</span>
+                    <span style="flex: 1 1 240px; color: #E6EDF3">Scegliere il modello dello schermo solare</span>
+                    <span style="height: 20px; padding: 0 7px; display: inline-flex; align-items: center; border-radius: 10px; font-size: 12px; font-weight: 500; border: 1px solid #8B949E; color: #8B949E">1 file</span>
+                    <span style="font-size: 12px; color: #8B949E"></span>
+                    
+                    <button type="button" aria-label="Azioni sul task" style="width: 28px; height: 28px; background: transparent; border: 0; border-radius: 6px; color: #8B949E; cursor: pointer">⋯</button>
+                  </li>
+                
+                  <li style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; min-height: 42px; padding: 4px 12px 4px 20px; border-top: 1px solid #21262D; background: transparent">
+                    <svg width="12" height="16" viewBox="0 0 12 16" fill="#484F58" aria-hidden="true"><circle cx="3" cy="3" r="1.4"></circle><circle cx="9" cy="3" r="1.4"></circle><circle cx="3" cy="8" r="1.4"></circle><circle cx="9" cy="8" r="1.4"></circle><circle cx="3" cy="13" r="1.4"></circle><circle cx="9" cy="13" r="1.4"></circle></svg>
+                    <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="#3FB950" stroke-width="1.5"></circle><path d="M8 8h0" stroke="#3FB950" stroke-width="1.6" fill="#3FB950"></path></svg>
+                    <span style="font-size: 12px; color: #8B949E; width: 24px">4.2</span>
+                    <span style="flex: 1 1 240px; color: #E6EDF3">Supporto per batteria e pannello</span>
+                    
+                    <span style="font-size: 12px; color: #8B949E"></span>
+                    
+                    <button type="button" aria-label="Azioni sul task" style="width: 28px; height: 28px; background: transparent; border: 0; border-radius: 6px; color: #8B949E; cursor: pointer">⋯</button>
+                  </li>
+                
+                  <li style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; min-height: 42px; padding: 4px 12px 4px 20px; border-top: 1px solid #21262D; background: transparent">
+                    <svg width="12" height="16" viewBox="0 0 12 16" fill="#484F58" aria-hidden="true"><circle cx="3" cy="3" r="1.4"></circle><circle cx="9" cy="3" r="1.4"></circle><circle cx="3" cy="8" r="1.4"></circle><circle cx="9" cy="8" r="1.4"></circle><circle cx="3" cy="13" r="1.4"></circle><circle cx="9" cy="13" r="1.4"></circle></svg>
+                    <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="#3FB950" stroke-width="1.5"></circle><path d="M8 8h0" stroke="#3FB950" stroke-width="1.6" fill="#3FB950"></path></svg>
+                    <span style="font-size: 12px; color: #8B949E; width: 24px">4.3</span>
+                    <span style="flex: 1 1 240px; color: #E6EDF3">Prova di tenuta sotto la pioggia</span>
+                    
+                    <span style="font-size: 12px; color: #8B949E"></span>
+                    
+                    <button type="button" aria-label="Azioni sul task" style="width: 28px; height: 28px; background: transparent; border: 0; border-radius: 6px; color: #8B949E; cursor: pointer">⋯</button>
+                  </li>
+                
+                
+                  <li style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 8px 12px 8px 46px; border-top: 1px solid #21262D">
+                    <label style="flex: 1 1 300px"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Titolo del nuovo task</span><input type="text" value="Stampare lo schermo solare in ASA" style="width: 100%; box-sizing: border-box; height: 32px; padding: 0 10px; background: #0D1117; border: 1px solid #1F6FEB; border-radius: 6px; color: #E6EDF3; font: inherit; box-shadow: 0 0 0 3px rgba(31,111,235,.3)"></label>
+                    <button type="button" style="height: 32px; padding: 0 14px; background: #238636; border: 1px solid rgba(240,246,252,.1); border-radius: 6px; color: #FFF; font: inherit; font-weight: 600; cursor: pointer">Aggiungi</button><button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; height: 32px">Annulla</button>
+                  </li>
+                
+                <li style="padding: 6px 12px 8px 46px; border-top: 1px solid #21262D"><button type="button" style="height: 28px; padding: 0; background: transparent; border: 0; color: #4493F8; font: inherit; cursor: pointer">+ Aggiungi task</button></li>
+              </ul>
+            
+          </section>
+        
+          <section style="border: 1px solid #30363D; border-radius: 6px; border-color: #30363D">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding: 10px 12px; background: #161B22; border-radius: 6px 6px 0 0">
+              <svg width="12" height="16" viewBox="0 0 12 16" fill="#484F58" aria-hidden="true"><circle cx="3" cy="3" r="1.4"></circle><circle cx="9" cy="3" r="1.4"></circle><circle cx="3" cy="8" r="1.4"></circle><circle cx="9" cy="8" r="1.4"></circle><circle cx="3" cy="13" r="1.4"></circle><circle cx="9" cy="13" r="1.4"></circle></svg>
+              <button type="button" aria-label="Espandi o chiudi la fase" style="width: 24px; height: 24px; background: transparent; border: 0; color: #8B949E; cursor: pointer">▸</button>
+              <span style="flex: 1 1 220px; font-weight: 600; font-size: 15px; color: #E6EDF3">5 · Posa sul balcone</span>
+              <span style="font-size: 12px; color: #8B949E">da iniziare</span>
+              <span style="flex: 0 0 140px; height: 8px; background: #30363D; border-radius: 4px; overflow: hidden" aria-hidden="true"><span style="display: block; width: 0%; height: 100%; background: #3FB950"></span></span>
+              <span style="font-size: 12px; color: #8B949E; width: 110px">0 chiusi · 2 aperti</span>
+              <button type="button" aria-label="Azioni sulla fase" style="width: 28px; height: 28px; background: transparent; border: 0; border-radius: 6px; color: #8B949E; cursor: pointer">⋯</button>
+            </div>
+            
+          </section>
+        
+      </div>
+    </main>
+  </div>
+</div>
+</body>
+</html>

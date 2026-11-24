@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Heph — Stati vuoti</title>
+<style>
+body{margin:0;background:#0D1117}
+a{color:#4493F8}a:hover{color:#79B8FF}
+input::placeholder,textarea::placeholder{color:#8B949E}
+mark{background:rgba(210,153,34,.35);color:#E6EDF3;border-radius:2px;padding:0 1px}
+</style>
+</head>
+<body>
+<div style="min-height: 100vh; background: #0D1117; color: #E6EDF3; font-family: -apple-system, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; font-size: 14px">
+  <header style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 12px 20px; background: #010409; border-bottom: 1px solid #30363D">
+    <a href="../screens/01-dashboard.html" aria-label="Heph, dashboard" style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid #30363D; display: grid; place-items: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E6EDF3" stroke-width="2" aria-hidden="true"><path d="M3 9h12c0 3 2 4 6 4v2h-7l-1 3h2v2H6v-2h2l-1-3H3z"></path></svg></a>
+    <span style="font-weight: 600">Stati vuoti</span>
+    <span style="flex: 1"></span>
+    <label style="flex: 0 1 340px; display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 10px; border: 1px solid #30363D; border-radius: 6px">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8B949E" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+      <span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Cerca</span>
+      <input type="search" placeholder="Digita / per cercare" style="flex: 1; min-width: 0; background: transparent; border: 0; color: #E6EDF3; font: inherit; outline: none">
+    </label>
+    <button type="button" style="height: 32px; padding: 0 10px; background: transparent; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; cursor: pointer">IT ▾</button>
+    <a href="../screens/20-nuovo-progetto.html" style="height: 32px; padding: 0 12px; display: inline-flex; align-items: center; background: #238636; border: 1px solid rgba(240,246,252,.1); border-radius: 6px; color: #FFF; font-weight: 600; text-decoration: none; box-sizing: border-box">Nuovo progetto</a>
+    <a href="../screens/31-impostazioni.html" aria-label="Impostazioni" style="width: 32px; height: 32px; box-sizing: border-box; background: transparent; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; display: grid; place-items: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"></path></svg></a>
+    <span style="width: 32px; height: 32px; border-radius: 50%; background: #1F6FEB; display: grid; place-items: center; font-size: 12px; font-weight: 600">TU</span>
+  </header>
+  <main style="max-width: 1280px; margin: 0 auto; padding: 28px 20px 48px; box-sizing: border-box">
+    <p style="margin: 0 0 20px; color: #8B949E">Tavola degli stati vuoti: ognuno sostituisce il contenuto della sua scheda.</p>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 24px">
+        <div><h2 style="margin: 0 0 8px; font-size: 12px; font-weight: 600; letter-spacing: .04em; color: #8B949E; text-transform: uppercase">Diario · nessuna voce</h2><section style="border: 1px solid #30363D; border-radius: 6px"><div style="padding: 36px 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px">
+              <span style="width: 40px; height: 40px; border-radius: 50%; border: 1px solid #30363D; display: grid; place-items: center; color: #8B949E; font-size: 18px">✎</span>
+              <div style="font-size: 18px; font-weight: 600">Il diario è vuoto</div>
+              <div style="max-width: 440px; color: #8B949E; line-height: 1.5">Qui finiranno le tue note, le sessioni di Claude, i commit e gli eventi del progetto.</div>
+              <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 6px"><button type="button" style="height: 32px; padding: 0 14px; background: #238636; border: 1px solid rgba(240,246,252,.1); border-radius: 6px; color: #FFF; font: inherit; font-weight: 600; cursor: pointer">Scrivi la prima nota</button></div>
+            </div></section></div>
+        <div><h2 style="margin: 0 0 8px; font-size: 12px; font-weight: 600; letter-spacing: .04em; color: #8B949E; text-transform: uppercase">Materiali · lista vuota</h2><section style="border: 1px solid #30363D; border-radius: 6px"><div style="padding: 36px 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px">
+              <span style="width: 40px; height: 40px; border-radius: 50%; border: 1px solid #30363D; display: grid; place-items: center; color: #8B949E; font-size: 18px">▤</span>
+              <div style="font-size: 18px; font-weight: 600">Nessun materiale</div>
+              <div style="max-width: 440px; color: #8B949E; line-height: 1.5">Tieni qui la lista della spesa: componenti, legname, filamento. Con prezzi e stato dell’ordine.</div>
+              <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 6px"><button type="button" style="height: 32px; padding: 0 14px; background: #238636; border: 1px solid rgba(240,246,252,.1); border-radius: 6px; color: #FFF; font: inherit; font-weight: 600; cursor: pointer">Aggiungi materiale</button><button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; height: 32px; font-size: 14px">Importa da CSV</button></div>
+            </div></section></div>
+        <div><h2 style="margin: 0 0 8px; font-size: 12px; font-weight: 600; letter-spacing: .04em; color: #8B949E; text-transform: uppercase">File · nessun file</h2><section style="border: 1px solid #30363D; border-radius: 6px"><div style="padding: 36px 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px">
+              <span style="width: 40px; height: 40px; border-radius: 50%; border: 1px solid #30363D; display: grid; place-items: center; color: #8B949E; font-size: 18px">▣</span>
+              <div style="font-size: 18px; font-weight: 600">Nessun file</div>
+              <div style="max-width: 440px; color: #8B949E; line-height: 1.5">Trascina qui foto, PDF o modelli 3D. Gli screenshot dei test di Claude compariranno da soli.</div>
+              <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 6px"><button type="button" style="height: 32px; padding: 0 14px; background: #238636; border: 1px solid rgba(240,246,252,.1); border-radius: 6px; color: #FFF; font: inherit; font-weight: 600; cursor: pointer">Carica file</button></div>
+            </div></section></div>
+        <div><h2 style="margin: 0 0 8px; font-size: 12px; font-weight: 600; letter-spacing: .04em; color: #8B949E; text-transform: uppercase">Roadmap · nessuna fase</h2><section style="border: 1px solid #30363D; border-radius: 6px"><div style="padding: 36px 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px">
+              <span style="width: 40px; height: 40px; border-radius: 50%; border: 1px solid #30363D; display: grid; place-items: center; color: #8B949E; font-size: 18px">◇</span>
+              <div style="font-size: 18px; font-weight: 600">La roadmap è vuota</div>
+              <div style="max-width: 440px; color: #8B949E; line-height: 1.5">Dividi il progetto in fasi e ogni fase in task. Il primo task aperto diventa il prossimo passo.</div>
+              <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 6px"><button type="button" style="height: 32px; padding: 0 14px; background: #238636; border: 1px solid rgba(240,246,252,.1); border-radius: 6px; color: #FFF; font: inherit; font-weight: 600; cursor: pointer">Aggiungi la prima fase</button></div>
+            </div></section></div>
+        <div><h2 style="margin: 0 0 8px; font-size: 12px; font-weight: 600; letter-spacing: .04em; color: #8B949E; text-transform: uppercase">Ricerca · nessun risultato</h2><section style="border: 1px solid #30363D; border-radius: 6px"><div style="padding: 36px 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px">
+              <span style="width: 40px; height: 40px; border-radius: 50%; border: 1px solid #30363D; display: grid; place-items: center; color: #8B949E; font-size: 18px">⌕</span>
+              <div style="font-size: 18px; font-weight: 600">Nessun risultato per «pannello 12V»</div>
+              <div style="max-width: 440px; color: #8B949E; line-height: 1.5">Prova con meno parole o togli i filtri: stai cercando solo nella Documentazione di «Stazione meteo ESP32».</div>
+              <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 6px"><button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; height: 32px; font-size: 14px">Cerca ovunque</button><button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; height: 32px; font-size: 14px">Togli i filtri</button></div>
+            </div></section></div>
+        <div><h2 style="margin: 0 0 8px; font-size: 12px; font-weight: 600; letter-spacing: .04em; color: #8B949E; text-transform: uppercase">Proposte · nessuna in attesa</h2><section style="border: 1px solid #30363D; border-radius: 6px"><div style="padding: 36px 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px">
+              <span style="width: 40px; height: 40px; border-radius: 50%; border: 1px solid #30363D; display: grid; place-items: center; color: #8B949E; font-size: 18px">✓</span>
+              <div style="font-size: 18px; font-weight: 600">Nessuna proposta in attesa</div>
+              <div style="max-width: 440px; color: #8B949E; line-height: 1.5">Quando Claude vorrà eliminare una fase o chiudere un progetto, te lo chiederà qui.</div>
+              <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 6px"><button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; height: 32px; font-size: 14px">Vedi le decise</button></div>
+            </div></section></div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

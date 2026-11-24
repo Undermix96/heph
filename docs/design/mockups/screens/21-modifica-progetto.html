@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Heph — Modifica progetto</title>
+<style>
+body{margin:0;background:#0D1117}
+a{color:#4493F8}a:hover{color:#79B8FF}
+input::placeholder,textarea::placeholder{color:#8B949E}
+mark{background:rgba(210,153,34,.35);color:#E6EDF3;border-radius:2px;padding:0 1px}
+</style>
+</head>
+<body>
+<div style="min-height: 100vh; background: #0D1117; color: #E6EDF3; font-family: -apple-system, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; font-size: 14px">
+  <header style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 12px 20px; background: #010409; border-bottom: 1px solid #30363D">
+    <a href="01-dashboard.html" aria-label="Heph, dashboard" style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid #30363D; display: grid; place-items: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E6EDF3" stroke-width="2" aria-hidden="true"><path d="M3 9h12c0 3 2 4 6 4v2h-7l-1 3h2v2H6v-2h2l-1-3H3z"></path></svg></a>
+    <span><a href="01-dashboard.html" style="color: #E6EDF3; text-decoration: none">progetti</a> <span style="color: #8B949E">/</span> <a href="10-progetto-panoramica.html" style="color: #E6EDF3; text-decoration: none">stazione-meteo-esp32</a> <span style="color: #8B949E">/</span> <b style="font-weight: 600">modifica</b></span>
+    <span style="flex: 1"></span>
+    <label style="flex: 0 1 340px; display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 10px; border: 1px solid #30363D; border-radius: 6px">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8B949E" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+      <span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Cerca</span>
+      <input type="search" placeholder="Digita / per cercare" style="flex: 1; min-width: 0; background: transparent; border: 0; color: #E6EDF3; font: inherit; outline: none">
+    </label>
+    <button type="button" style="height: 32px; padding: 0 10px; background: transparent; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; cursor: pointer">IT ▾</button>
+    <a href="20-nuovo-progetto.html" style="height: 32px; padding: 0 12px; display: inline-flex; align-items: center; background: #238636; border: 1px solid rgba(240,246,252,.1); border-radius: 6px; color: #FFF; font-weight: 600; text-decoration: none; box-sizing: border-box">Nuovo progetto</a>
+    <a href="31-impostazioni.html" aria-label="Impostazioni" style="width: 32px; height: 32px; box-sizing: border-box; background: transparent; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; display: grid; place-items: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"></path></svg></a>
+    <span style="width: 32px; height: 32px; border-radius: 50%; background: #1F6FEB; display: grid; place-items: center; font-size: 12px; font-weight: 600">TU</span>
+  </header>
+  <main style="max-width: 760px; margin: 0 auto; padding: 32px 20px 56px; box-sizing: border-box">
+    <div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 12px; margin-bottom: 18px">
+      <h1 style="margin: 0; font-size: 24px; font-weight: 400">Modifica progetto</h1>
+      <a href="10-progetto-panoramica.html" style="text-decoration: none">← Stazione meteo ESP32</a>
+    </div>
+    <form style="display: flex; flex-direction: column; gap: 22px; padding-top: 18px; border-top: 1px solid #21262D">
+      <label><span style="display: block; font-weight: 600; margin-bottom: 6px">Nome *</span><input type="text" value="Stazione meteo ESP32" style="width: 100%; box-sizing: border-box; height: 32px; padding: 0 10px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; max-width: 420px"></label>
+      <label><span style="display: block; font-weight: 600; margin-bottom: 6px">Descrizione</span><textarea rows="3" style="width: 100%; box-sizing: border-box; padding: 8px 10px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; line-height: 1.5; resize: vertical">Stazione da balcone a batteria: temperatura, umidità e pressione ogni 10 minuti verso Home Assistant, deep sleep tra le letture.</textarea></label>
+      <div>
+        <span style="display: block; font-weight: 600; margin-bottom: 6px">Tag</span>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-height: 32px; padding: 3px 8px; border: 1px solid #30363D; border-radius: 6px">
+          <span style="height: 20px; padding: 0 8px; display: inline-flex; align-items: center; border-radius: 10px; background: #121D2F; color: #4493F8; font-size: 12px; font-weight: 500; text-decoration: none; white-space: nowrap; height: 22px">elettronica ✕</span><span style="height: 20px; padding: 0 8px; display: inline-flex; align-items: center; border-radius: 10px; background: #121D2F; color: #4493F8; font-size: 12px; font-weight: 500; text-decoration: none; white-space: nowrap; height: 22px">firmware ✕</span>
+          <label style="flex: 1; min-width: 120px"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Aggiungi tag</span><input type="text" placeholder="Aggiungi…" style="width: 100%; height: 24px; background: transparent; border: 0; color: #E6EDF3; font: inherit; outline: none"></label>
+        </div>
+      </div>
+      <div>
+        <span style="display: block; font-weight: 600; margin-bottom: 6px">Copertina</span>
+        <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center">
+          <div style="flex: 0 0 180px; aspect-ratio: 16/10; border: 1px solid #30363D; border-radius: 6px; background: #1C2128; display: grid; place-items: center; font-size: 12px; color: #8B949E">breadboard_v2.jpg</div>
+          <div style="display: flex; flex-direction: column; gap: 6px"><button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer">Scegli dai file del progetto</button><button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer">Carica nuova</button><button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; color: #FF7B72">Rimuovi</button></div>
+        </div>
+      </div>
+      <div>
+        <span style="display: block; font-weight: 600; margin-bottom: 6px">Collegamenti e repository</span>
+        <div style="border: 1px solid #30363D; border-radius: 6px">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 10px 12px"><b style="font-weight: 600">tu/meteo-esp32</b><span style="font-size: 12px; color: #8B949E">documentazione: docs/DECISIONI.md · commit nel diario</span><span style="flex: 1"></span><button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer">Modifica</button></div>
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 10px 12px; border-top: 1px solid #21262D"><span>Datasheet BME280</span><span style="font-size: 12px; color: #8B949E; flex: 1">bosch-sensortec.com/…</span><button type="button" aria-label="Rimuovi" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer">✕</button></div>
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 10px 12px; border-top: 1px solid #21262D"><span>Dashboard HA</span><span style="font-size: 12px; color: #8B949E; flex: 1">ha.casa.lan/lovelace/meteo</span><button type="button" aria-label="Rimuovi" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer">✕</button></div>
+        </div>
+        <button type="button" style="margin-top: 8px; height: 28px; padding: 0; background: transparent; border: 0; color: #4493F8; font: inherit; cursor: pointer">+ Aggiungi collegamento o repository</button>
+      </div>
+
+      <fieldset style="border: 0; margin: 0; padding: 0">
+        <legend style="display: block; font-weight: 600; margin-bottom: 6px; padding: 0">Stato</legend>
+        <div style="border: 1px solid #30363D; border-radius: 6px">
+          <label style="display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border-top: 1px solid #21262D; cursor: pointer; border-top: 0"><input type="radio" name="st" style="margin: 3px 0 0; accent-color: #1F6FEB"><span><b style="font-weight: 600">In sviluppo</b></span></label>
+          <label style="display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border-top: 1px solid #21262D; cursor: pointer; background: #1C1A10"><input type="radio" name="st" checked style="margin: 3px 0 0; accent-color: #1F6FEB"><span style="flex: 1"><b style="font-weight: 600">In attesa del mio test</b><span style="display: block; font-size: 12px; color: #8B949E; margin: 2px 0 8px">Cosa devi verificare:</span><input type="text" value="24 h all'aperto, confronto con ARPA, nessuna lettura persa" style="width: 100%; box-sizing: border-box; height: 32px; padding: 0 10px; background: #0D1117; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit"></span></label>
+          <label style="display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border-top: 1px solid #21262D; cursor: pointer"><input type="radio" name="st" style="margin: 3px 0 0; accent-color: #1F6FEB"><span style="flex: 1"><b style="font-weight: 600">In pausa</b><span style="display: block; font-size: 12px; color: #8B949E">Ti chiederemo cosa stai aspettando.</span></span></label>
+          <label style="display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border-top: 1px solid #21262D; cursor: pointer"><input type="radio" name="st" style="margin: 3px 0 0; accent-color: #1F6FEB"><span><b style="font-weight: 600">Completato</b><span style="display: block; font-size: 12px; color: #8B949E">Esce dalla dashboard, resta nei chiusi.</span></span></label>
+          <label style="display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border-top: 1px solid #21262D; cursor: pointer"><input type="radio" name="st" style="margin: 3px 0 0; accent-color: #1F6FEB"><span><b style="font-weight: 600">Abbandonato</b><span style="display: block; font-size: 12px; color: #8B949E">Come completato, ma ricorda che non è finito.</span></span></label>
+        </div>
+      </fieldset>
+
+      <div style="display: flex; gap: 8px; padding-top: 4px">
+        <button type="button" style="height: 32px; padding: 0 14px; background: #238636; border: 1px solid rgba(240,246,252,.1); border-radius: 6px; color: #FFF; font: inherit; font-weight: 600; cursor: pointer">Salva modifiche</button>
+        <a href="10-progetto-panoramica.html" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; height: 32px; font-size: 14px; display: inline-flex; align-items: center; text-decoration: none; box-sizing: border-box">Annulla</a>
+      </div>
+
+      <section style="padding-top: 22px; border-top: 1px solid #21262D">
+        <h2 style="margin: 0 0 10px; font-size: 16px; font-weight: 600">Esporta</h2>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px"><span style="flex: 1 1 300px; color: #8B949E; line-height: 1.5">Un archivio con roadmap, diario e documentazione in Markdown, i materiali in CSV e tutti i file.</span><button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; height: 32px; font-size: 14px">Esporta .zip</button><button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; height: 32px; font-size: 14px">Solo JSON</button></div>
+      </section>
+
+      <section>
+        <h2 style="margin: 0 0 10px; font-size: 16px; font-weight: 600">Zona pericolosa</h2>
+        <div style="border: 1px solid #8E1519; border-radius: 6px">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 14px 16px">
+            <span style="flex: 1 1 300px"><b style="font-weight: 600">Revoca l'accesso di Claude a questo progetto</b><span style="display: block; font-size: 12px; color: #8B949E; margin-top: 2px">Claude potrà solo leggere: niente diario, task o screenshot.</span></span>
+            <button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; height: 32px; font-size: 14px; color: #FF7B72">Revoca</button>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 14px 16px; border-top: 1px solid #8E1519">
+            <span style="flex: 1 1 300px"><b style="font-weight: 600">Elimina il progetto</b><span style="display: block; font-size: 12px; color: #8B949E; margin-top: 2px">Cancella roadmap, 47 voci di diario, 11 materiali e 38 file. Non si può annullare.</span></span>
+            <button type="button" style="height: 28px; padding: 0 10px; background: #21262D; border: 1px solid #30363D; border-radius: 6px; color: #E6EDF3; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer; height: 32px; font-size: 14px; color: #FF7B72">Elimina…</button>
+          </div>
+        </div>
+      </section>
+    </form>
+  </main>
+</div>
+</body>
+</html>

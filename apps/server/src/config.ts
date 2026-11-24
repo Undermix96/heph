@@ -30,7 +30,8 @@ function intEnv(env: NodeJS.ProcessEnv, name: string, fallback: number): number 
 }
 
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): ServerConfig {
-  const dataDir = env.HEPH_DATA_DIR ?? path.resolve('data');
+  // INIT_CWD: the directory npm was invoked from (repo root for `npm run dev`).
+  const dataDir = env.HEPH_DATA_DIR ?? path.resolve(env.INIT_CWD ?? process.cwd(), 'data');
   return {
     dbDir: env.HEPH_DB_DIR ?? path.join(dataDir, 'db'),
     filesDir: env.HEPH_FILES_DIR ?? path.join(dataDir, 'files'),

@@ -1,6 +1,6 @@
 # Hephaestus (heph)
 
-> **Work in progress** — not usable yet.
+> **Work in progress.** The backend (data model, REST API, auth, CLI) works; the web UI is only a setup/login page for now, and the MCP server and Claude Code plugin are not built yet.
 
 Hephaestus is a self-hosted, AI-first tracker for personal software and DIY projects.
 Its core job: let you resume any project after weeks without reconstructing context.
@@ -9,11 +9,59 @@ Its core job: let you resume any project after weeks without reconstructing cont
 - Built to be operated by [Claude Code](https://claude.com/claude-code) as a first-class user, through an MCP server and hooks that keep the diary up to date automatically.
 - Single user, single Docker container, SQLite storage, runs on a LAN server.
 
+## Run with Docker Compose
+
+Requirements: Docker with the Compose plugin, on an x86-64 or arm64 Linux host.
+
+```sh
+git clone https://github.com/Undermix96/heph.git
+cd heph
+docker compose up -d --build
+```
+
+Then open `http://<server>:8080` and complete the one-time setup wizard (username + password). The wizard shows the **API token** once; you can see it again later in Settings.
+
+| Port | Serves | Expose |
+|------|--------|--------|
+| `8080` | Web UI + REST API (`/api`) | LAN, and through your Cloudflare Tunnel |
+| `8081` | REST API with the token, one-time uploads (`/upload`), later MCP and hooks | **LAN only**: never route it through the tunnel |
+
+To change the host ports or time zone, copy `.env.example` to `.env` and edit it.
+
+Data lives in two named volumes: `heph-db` (`/data/db`, SQLite) and `heph-files` (`/data/files`, uploads and thumbnails). They must be on local storage, not NFS/SMB. Back up by copying both volumes while the container is stopped.
+
+### Recovery and maintenance
+
+```sh
+docker exec -it heph heph reset-password             # new password, signs out all sessions
+docker exec -it heph heph reset-password --username me   # also rename the user
+docker exec heph heph rotate-token                   # new API token; the old one stops working
+docker compose logs -f heph
+```
+
+### Cloudflare Tunnel
+
+Point the tunnel at `http://<server>:8080`. The app does not read any Cloudflare Access header; it uses its own login. Login cookies are marked `Secure` automatically when requests arrive over HTTPS (via `X-Forwarded-Proto`).
+
+## Development
+
+Requires Node.js 26 (see `.nvmrc`).
+
+```sh
+npm install
+npm run dev        # server on :8080 (UI/REST) and :8081 (agent), data in ./data
+npm run dev:web    # Vite dev server for the web UI, proxies /api to :8080
+npm run check      # lint + typecheck + tests
+npm run smoke:docker   # build the image and run an end-to-end smoke test
+```
+
+Layout: `packages/schema` (shared Zod schemas and types), `packages/core` (database, migrations, domain layer), `apps/server` (HTTP adapters and the `heph` CLI), `apps/web` (web UI).
+
 ## Documentation
 
-- [`docs/HANDOFF.md`](docs/HANDOFF.md) — product spec and scope.
-- [`DECISIONS.md`](DECISIONS.md) — architectural and technical decisions.
-- [`docs/design/`](docs/design/) — approved UI design (mockups, tokens).
+- [`docs/HANDOFF.md`](docs/HANDOFF.md): product spec and scope.
+- [`DECISIONS.md`](DECISIONS.md): architectural and technical decisions.
+- [`docs/design/`](docs/design/): approved UI design (mockups, tokens).
 
 ## License
 

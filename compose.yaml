@@ -1,5 +1,5 @@
 # Hephaestus (heph). Start with: docker compose up -d
-# Pulls the image built by the "Docker image" GitHub workflow.
+# Pulls the multi-arch image published by the "Release" GitHub workflow (D42).
 # To build locally instead: docker compose -f compose.yaml -f compose.build.yaml up -d --build
 services:
   heph:

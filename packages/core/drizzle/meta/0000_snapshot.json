@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "7d57ce87-8c08-451e-b4ca-b6f50ad21178",
+  "id": "edaa4240-ebcf-4325-a94f-835a5423b423",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "auth_sessions": {
@@ -271,7 +271,7 @@
         },
         "testing_since": {
           "name": "testing_since",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false

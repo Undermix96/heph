@@ -19,6 +19,7 @@ import { and, asc, eq, inArray, sql } from 'drizzle-orm';
 import type { Ctx } from './context.js';
 import {
   files,
+  isoForStorage,
   projectLinks,
   projectRepos,
   projects,
@@ -511,7 +512,7 @@ export class ProjectsService {
     this.d.db
       .update(projects)
       // Stored as ISO text: max() on fixed-width ISO strings is the later time.
-      .set({ lastActivityAt: sql`max(${projects.lastActivityAt}, ${new Date(at).toISOString()})` })
+      .set({ lastActivityAt: sql`max(${projects.lastActivityAt}, ${isoForStorage(at)})` })
       .where(eq(projects.id, projectId))
       .run();
   }

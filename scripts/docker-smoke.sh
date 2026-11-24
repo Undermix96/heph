@@ -44,9 +44,20 @@ echo "==> start"
 start
 
 echo "==> hardening"
-docker exec "$NAME" sh -c 'touch /app/write-test' 2>/dev/null && fail "root filesystem is writable"
-docker exec "$NAME" sh -c 'touch /data/files/.write-test && rm /data/files/.write-test' || fail "data volume not writable"
+# D41: read-only root mount, no capabilities, no-new-privileges, non-root, only /tmp and /data writable.
+docker exec "$NAME" sh -c "awk '\$2==\"/\" {print \$4}' /proc/mounts | grep -qE '(^|,)ro(,|$)'" ||
+  fail "root filesystem is not mounted read-only"
+docker exec "$NAME" sh -c "grep -q '^CapBnd:[[:space:]]*0*$' /proc/1/status" || fail "capabilities not dropped (CapBnd)"
+docker exec "$NAME" sh -c "grep -q '^NoNewPrivs:[[:space:]]*1$' /proc/1/status" || fail "no-new-privileges not set"
 [ "$(docker exec "$NAME" id -u)" != "0" ] || fail "container runs as root"
+for dir in /tmp /data/db /data/files; do
+  docker exec "$NAME" sh -c "touch $dir/.write-test && rm $dir/.write-test" || fail "$dir not writable"
+done
+
+if [ -n "${EXPECT_VERSION:-}" ]; then
+  echo "==> version $EXPECT_VERSION"
+  curl -fsS "$UI/health" | grep -q "\"version\":\"$EXPECT_VERSION\"" || fail "/health does not report $EXPECT_VERSION"
+fi
 
 echo "==> setup wizard"
 [ "$(curl -fsS "$UI/api/auth/status" | json .setupDone)" = "false" ] || fail "setup already done"
@@ -80,7 +91,7 @@ mcp() {
     -H 'accept: application/json, text/event-stream' -d "$1" "$AGENT/mcp"
 }
 mcp '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"smoke","version":"0"}}}' \
-  | grep -q '"name":"heph"' || fail "MCP initialize"
+  | grep -q "\"name\":\"heph\",\"version\":\"${EXPECT_VERSION:-dev}\"" || fail "MCP initialize (server name/version)"
 mcp '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}' | grep -q '"get_briefing"' || fail "MCP tools/list"
 mcp "{\"jsonrpc\":\"2.0\",\"id\":3,\"method\":\"tools/call\",\"params\":{\"name\":\"get_briefing\",\"arguments\":{\"project\":\"$SLUG\"}}}" \
   | grep -q 'First task' || fail "MCP get_briefing"

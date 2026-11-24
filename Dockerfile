@@ -14,6 +14,8 @@ COPY packages/schema/package.json packages/schema/
 COPY packages/core/package.json packages/core/
 COPY apps/server/package.json apps/server/
 COPY apps/web/package.json apps/web/
+# `npm ci` runs the "prepare" script; it is a no-op without a .git checkout but must exist.
+COPY scripts/setup-hooks.mjs scripts/
 
 # All dependencies, for building.
 FROM manifests AS deps

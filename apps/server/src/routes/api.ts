@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import { Readable } from 'node:stream';
-import { type Domain, DomainError } from '@heph/core';
+import { type Domain, DomainError, iso } from '@heph/core';
 import { FileTarget, ProposalState } from '@heph/schema';
 import { type Context, Hono } from 'hono';
 import { requireUi } from '../http/auth.js';
@@ -186,7 +186,10 @@ export function apiRoutes(domain: Domain) {
     const input = (await body(c)) as { target?: unknown; caption?: string | null };
     const { token, expiresAt } = domain.files.createUploadToken(ref(c), input, c.get('ctx'));
     const path = `/upload/${token}`;
-    return c.json({ path, url: new URL(path, publicAgentOrigin(c)).toString(), expiresAt }, 201);
+    return c.json(
+      { path, url: new URL(path, publicAgentOrigin(c)).toString(), expiresAt: iso(expiresAt) },
+      201,
+    );
   });
 
   r.get('/files/:id', (c) => c.json(domain.files.get(idParam(c))));

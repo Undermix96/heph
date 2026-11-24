@@ -24,6 +24,8 @@ concurrency:
 
 jobs:
   release:
+    # Releases come from main only.
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -36,7 +38,8 @@ jobs:
           day=$(date -u +%Y.%m.%d)
           n=$(( $(git tag --list "${day}-b*" | wc -l) + 1 ))
           version="${day}-b${n}"
-          prev=$(git tag --list '20*.*.*-b*' --sort=-creatordate | head -n1)
+          # Previous release: highest CalVer tag reachable from HEAD.
+          prev=$(git tag --merged HEAD --list '20*.*.*-b*' --sort=-v:refname | head -n1)
           image="ghcr.io/$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')/heph"
           {
             echo "version=$version"
@@ -66,6 +69,7 @@ jobs:
         env:
           SKIP_BUILD: "1"
           IMAGE: heph:smoke
+          EXPECT_VERSION: ${{ steps.version.outputs.version }}
         run: bash scripts/docker-smoke.sh
 
       - name: Log in to ghcr.io

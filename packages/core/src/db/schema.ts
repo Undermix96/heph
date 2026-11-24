@@ -38,9 +38,25 @@ import {
  */
 export const isoTime = customType<{ data: number; driverData: string }>({
   dataType: () => 'text',
-  toDriver: (ms) => new Date(ms).toISOString(),
+  toDriver: (ms) => isoForStorage(ms),
   fromDriver: (iso) => Date.parse(iso),
 });
+
+/** Earliest and latest storable times: the ISO text stays fixed-width (4-digit years). */
+// ISO literals on purpose: Date.UTC maps years 0–99 to 1900–1999.
+export const MIN_STORABLE_MS = Date.parse('0000-01-01T00:00:00.000Z');
+export const MAX_STORABLE_MS = Date.parse('9999-12-31T23:59:59.999Z');
+
+/**
+ * Unix ms → fixed-width UTC ISO text. Do not break (D39): years outside 0000–9999
+ * would produce `+010000-…` / `-000001-…` and break text ordering, so they are refused.
+ */
+export function isoForStorage(ms: number): string {
+  if (!Number.isFinite(ms) || ms < MIN_STORABLE_MS || ms > MAX_STORABLE_MS) {
+    throw new RangeError(`Timestamp out of the storable range (years 0000-9999): ${ms}`);
+  }
+  return new Date(ms).toISOString();
+}
 
 /** SQLite default with the same format as Date.prototype.toISOString(). */
 const now = sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`;
@@ -352,7 +368,7 @@ export const claudeSessions = sqliteTable(
     endedAt: isoTime('ended_at'),
     endReason: text('end_reason'),
     isTesting: bool('is_testing').notNull().default(false),
-    testingSince: integer('testing_since'),
+    testingSince: isoTime('testing_since'),
     /** Auto-diary bookkeeping for the Stop hook (phase 5). */
     lastDiaryAt: isoTime('last_diary_at'),
     turnsSinceDiary: integer('turns_since_diary').notNull().default(0),

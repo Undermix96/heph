@@ -37,7 +37,7 @@ CREATE TABLE `claude_sessions` (
 	`ended_at` text,
 	`end_reason` text,
 	`is_testing` integer DEFAULT false NOT NULL,
-	`testing_since` integer,
+	`testing_since` text,
 	`last_diary_at` text,
 	`turns_since_diary` integer DEFAULT 0 NOT NULL,
 	`last_head_sha` text,

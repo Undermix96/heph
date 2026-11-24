@@ -456,7 +456,7 @@ describe('one-time upload URLs', () => {
     expect(req.status).toBe(201);
     expect(req.data.path).toMatch(/^\/upload\/[A-Za-z0-9_-]{20,}$/);
     expect(req.data.url).toBe(`http://localhost${req.data.path}`);
-    expect(req.data.expiresAt).toBe(t.clock.now + 60 * 60_000);
+    expect(req.data.expiresAt).toBe(new Date(t.clock.now + 60 * 60_000).toISOString());
 
     // Not served on the UI port.
     const onUi = await t.ui.request(req.data.path, {

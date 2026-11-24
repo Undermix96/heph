@@ -1,7 +1,7 @@
 # Decisions
 
 Durable architectural and technical decisions for Hephaestus (heph), numbered `D<n>`, newest at the bottom.
-Entries are never renumbered or rewritten; superseded ones are marked. Cite them in code as `D14`, spec sections as `§4.2` (spec: `docs/HANDOFF.md`).
+Entries are never renumbered or rewritten (the one-time conversion to `D<n>` numbering on 2026-11-24 kept every entry and its order); superseded ones are marked. Cite them in code as `D14`, spec sections as `§4.2` (spec: `docs/HANDOFF.md`).
 Work state lives in [`PROGRESS.md`](PROGRESS.md), not here.
 
 ---

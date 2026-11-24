@@ -11,3 +11,4 @@ export { outline, type RestructurePayload } from './restructure.js';
 export { computeNextTask, confirmedFlag, syncedPhaseStatus } from './roadmap.js';
 export { toFtsQuery } from './search.js';
 export { activityStateOf, attentionGroupOf, badgeOf } from './status.js';
+export { iso, toMs } from './util.js';

@@ -40,12 +40,13 @@ export class LoginLimiter {
   }
 }
 
-function clientKey(
-  c: { req: { header(n: string): string | undefined } },
-  remote: string | undefined,
-): string {
-  // Behind cloudflared the peer is the tunnel; use the forwarded client address when present.
-  return c.req.header('x-forwarded-for')?.split(',')[0]?.trim() || remote || 'unknown';
+/**
+ * Limiter key: the TCP peer address only. Do not use X-Forwarded-For: the client
+ * controls it and could get a fresh bucket per request. Behind the tunnel all
+ * logins share the tunnel's bucket, which is acceptable for a single-user app.
+ */
+function clientKey(remote: string | undefined): string {
+  return remote || 'unknown';
 }
 
 /**
@@ -76,7 +77,7 @@ export function authRoutes(domain: Domain, limiter = new LoginLimiter()) {
   r.post('/auth/login', async (c) => {
     const remote = (c.env as { incoming?: { socket?: { remoteAddress?: string } } } | undefined)
       ?.incoming?.socket?.remoteAddress;
-    const key = clientKey(c, remote);
+    const key = clientKey(remote);
     limiter.check(key);
     try {
       const session = await domain.auth.login(await body(c), c.req.header('user-agent'));

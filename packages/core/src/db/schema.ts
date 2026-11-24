@@ -26,7 +26,6 @@ import {
   real,
   sqliteTable,
   text,
-  uniqueIndex,
 } from 'drizzle-orm/sqlite-core';
 
 const now = sql`(cast(unixepoch('subsec') * 1000 as integer))`;

@@ -3,8 +3,41 @@
   "files": {
     "includes": ["**", "!**/dist", "!**/node_modules", "!docs/design", "!**/drizzle/meta", "!data"]
   },
-  "formatter": { "enabled": true, "indentStyle": "space", "indentWidth": 2, "lineWidth": 100 },
-  "javascript": { "formatter": { "quoteStyle": "single", "semicolons": "always" } },
-  "linter": { "enabled": true, "rules": { "recommended": true } },
-  "assist": { "actions": { "source": { "organizeImports": "on" } } }
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "semicolons": "always"
+    }
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true
+    }
+  },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["**/*.test.ts", "**/test/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noNonNullAssertion": "off"
+          }
+        }
+      }
+    }
+  ]
 }

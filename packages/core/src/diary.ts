@@ -95,14 +95,21 @@ export class DiaryService {
 
   /**
    * Lists entries newest first. `projectRef` null = all projects.
-   * Paginate with `before` = the `occurredAt` of the last entry received.
+   * Paginate with `before` = the `occurredAt` and `beforeId` = the `id` of the
+   * last entry received (keyset on the non-unique timestamp plus id).
    */
   list(projectRef: ProjectRef | null, query: unknown = {}): DiaryEntryView[] {
     const q = parse(DiaryQuery, query);
     const where: SQL[] = [];
     if (projectRef !== null)
       where.push(eq(diaryEntries.projectId, this.d.projects.row(projectRef).id));
-    if (q.before !== undefined) where.push(lt(diaryEntries.occurredAt, q.before));
+    if (q.before !== undefined) {
+      where.push(
+        q.beforeId === undefined
+          ? lt(diaryEntries.occurredAt, q.before)
+          : sql`(${diaryEntries.occurredAt} < ${q.before} or (${diaryEntries.occurredAt} = ${q.before} and ${diaryEntries.id} < ${q.beforeId}))`,
+      );
+    }
     if (q.source) where.push(eq(diaryEntries.source, q.source));
     if (q.type) where.push(eq(diaryEntries.type, q.type));
     if (q.withFiles) {

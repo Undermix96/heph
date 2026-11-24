@@ -66,10 +66,10 @@ export class FilesService {
    * logs a diary event and applies Claude screenshot retention.
    */
   async ingest(projectRef: ProjectRef, input: IngestInput, ctx: Ctx): Promise<FileView> {
-    const project = this.d.projects.writable(projectRef, ctx);
-    const target = this.resolveTarget(project.id, input.target ?? {});
-    const originalName = sanitizeName(input.originalName);
     try {
+      const project = this.d.projects.writable(projectRef, ctx);
+      const target = this.resolveTarget(project.id, input.target ?? {});
+      const originalName = sanitizeName(input.originalName);
       const size = (await fsp.stat(input.tempPath)).size;
       if (size > this.maxBytes())
         throw new DomainError('too_large', `File exceeds ${this.d.settings.get().maxUploadMb} MB`);
@@ -492,6 +492,7 @@ function sanitizeName(name: string): string {
   // Keep only the base name; drop control characters and path separators.
   const base = name.split(/[\\/]/).pop() ?? '';
   const clean = base
+    // biome-ignore lint/suspicious/noControlCharactersInRegex: stripping control characters is the point
     .replace(/[\u0000-\u001f\u007f]/g, '')
     .trim()
     .slice(0, 255);

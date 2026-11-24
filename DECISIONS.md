@@ -170,3 +170,8 @@ Work state (what's done, what's next) does **not** belong here.
 
 **Decision:** npm workspaces: `packages/schema` (Zod), `packages/core` (Drizzle schema, migrations, domain), `apps/server` (Hono adapters, CLI), `apps/web` (Vite + React SPA). Libraries: Hono, Zod v4, Drizzle + better-sqlite3, @node-rs/argon2, sharp, busboy, pino, Vitest, Biome. Integer IDs, unix-ms timestamps.
 **Why:** No extra package manager to install (corepack is gone from Node 25+); one domain package for all adapters; mature, light dependencies. Integer IDs are short for an agent to reference.
+
+## 2026-11-24 — Diary keyset pagination and no all-digit slugs
+
+**Decision:** Diary lists paginate with a keyset cursor `(before = occurredAt, beforeId = id)` of the last entry received, because many entries share a millisecond. Project slugs can never be only digits (generated ones get a `p-` prefix; explicit ones are rejected), so a project reference that is all digits is always an id.
+**Why:** Found by the domain test suite: timestamp-only cursors skipped entries, and digit-only slugs were unreachable by slug.

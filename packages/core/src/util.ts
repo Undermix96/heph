@@ -24,6 +24,8 @@ export function slugify(name: string): string {
     .replace(/^-+|-+$/g, '')
     .slice(0, 60)
     .replace(/-+$/g, '');
+  // All-digit slugs would clash with numeric ids in project references.
+  if (/^\d+$/.test(s)) return `p-${s}`;
   return s || 'project';
 }
 

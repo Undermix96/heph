@@ -70,7 +70,7 @@ describe('REST smoke', () => {
     form2.append('file', new Blob(['hello'], { type: 'text/plain' }), 'notes.txt');
     const agentUp = await t.agent.request(req.data.path, { method: 'POST', body: form2 });
     expect(agentUp.status).toBe(201);
-    expect((await agentUp.json()).source).toBe('claude_code');
+    expect(((await agentUp.json()) as { source: string }).source).toBe('claude_code');
     const form3 = new FormData();
     form3.append('file', new Blob(['again']), 'again.txt');
     expect((await t.agent.request(req.data.path, { method: 'POST', body: form3 })).status).toBe(

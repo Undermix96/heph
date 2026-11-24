@@ -310,6 +310,7 @@ export class ProjectsService {
     const row = this.row(ref);
     this.d.tx(() => {
       this.d.db.delete(projects).where(eq(projects.id, row.id)).run();
+      this.dropUnusedTags();
       this.d.audit.record(ctx, {
         projectId: null,
         entity: 'project',
@@ -563,7 +564,11 @@ export class ProjectsService {
           .onConflictDoNothing()
           .run();
     }
-    // Drop tags no project uses any more.
+    this.dropUnusedTags();
+  }
+
+  /** Drops tags no project uses any more. */
+  private dropUnusedTags(): void {
     this.d.db.delete(tags).where(sql`${tags.id} not in (select tag_id from project_tags)`).run();
   }
 

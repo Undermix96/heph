@@ -22,7 +22,9 @@ export const Slug = z
   .trim()
   .min(1)
   .max(80)
-  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Lowercase letters, digits and dashes');
+  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Lowercase letters, digits and dashes')
+  // All-digit slugs would be ambiguous with numeric ids in project references.
+  .refine((s) => !/^\d+$/.test(s), 'A slug cannot be only digits');
 
 export const TagName = z.string().trim().toLowerCase().min(1).max(50);
 
@@ -142,7 +144,9 @@ export const AddNoteInput = z.object({
 export type AddNoteInput = z.infer<typeof AddNoteInput>;
 
 export const DiaryQuery = z.object({
+  /** Keyset cursor: `occurredAt` and `id` of the last entry already received. */
   before: z.coerce.number().int().optional(),
+  beforeId: z.coerce.number().int().optional(),
   limit: z.coerce.number().int().min(1).max(500).default(50),
   source: z.enum(['ui', 'claude_code', 'github', 'system']).optional(),
   type: z.enum(['note', 'session', 'event']).optional(),

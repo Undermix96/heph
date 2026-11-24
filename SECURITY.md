@@ -1,0 +1,48 @@
+# Security
+
+Security posture of Hephaestus (heph), stated as it is. Decisions are referenced as `D<n>` in [`DECISIONS.md`](DECISIONS.md).
+
+## Model
+
+- **Single user, self-hosted.** One account, created by a one-time setup wizard (D5). There is no registration page.
+- **Two ports (D3, D24).** The UI port (8080) is meant to be published through a Cloudflare Tunnel protected by Cloudflare Access. The agent port (8081: MCP, uploads, hooks) is meant for the LAN only and must never be routed through the tunnel.
+- **The app does its own authentication** and does not rely on Cloudflare Access (D4): it behaves the same on the LAN and through the tunnel.
+
+## Authentication
+
+- Passwords are hashed with argon2id. Login sessions are random tokens stored only as SHA-256 hashes; the cookie is `httpOnly`, `SameSite=Lax`, and `Secure` when the request arrives over HTTPS (`X-Forwarded-Proto`). Sessions expire after 30 days of inactivity.
+- Failed logins are rate-limited per client address. Cookie-authenticated writes from another origin are refused.
+- **API token (D6, D45):** one static bearer token for MCP and the agent REST API. It is stored readable in the database because the spec requires showing it in Settings. Rotate it with `docker exec heph heph rotate-token` or from Settings; the old token stops working at once. It does not expire by itself.
+- The GitHub token (phase 6) is write-only: the API only says whether it is set.
+- Recovery: `docker exec -it heph heph reset-password` sets a new password and signs out every session.
+
+## Agent writes
+
+- Claude Code acts with source `claude_code`; every change is recorded in `change_log` with its source and session.
+- Destructive agent changes become proposals unless Claude says the user confirmed them in chat (D12, D37); that claim is recorded, and the `allowClaudeConfirm` setting can turn it off. A project can disable Claude writes entirely.
+
+## Files
+
+- Uploads are type-sniffed from their content. Raster images are re-encoded: EXIF, GPS and other metadata are removed and the orientation is applied.
+- Downloads are sent with `X-Content-Type-Options: nosniff`, a sandboxed CSP, and as attachments unless they are images or PDFs.
+- Agent uploads use one-time URLs that expire after one hour (D14).
+
+## Container (D41)
+
+- Non-root user, read-only root filesystem, tmpfs `/tmp`, all Linux capabilities dropped, `no-new-privileges`. Only `/data/db` and `/data/files` are writable.
+- Images are built and published by the manual Release workflow (D42); the server only pulls them.
+
+## Supply chain (D43)
+
+- gitleaks scans staged changes in a pre-commit hook and the full history in CI.
+- Dependabot proposes grouped dependency updates weekly. Dependencies install from the lockfile.
+
+## Known limits
+
+- No TLS inside the container: HTTPS is expected from the tunnel; on the LAN, traffic (including the API token) is plain HTTP.
+- No multi-user access control and no audit UI yet; `change_log` is only readable in the database for now.
+- Backups are manual (copy the volumes with the container stopped); there is no automated, tested restore yet.
+
+## Reporting a vulnerability
+
+Please open a private security advisory on GitHub (Security → Advisories → "Report a vulnerability") rather than a public issue.

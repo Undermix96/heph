@@ -40,11 +40,10 @@ Last updated: 2026-11-24
 - Timestamps as UTC ISO strings; migrations regenerated (D39, D40), commit `ab29542`. Existing databases must be recreated.
 - Hardened container (D41) and CalVer multi-arch Release workflow (D42), commit `9e28a0d`.
 - gitleaks pre-commit + CI and Dependabot (D43), commit `9fb3042`; full history scanned: no leaks.
-- DECISIONS.md renumbered into D1–D45 with rejected alternatives; this file in the new format.
+- DECISIONS.md renumbered into D1–D45 with rejected alternatives; this file in the new format; package READMEs and SECURITY.md.
 
 ## In progress
 
-- Package READMEs and SECURITY.md.
 - Independent verification (fresh subagent, spec + diff only) of the alignment changes, then the first CalVer release.
 
 ## Next step

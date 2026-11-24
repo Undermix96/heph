@@ -1,5 +1,6 @@
 import type { Domain } from '@heph/core';
 import { DomainError } from '@heph/core';
+import { LoginInput } from '@heph/schema';
 import { Hono, type MiddlewareHandler } from 'hono';
 import { getCookie } from 'hono/cookie';
 import {
@@ -18,13 +19,15 @@ const MAX_TRACKED_KEYS = 10_000;
 const MAX_QUEUED_PER_KEY = 50;
 
 const tooMany = () => new DomainError('forbidden', 'Too many failed logins; try again later');
+const busy = () =>
+  new DomainError('rate_limited', 'Too many login attempts in progress; try again in a moment');
 
 /**
  * Fixed-window limiter for failed logins, per client key.
  * Do not break: attempts of one key are evaluated strictly one after another
  * (run()), so concurrent requests cannot evaluate more than `max` wrong
- * passwords, and concurrent correct logins are not refused. Active blocks are
- * never evicted.
+ * passwords, and concurrent correct logins are not refused (up to the queue
+ * bound, beyond which attempts get 429). Blocks are evicted only past 10 000 keys.
  */
 export class LoginLimiter {
   private readonly failures = new Map<string, { count: number; resetAt: number }>();
@@ -43,7 +46,8 @@ export class LoginLimiter {
   run<T>(key: string, attempt: () => Promise<T>): Promise<T> {
     if (this.isBlocked(key)) return Promise.reject(tooMany());
     const q = this.queues.get(key) ?? { tail: Promise.resolve(), size: 0 };
-    if (q.size >= MAX_QUEUED_PER_KEY) return Promise.reject(tooMany());
+    // Bounded queue (memory): excess concurrent attempts get 429, not a "failed logins" 403.
+    if (q.size >= MAX_QUEUED_PER_KEY) return Promise.reject(busy());
     q.size++;
     this.queues.set(key, q);
     const result = q.tail.then(async () => {
@@ -77,12 +81,22 @@ export class LoginLimiter {
     if (this.failures.size > MAX_TRACKED_KEYS) this.evict(now);
   }
 
-  /** Drops expired entries, then unblocked ones (oldest first); never active blocks. */
+  /**
+   * Shrinks the map to 90% of the cap (so the O(n) sweep runs at most once per
+   * ~1000 new keys): expired entries first, then unblocked ones, and only then the
+   * oldest blocks. Blocks are evicted only with more than 10 000 distinct
+   * addresses failing, where the attacker already has that many fresh budgets.
+   */
   private evict(now: number): void {
+    const target = Math.floor(MAX_TRACKED_KEYS * 0.9);
     for (const [k, v] of this.failures) if (v.resetAt <= now) this.failures.delete(k);
     for (const [k, v] of this.failures) {
-      if (this.failures.size <= MAX_TRACKED_KEYS) break;
+      if (this.failures.size <= target) return;
       if (v.count < this.max) this.failures.delete(k);
+    }
+    for (const k of this.failures.keys()) {
+      if (this.failures.size <= target) return;
+      this.failures.delete(k);
     }
   }
 }
@@ -137,7 +151,10 @@ export function authRoutes(domain: Domain, limiter = new LoginLimiter()) {
     const remote = (c.env as { incoming?: { socket?: { remoteAddress?: string } } } | undefined)
       ?.incoming?.socket?.remoteAddress;
     const key = clientKey(remote);
-    const input = await body(c, { requireJson: true });
+    // Validate the shape first: an invalid login is a 400 and never reaches the limiter.
+    const parsed = LoginInput.safeParse(await body(c, { requireJson: true }));
+    if (!parsed.success) throw new DomainError('validation', 'Expected { username, password }');
+    const input = parsed.data;
     const session = await limiter.run(key, () =>
       domain.auth.login(input, c.req.header('user-agent')),
     );

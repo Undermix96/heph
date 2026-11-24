@@ -23,6 +23,7 @@ const STATUS: Record<DomainError['code'], ContentfulStatusCode> = {
   forbidden: 403,
   unauthorized: 401,
   too_large: 413,
+  rate_limited: 429,
   unsupported: 501,
 };
 

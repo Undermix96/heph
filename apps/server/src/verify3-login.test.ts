@@ -94,7 +94,8 @@ describe('verify3: concurrent limiting', () => {
     const { login } = await startUi();
     const codes = await Promise.all(Array.from({ length: 100 }, () => login(WRONG)));
     expect(codes.filter((c) => c === 401).length, String(codes)).toBe(MAX);
-    expect(codes.filter((c) => c === 403).length).toBe(100 - MAX);
+    // The rest are refused: 403 once blocked, or 429 beyond the per-key queue bound.
+    expect(codes.filter((c) => c === 403 || c === 429).length).toBe(100 - MAX);
     expect(await login(USER.password)).toBe(403);
   });
 

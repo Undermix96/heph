@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { makeApps, USER } from '../test/app.js';
+import { LoginLimiter } from './auth.js';
 
 describe('setup wizard and login', () => {
   it('reports setup status and allows setup exactly once', async () => {
@@ -154,4 +155,18 @@ describe('cross-site login protection', () => {
     // Neither attempt counted against the owner.
     expect((await t.uiReq('POST', '/api/auth/login', { json: USER })).status).toBe(200);
   });
+});
+
+describe('LoginLimiter eviction', () => {
+  it('stays fast with tens of thousands of blocked keys and keeps recent blocks', async () => {
+    const { DomainError } = await import('@heph/core');
+    const l = new LoginLimiter(1, 60_000, () => 0);
+    const bad = () => Promise.reject(new DomainError('unauthorized', 'nope'));
+    const started = Date.now();
+    for (let i = 0; i < 30_000; i++) await l.run(`k${i}`, bad).catch(() => undefined);
+    // Amortized eviction: the old quadratic scan took tens of seconds here.
+    expect(Date.now() - started).toBeLessThan(10_000);
+    expect(l.isBlocked('k29999')).toBe(true);
+    expect(l.isBlocked('k0')).toBe(false);
+  }, 30_000);
 });

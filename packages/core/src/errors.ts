@@ -5,6 +5,7 @@ export type DomainErrorCode =
   | 'forbidden'
   | 'unauthorized'
   | 'too_large'
+  | 'rate_limited'
   | 'unsupported';
 
 /** Errors the adapters map to protocol-specific responses (HTTP status, MCP error). */

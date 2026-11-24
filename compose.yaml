@@ -1,8 +1,10 @@
-# Hephaestus (heph). Start with: docker compose up -d --build
+# Hephaestus (heph). Start with: docker compose up -d
+# Pulls the image built by the "Docker image" GitHub workflow.
+# To build locally instead: docker compose -f compose.yaml -f compose.build.yaml up -d --build
 services:
   heph:
-    build: .
-    image: heph:latest
+    image: ghcr.io/undermix96/heph:${HEPH_TAG:-latest}
+    pull_policy: always
     container_name: heph # lets you run `docker exec -it heph heph reset-password`
     init: true
     restart: unless-stopped

@@ -1,0 +1,7 @@
+# Override: build the image from this checkout instead of pulling it.
+#   docker compose -f compose.yaml -f compose.build.yaml up -d --build
+services:
+  heph:
+    build: .
+    image: heph:local
+    pull_policy: build

@@ -1,5 +1,5 @@
 /** Markdown renderers for MCP tool results (compact, agent-facing, ids as `#42`). */
-import { badgeLabel, diaryLine, isoDay, isoMinute, oneLine, pct, relTime } from '@heph/core';
+import { badgeLabel, diaryLine, isoTimestamp, oneLine, pct, relTime } from '@heph/core';
 import type {
   DiaryEntryView,
   FileView,
@@ -58,7 +58,7 @@ export function attentionList(list: ProjectSummary[], now: number): string {
 export function taskLine(t: TaskView, phaseNo: number, taskNo: number, nextId?: number): string {
   const next = t.id === nextId ? ' ← next' : '';
   const link = t.link ? ` (${t.link})` : '';
-  const done = t.doneAt ? ` · done ${isoDay(t.doneAt)}` : '';
+  const done = t.doneAt ? ` · done ${isoTimestamp(t.doneAt)}` : '';
   return `   - [${t.done ? 'x' : ' '}] ${phaseNo}.${taskNo} #${t.id} ${t.title}${link}${done}${next}`;
 }
 
@@ -95,7 +95,7 @@ export function projectDetail(
     `# ${p.name}`,
     '',
     `Project #${p.id} \`${p.slug}\` · ${badgeLabel(p.badge)} · status \`${p.lifecycleStatus}\` · ${pct(p.progress)} · ` +
-      `last activity ${relTime(p.lastActivityAt, now)} · created ${isoDay(p.createdAt)}`,
+      `last activity ${relTime(p.lastActivityAt, now)} · created ${isoTimestamp(p.createdAt)}`,
   ];
   if (p.tags.length) out.push(`Tags: ${p.tags.join(', ')}`);
   if (p.repoDetails.length) {
@@ -126,7 +126,7 @@ export function projectDetail(
 }
 
 export function proposalLine(x: ProposalView): string {
-  const decided = x.decidedAt ? ` ${isoDay(x.decidedAt)}` : '';
+  const decided = x.decidedAt ? ` ${isoTimestamp(x.decidedAt)}` : '';
   const note = x.decisionNote ? ` · user note: ${oneLine(x.decisionNote, 300)}` : '';
   const reason = x.reason ? ` · reason: ${oneLine(x.reason, 200)}` : '';
   return `- #${x.id} ${x.kind} · ${x.state}${decided} · project #${x.projectId}${reason}${note}`;
@@ -168,7 +168,7 @@ export function fileLine(f: FileView): string {
   const dims = f.width && f.height ? ` · ${f.width}×${f.height}` : '';
   return (
     `File #${f.id} "${f.originalName}" · ${f.mime} · ${formatBytes(f.size)}${dims} · ${target} · ` +
-    `by ${f.source} ${isoMinute(f.createdAt)}${f.pinned ? ' · pinned' : ''}${f.caption ? ` · caption: ${f.caption}` : ''}`
+    `by ${f.source} ${isoTimestamp(f.createdAt)}${f.pinned ? ' · pinned' : ''}${f.caption ? ` · caption: ${f.caption}` : ''}`
   );
 }
 

@@ -79,15 +79,13 @@ export function authRoutes(domain: Domain, limiter = new LoginLimiter()) {
       ?.incoming?.socket?.remoteAddress;
     const key = clientKey(remote);
     limiter.check(key);
-    try {
-      const session = await domain.auth.login(await body(c), c.req.header('user-agent'));
-      limiter.reset(key);
-      setSessionCookie(c, session.sessionToken, session.expiresAt);
-      return c.json({ user: session.user });
-    } catch (e) {
-      if (e instanceof DomainError && e.code === 'unauthorized') limiter.fail(key);
-      throw e;
-    }
+    // Count the attempt before the (slow, async) password check, so parallel
+    // requests cannot all pass check(); a successful login clears the counter.
+    limiter.fail(key);
+    const session = await domain.auth.login(await body(c), c.req.header('user-agent'));
+    limiter.reset(key);
+    setSessionCookie(c, session.sessionToken, session.expiresAt);
+    return c.json({ user: session.user });
   });
 
   r.post('/auth/logout', (c) => {

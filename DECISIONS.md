@@ -344,7 +344,7 @@ Alternatives rejected:
 
 ## D41 — Hardened container (2026-11-24)
 
-Decision: The container runs as the non-root `node` user with a read-only root filesystem, a tmpfs `/tmp`, all Linux capabilities dropped and `no-new-privileges`; only the two data volumes are writable. `compose.yaml` and the smoke test use the same flags, and the smoke test asserts them.
+Decision: The container runs as the non-root `node` user with a read-only root filesystem, a tmpfs `/tmp`, all Linux capabilities dropped and `no-new-privileges`; only the two data volumes, `/tmp` and Docker's default in-memory `/dev/shm` are writable. `compose.yaml` and the smoke test use the same flags, and the smoke test asserts them.
 Why: User rule for container deployments (global CLAUDE.md); limits what a compromised process can do.
 Alternatives rejected:
 

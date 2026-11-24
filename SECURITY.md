@@ -29,7 +29,7 @@ Security posture of Hephaestus (heph), stated as it is. Decisions are referenced
 
 ## Container (D41)
 
-- Non-root user, read-only root filesystem, tmpfs `/tmp`, all Linux capabilities dropped, `no-new-privileges`. Only `/data/db` and `/data/files` are writable.
+- Non-root user, read-only root filesystem, tmpfs `/tmp`, all Linux capabilities dropped, `no-new-privileges`. Writable: `/data/db`, `/data/files`, the tmpfs `/tmp` and Docker's default `/dev/shm` (a small in-memory tmpfs, noexec).
 - Images are built and published by the manual Release workflow (D42); the server only pulls them.
 
 ## Supply chain (D43)

@@ -2,12 +2,9 @@
 import type { Badge, DiaryEntryView, Progress, Source } from '@heph/schema';
 import { DAY_MS, toMs } from './util.js';
 
-export function isoMinute(t: string | number): string {
-  return new Date(toMs(t)).toISOString().slice(0, 16).replace('T', ' ');
-}
-
-export function isoDay(t: string | number): string {
-  return new Date(toMs(t)).toISOString().slice(0, 10);
+/** Full UTC ISO 8601 timestamp, e.g. 2026-11-24T12:00:00.000Z (D39). */
+export function isoTimestamp(t: string | number): string {
+  return new Date(toMs(t)).toISOString();
 }
 
 /** "just now", "5 min ago", "3 h ago", "12 days ago". */
@@ -67,5 +64,5 @@ export function diaryLine(e: DiaryEntryView, max = 280): string {
   const kind = e.type === 'event' ? (e.eventKind ?? 'event') : e.type;
   const files = e.files.length ? ` [${e.files.length} file${e.files.length === 1 ? '' : 's'}]` : '';
   const session = e.sessionId ? ` (session ${e.sessionId.slice(0, 8)})` : '';
-  return `- ${isoMinute(e.occurredAt)} · ${SOURCE_LABEL[e.source]}${session} · ${kind} #${e.id}: ${oneLine(e.body, max)}${files}`;
+  return `- ${isoTimestamp(e.occurredAt)} · ${SOURCE_LABEL[e.source]}${session} · ${kind} #${e.id}: ${oneLine(e.body, max)}${files}`;
 }

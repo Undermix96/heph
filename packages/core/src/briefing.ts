@@ -1,7 +1,7 @@
 import { normalizeRepo, type ProjectDetail } from '@heph/schema';
 import type { Domain } from './domain.js';
 import { DomainError } from './errors.js';
-import { badgeLabel, diaryLine, isoDay, isoMinute, oneLine, pct, relTime } from './format.js';
+import { badgeLabel, diaryLine, isoTimestamp, oneLine, pct, relTime } from './format.js';
 import { DAY_MS, toMs } from './util.js';
 
 export interface BriefingTarget {
@@ -61,7 +61,7 @@ export class BriefingService {
     out.push('');
     out.push(
       `Project #${p.id} \`${p.slug}\` · **${badgeLabel(p.badge)}** · status \`${p.lifecycleStatus}\` · ` +
-        `progress ${pct(p.progress)} · last activity ${relTime(p.lastActivityAt, now)} (${isoMinute(p.lastActivityAt)} UTC)`,
+        `progress ${pct(p.progress)} · last activity ${relTime(p.lastActivityAt, now)} (${isoTimestamp(p.lastActivityAt)})`,
     );
     if (p.tags.length) out.push(`Tags: ${p.tags.join(', ')}`);
     if (p.description.trim()) out.push('', oneLine(p.description, 600));
@@ -71,7 +71,7 @@ export class BriefingService {
         `**Live:** ${p.liveSessions
           .map(
             (s) =>
-              `Claude session ${s.sessionId.slice(0, 8)}${s.repo ? ` on ${s.repo}` : ''} since ${isoMinute(s.startedAt)}` +
+              `Claude session ${s.sessionId.slice(0, 8)}${s.repo ? ` on ${s.repo}` : ''} since ${isoTimestamp(s.startedAt)}` +
               (s.isTesting ? ' (running tests)' : ''),
           )
           .join('; ')}`,
@@ -142,12 +142,12 @@ export class BriefingService {
       out.push('', '## Proposals', '');
       for (const x of pending) {
         out.push(
-          `- #${x.id} ${x.kind} · pending since ${isoDay(x.createdAt)}${x.reason ? ` · ${oneLine(x.reason, 160)}` : ''}`,
+          `- #${x.id} ${x.kind} · pending since ${isoTimestamp(x.createdAt)}${x.reason ? ` · ${oneLine(x.reason, 160)}` : ''}`,
         );
       }
       for (const x of decided) {
         out.push(
-          `- #${x.id} ${x.kind} · **${x.state}** ${isoDay(x.decidedAt ?? x.createdAt)}` +
+          `- #${x.id} ${x.kind} · **${x.state}** ${isoTimestamp(x.decidedAt ?? x.createdAt)}` +
             (x.decisionNote ? ` · user note: ${oneLine(x.decisionNote, 300)}` : ''),
         );
       }

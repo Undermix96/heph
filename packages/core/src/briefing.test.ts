@@ -159,7 +159,7 @@ describe('briefing: build', () => {
     expect(header).toContain(`**${badgeLabel(proj.badge)}**`);
     expect(header).toContain('status `in_development`');
     expect(header).toContain('progress 1/4 (25%)');
-    expect(header).toContain('last activity just now (2026-11-24 12:00 UTC)');
+    expect(header).toContain('last activity just now (2026-11-24T12:00:00.000Z)');
   });
 
   it('shows tags and description', () => {
@@ -207,7 +207,7 @@ describe('briefing: build', () => {
     insertLiveSession(d, p.id, { sessionId: 'abcdef1234567890', isTesting: true });
     text = d.briefing.build({ project: p.id });
     expect(text).toContain(
-      '**Live:** Claude session abcdef12 since 2026-11-24 12:00 (running tests)',
+      '**Live:** Claude session abcdef12 since 2026-11-24T12:00:00.000Z (running tests)',
     );
   });
 
@@ -399,12 +399,14 @@ describe('briefing: build', () => {
 
     let props = section(d.briefing.build({ project: p.id }), 'Proposals');
     expect(props).toContain(
-      `- #${pending.id} delete_task · pending since 2026-11-24 · Not needed anymore`,
+      `- #${pending.id} delete_task · pending since 2026-11-24T12:00:00.000Z · Not needed anymore`,
     );
     expect(props).toContain(
-      `- #${approved.id} delete_task · **approved** 2026-11-25 · user note: Fine, drop it`,
+      `- #${approved.id} delete_task · **approved** 2026-11-25T12:00:00.000Z · user note: Fine, drop it`,
     );
-    expect(props).toContain(`- #${rejected.id} delete_task · **rejected** 2026-11-25`);
+    expect(props).toContain(
+      `- #${rejected.id} delete_task · **rejected** 2026-11-25T12:00:00.000Z`,
+    );
     expect(props).not.toMatch(new RegExp(`#${rejected.id} .*user note`));
 
     clock.advance(7 * DAY_MS - 1);

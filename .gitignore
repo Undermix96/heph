@@ -29,3 +29,6 @@ Thumbs.db
 # Local Claude Code settings
 .claude/settings.local.json
 .claude/launch.json
+
+# End-to-end test data and screenshots
+/.e2e-data/

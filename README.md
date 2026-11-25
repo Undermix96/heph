@@ -72,6 +72,7 @@ npm run dev        # server on :8080 (UI/REST) and :8081 (agent), data in ./data
 npm run dev:web    # Vite dev server for the web UI, proxies /api to :8080
 npm run check      # lint + typecheck + tests
 npm run smoke:docker   # build the image and run an end-to-end smoke test
+npm run e2e        # Playwright end-to-end, axe and screenshots (after npm run build)
 ```
 
 Layout: `packages/schema` (shared Zod schemas and types), `packages/core` (database, migrations, domain layer), `apps/server` (HTTP adapters and the `heph` CLI), `apps/web` (web UI).

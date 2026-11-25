@@ -486,3 +486,14 @@ Alternatives rejected:
 - A cheaper model for verification: the user wants in-depth verification kept.
 - A hard cap of 2 rounds: serious problems found in round 2 must still be fixed and verified.
 - Verification after every step (global rule): too costly for the pace needed.
+
+## D56 — Phase 4 group C: touch targets, e2e in CI, diary months, UTF-8 bodies (2026-11-25)
+
+Decision: On the phone (below 600 px) interactive controls are at least 44 px high (and icon buttons 44 px wide), through a Heph token `--control-touch-min: 44px` added to the copy of the design tokens. Playwright end-to-end tests, axe accessibility checks (no serious or critical WCAG 2.1 AA violations) and screenshots at 1440 and 390 px run locally (`npm run e2e`) and in a separate `e2e` CI job against the real server with invented data. The diary month bar uses `GET /api/projects/:ref/diary/months` and `GET /api/diary/months` (entry counts per UTC month). REST request bodies must be valid UTF-8 and are refused with a validation error otherwise.
+Why: User decisions on the group C plan, 2026-11-25. The owner's global rule asks for 44 px touch targets where the design says 40 px; e2e in CI catches UI regressions on every push; jumping to a month not yet loaded needs counts from the server; task #42 showed a Windows shell sending Latin-1, which a lenient decoder stored as U+FFFD without any error.
+Alternatives rejected:
+
+- 40 px controls (design): below the owner's rule.
+- E2E only locally: regressions would wait for the next manual run.
+- Month counts from the loaded entries only: cannot jump to months not loaded yet.
+- Decoding bodies leniently: silent loss of characters.

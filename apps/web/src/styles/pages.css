@@ -1075,3 +1075,11 @@
     display: none;
   }
 }
+
+/* Links inside text are underlined, not told apart by colour alone (axe link-in-text-block). */
+.hits a,
+.md a,
+.checklist a,
+.history a {
+  text-decoration: underline;
+}

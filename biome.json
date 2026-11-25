@@ -8,7 +8,8 @@
       "!docs/design",
       "!apps/web/src/styles/tokens.css",
       "!**/drizzle/meta",
-      "!data"
+      "!data",
+      "!.e2e-data"
     ]
   },
   "formatter": {

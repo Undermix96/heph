@@ -15,7 +15,7 @@
     "dev": "npm run dev -w @heph/server",
     "dev:web": "npm run dev -w @heph/web",
     "build": "npm run build -w @heph/web && npm run build -w @heph/server",
-    "typecheck": "tsc -p tsconfig.json && tsc -p apps/web",
+    "typecheck": "tsc -p tsconfig.json && tsc -p apps/web && tsc -p e2e",
     "lint": "biome check .",
     "format": "biome check --write .",
     "test": "vitest run",
@@ -23,10 +23,13 @@
     "db:generate": "npm run db:generate -w @heph/core",
     "check": "npm run lint && npm run typecheck && npm test",
     "smoke:docker": "bash scripts/docker-smoke.sh",
-    "prepare": "node scripts/setup-hooks.mjs"
+    "prepare": "node scripts/setup-hooks.mjs",
+    "e2e": "node -e \"require('fs').rmSync('.e2e-data',{recursive:true,force:true})\" && playwright test"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.1",
     "@biomejs/biome": "^2.6.8",
+    "@playwright/test": "^1.65.1",
     "@types/node": "^26.6.6",
     "typescript": "^7.0.2",
     "vitest": "^5.1.1"

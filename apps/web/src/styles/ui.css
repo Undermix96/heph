@@ -225,18 +225,24 @@
   color: var(--fg-on-emphasis);
   flex: none;
 }
+/* Subtle background + light text: AA contrast at 9 px (axe, group C4). */
 .avatar-ui {
-  background: var(--accent-emphasis);
+  background: var(--accent-subtle);
+  color: var(--accent-fg);
+  border: 1px solid var(--accent-border);
 }
 .avatar-claude_code {
-  background: var(--ai-fg);
+  background: var(--ai-label-bg);
+  color: var(--ai-text);
+  border: 1px solid var(--ai-border);
 }
 .avatar-github {
   background: var(--bg-muted);
   color: var(--fg-default);
 }
 .avatar-system {
-  background: var(--border-strong);
+  background: var(--bg-muted);
+  color: var(--fg-secondary);
 }
 .counter {
   display: inline-block;

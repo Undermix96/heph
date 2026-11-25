@@ -104,7 +104,10 @@ export function Snippet({ html }: { html: string }) {
 }
 
 function decode(s: string): string {
+  // The server escapes with numeric entities (&#38;), named ones are handled too.
   return s
+    .replace(/&#x([0-9a-f]+);/gi, (_m, h: string) => String.fromCodePoint(Number.parseInt(h, 16)))
+    .replace(/&#(\d+);/g, (_m, d: string) => String.fromCodePoint(Number(d)))
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')

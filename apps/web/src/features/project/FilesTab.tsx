@@ -40,7 +40,7 @@ export function FilesTab({ projectRef }: { projectRef: string }) {
     refetchInterval: false,
   });
   const [kind, setKind] = useState<Kind>('all');
-  const [open, setOpen] = useState<{ list: FileView[]; at: number } | null>(null);
+  const [open, setOpen] = useState<{ which: 'pinned' | 'all'; at: number } | null>(null);
   const [pending, setPending] = useState<Pending[]>([]);
   const [over, setOver] = useState(false);
   const input = useRef<HTMLInputElement>(null);
@@ -164,17 +164,17 @@ export function FilesTab({ projectRef }: { projectRef: string }) {
         <>
           {pinned.length > 0 && (
             <Box title={t('files.pinned')}>
-              <FileGrid files={pinned} big onOpen={(at) => setOpen({ list: pinned, at })} />
+              <FileGrid files={pinned} big onOpen={(at) => setOpen({ which: 'pinned', at })} />
             </Box>
           )}
           <Box title={t('files.allFiles')} meta={String(all.length)}>
-            <FileGrid files={all} onOpen={(at) => setOpen({ list: all, at })} />
+            <FileGrid files={all} onOpen={(at) => setOpen({ which: 'all', at })} />
           </Box>
         </>
       )}
       {open && (
         <Viewer
-          files={open.list}
+          files={open.which === 'pinned' ? pinned : all}
           start={open.at}
           onClose={() => setOpen(null)}
           onChanged={() => void q.refetch()}

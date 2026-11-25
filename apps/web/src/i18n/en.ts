@@ -459,4 +459,5 @@ export const en: Record<MessageKey, string> = {
   'edit.deleteTitle': 'Delete the project?',
   'edit.deleteConfirm': 'This cannot be undone. Type “{name}” to confirm.',
   'edit.typeName': 'Project name',
+  'settings.wrongPassword': 'The current password is wrong. Try again.',
 };

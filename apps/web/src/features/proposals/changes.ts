@@ -10,7 +10,7 @@ export type ChangeLine = { op: 'remove' | 'add' | 'same'; text: string };
 export type Changes =
   | { kind: 'delete_task'; lines: ChangeLine[] }
   | { kind: 'delete_phase'; title: string; taskCount: number; lines: ChangeLine[] }
-  | { kind: 'set_status'; to: string; note: string }
+  | { kind: 'set_status'; from: string | null; to: string; note: string }
   | { kind: 'restructure_roadmap'; lines: ChangeLine[] }
   | { kind: 'unknown' };
 
@@ -30,7 +30,12 @@ export function changesOf(p: ProposalView): Changes {
         lines: [{ op: 'remove', text: String(x.title ?? '') }],
       };
     case 'set_status':
-      return { kind: 'set_status', to: String(x.status ?? ''), note: String(x.note ?? '') };
+      return {
+        kind: 'set_status',
+        from: typeof x.from === 'string' ? x.from : null,
+        to: String(x.status ?? ''),
+        note: String(x.note ?? ''),
+      };
     case 'restructure_roadmap':
       return {
         kind: 'restructure_roadmap',

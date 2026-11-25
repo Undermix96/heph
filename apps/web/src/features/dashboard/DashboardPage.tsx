@@ -417,7 +417,11 @@ function ProjectTable({ projects }: { projects: ProjectSummary[] }) {
                     </td>
                     <td>
                       <span className="table-progress">
-                        <SegmentedProgress phases={p.phaseProgress} />
+                        {p.phaseProgress.length > 0 ? (
+                          <SegmentedProgress phases={p.phaseProgress} />
+                        ) : (
+                          <ProgressBar progress={p.progress} />
+                        )}
                       </span>{' '}
                       <span className="meta">{Math.round(p.progress.ratio * 100)}%</span>
                     </td>

@@ -112,7 +112,12 @@ function ProposalBox({
       {c.kind === 'set_status' ? (
         <p>
           {t('proposals.statusChange', {
-            from: projectName ? t(`lifecycle.${projectName.lifecycleStatus}` as MessageKey) : '—',
+            // Older proposals have no `from`: only a pending one can use the current status.
+            from: c.from
+              ? t(`lifecycle.${c.from}` as MessageKey)
+              : p.state === 'pending' && projectName
+                ? t(`lifecycle.${projectName.lifecycleStatus}` as MessageKey)
+                : '—',
             to: t(`lifecycle.${c.to}` as MessageKey),
           })}
           {c.note && <span className="pre"> — {c.note}</span>}

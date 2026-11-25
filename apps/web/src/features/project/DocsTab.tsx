@@ -49,6 +49,7 @@ function InternalDocs({ projectRef, docs }: { projectRef: string; docs: ProjectD
           value={text}
           onChange={setText}
           rows={16}
+          allowEmpty
           onSubmit={() => save.mutate(undefined)}
           submitLabel={t('common.save')}
           busy={save.isPending}

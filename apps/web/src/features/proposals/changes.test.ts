@@ -41,6 +41,7 @@ describe('proposal changes', () => {
     });
     expect(changesOf(proposal('set_status', { status: 'completed', note: '' }))).toEqual({
       kind: 'set_status',
+      from: null,
       to: 'completed',
       note: '',
     });

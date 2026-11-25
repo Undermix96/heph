@@ -263,7 +263,13 @@ function ApiTokenBox() {
     },
   });
   const copy = async () => {
-    const value = token ?? (await api.apiToken()).apiToken;
+    let value = token;
+    try {
+      value ??= (await api.apiToken()).apiToken;
+    } catch (err) {
+      notices.error(err);
+      return;
+    }
     try {
       await navigator.clipboard.writeText(value);
       notices.info('settings.copied');

@@ -1,4 +1,4 @@
-import { ApiError, NETWORK_ERROR } from '../api/client.js';
+import { ApiError, NETWORK_ERROR, WRONG_PASSWORD } from '../api/client.js';
 import type { MessageKey } from '../i18n/index.js';
 
 /**
@@ -15,6 +15,7 @@ const BY_CODE: Record<string, MessageKey> = {
   rate_limited: 'error.rate_limited',
   unsupported: 'error.unsupported',
   [NETWORK_ERROR]: 'error.network',
+  [WRONG_PASSWORD]: 'settings.wrongPassword',
 };
 
 export function errorKey(err: unknown): MessageKey {

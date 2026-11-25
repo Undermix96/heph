@@ -340,7 +340,7 @@ export class ProjectsService {
       const proposal = this.d.proposals.create(
         row.id,
         'set_status',
-        { status, note: note ?? '' },
+        { status, note: note ?? '', from: row.lifecycleStatus },
         reason ?? '',
         ctx,
       );

@@ -31,6 +31,8 @@ export class ApiError extends Error {
 
 /** Network failure (server unreachable): its own code for a fixed UI text. */
 export const NETWORK_ERROR = 'network';
+/** Wrong current password on a password change (client-side code). */
+export const WRONG_PASSWORD = 'wrong_password';
 
 async function request<T>(method: string, path: string, body?: unknown): Promise<T> {
   let res: Response;
@@ -106,8 +108,17 @@ export const api = {
   logout: () => request<null>('POST', '/auth/logout'),
 
   // account and settings
+  /** A wrong current password is a 401 from the server, but the session is fine: it
+   *  becomes its own code so the global "session expired" handling does not sign out. */
   changePassword: (currentPassword: string, newPassword: string) =>
-    request<{ ok: true }>('POST', '/auth/password', { currentPassword, newPassword }),
+    request<{ ok: true }>('POST', '/auth/password', { currentPassword, newPassword }).catch(
+      (err: unknown) => {
+        if (err instanceof ApiError && err.status === 401) {
+          throw new ApiError(400, WRONG_PASSWORD, err.message);
+        }
+        throw err;
+      },
+    ),
   apiToken: () => request<{ apiToken: string }>('GET', '/settings/api-token'),
   rotateApiToken: () => request<{ apiToken: string }>('POST', '/settings/api-token/rotate'),
   search: (q: string) => request<SearchHit[]>('GET', `/search?q=${encodeURIComponent(q)}`),

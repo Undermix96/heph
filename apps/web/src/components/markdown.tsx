@@ -40,6 +40,7 @@ export function MarkdownEditor({
   files,
   onFiles,
   rows = 5,
+  allowEmpty = false,
 }: {
   label: string;
   value: string;
@@ -52,6 +53,8 @@ export function MarkdownEditor({
   files?: FileView[];
   onFiles?: (files: FileView[]) => void;
   rows?: number;
+  /** Submitting an empty text is meaningful (e.g. clearing the documentation). */
+  allowEmpty?: boolean;
 }) {
   const t = useT();
   const notices = useNotices();
@@ -75,7 +78,8 @@ export function MarkdownEditor({
   }
 
   const onKey = (e: KeyboardEvent) => {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && onSubmit && value.trim() && !busy) {
+    const ready = (allowEmpty || value.trim()) && !busy && !uploading;
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && onSubmit && ready) {
       e.preventDefault();
       onSubmit();
     }
@@ -158,7 +162,7 @@ export function MarkdownEditor({
         {onSubmit && (
           <Button
             variant="primary"
-            disabled={!value.trim() || busy || uploading}
+            disabled={(!allowEmpty && !value.trim()) || busy || uploading}
             onClick={onSubmit}
           >
             {submitLabel}

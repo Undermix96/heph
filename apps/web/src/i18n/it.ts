@@ -467,6 +467,7 @@ export const it = {
   'edit.deleteTitle': 'Eliminare il progetto?',
   'edit.deleteConfirm': 'Non si può annullare. Scrivi «{name}» per confermare.',
   'edit.typeName': 'Nome del progetto',
+  'settings.wrongPassword': 'La password attuale non è corretta. Riprova.',
 } as const;
 
 export type MessageKey = keyof typeof it;

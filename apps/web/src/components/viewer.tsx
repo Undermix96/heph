@@ -35,21 +35,49 @@ export function Viewer({
   const { date } = useI18n();
   const id = useId();
   const ref = useRef<HTMLDivElement>(null);
-  const [i, setI] = useState(Math.min(start, files.length - 1));
+  // The caller passes its live list (refetched after pin / delete); the current file is
+  // tracked by id so a refetch keeps the place, and local changes show at once.
+  const [currentId, setCurrentId] = useState(files[Math.min(start, files.length - 1)]?.id);
+  const [deleted, setDeleted] = useState<number[]>([]);
+  const [pinned, setPinned] = useState<Record<number, boolean>>({});
   const [confirming, setConfirming] = useState(false);
-  const f = files[i];
+  const list = files
+    .filter((x) => !deleted.includes(x.id))
+    .map((x) => (x.id in pinned ? { ...x, pinned: pinned[x.id] as boolean } : x));
+  const last = useRef(0);
+  let i = list.findIndex((x) => x.id === currentId);
+  if (i < 0) i = Math.min(last.current, list.length - 1);
+  last.current = i;
+  const f = list[i];
+  const setI = (j: number) => setCurrentId(list[j]?.id);
   const close = useRef(onClose);
   close.current = onClose;
-  const count = useRef(files.length);
-  count.current = files.length;
+  const nav = useRef({ list, i });
+  nav.current = { list, i };
 
   useEffect(() => {
     const prev = document.activeElement as HTMLElement | null;
-    ref.current?.querySelector<HTMLElement>('button')?.focus();
+    ref.current?.querySelector<HTMLElement>('[data-autofocus]')?.focus();
     const onKey = (e: KeyboardEvent) => {
+      const { list: l, i: at } = nav.current;
       if (e.key === 'Escape') close.current();
-      if (e.key === 'ArrowLeft') setI((x) => Math.max(0, x - 1));
-      if (e.key === 'ArrowRight') setI((x) => Math.min(count.current - 1, x + 1));
+      if (e.key === 'ArrowLeft' && at > 0) setCurrentId(l[at - 1]?.id);
+      if (e.key === 'ArrowRight' && at < l.length - 1) setCurrentId(l[at + 1]?.id);
+      if (e.key === 'Tab') {
+        // Keep Tab inside the viewer (aria-modal).
+        const els = [
+          ...(ref.current?.querySelectorAll<HTMLElement>('button, a[href]') ?? []),
+        ].filter((el) => !(el as HTMLButtonElement).disabled);
+        const first = els[0];
+        const lastEl = els.at(-1);
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          lastEl?.focus();
+        } else if (!e.shiftKey && document.activeElement === lastEl) {
+          e.preventDefault();
+          first?.focus();
+        }
+      }
     };
     document.addEventListener('keydown', onKey);
     return () => {
@@ -59,14 +87,20 @@ export function Viewer({
   }, []);
 
   const pin = useApiMutation((x: FileView) => api.updateFile(x.id, { pinned: !x.pinned }), {
-    onSuccess: onChanged,
+    onSuccess: (r) => {
+      setPinned((m) => ({ ...m, [r.id]: r.pinned }));
+      onChanged();
+    },
   });
   const del = useApiMutation((x: FileView) => api.deleteFile(x.id), {
-    onSuccess: () => {
+    onSuccess: (_r, x) => {
       setConfirming(false);
+      const at = list.findIndex((y) => y.id === x.id);
+      const next = list[at + 1] ?? list[at - 1];
+      setDeleted((d) => [...d, x.id]);
       onChanged();
-      if (files.length <= 1) onClose();
-      else setI((x) => Math.max(0, Math.min(x, files.length - 2)));
+      if (!next) onClose();
+      else setCurrentId(next.id);
     },
   });
 
@@ -93,7 +127,7 @@ export function Viewer({
           <Button
             variant="invisible"
             aria-label={t('viewer.next')}
-            disabled={i === files.length - 1}
+            disabled={i === list.length - 1}
             onClick={() => setI(i + 1)}
           >
             <ChevronRightIcon size={24} />
@@ -107,6 +141,7 @@ export function Viewer({
             <button
               type="button"
               className="icon-btn"
+              data-autofocus
               aria-label={t('common.dismiss')}
               onClick={onClose}
             >
@@ -114,7 +149,7 @@ export function Viewer({
             </button>
           </div>
           <p className="meta">
-            {i + 1} / {files.length}
+            {i + 1} / {list.length}
           </p>
           <p className="row">
             <SourceAvatar source={f.source} /> <span className="meta">{date(f.createdAt)}</span>
@@ -145,7 +180,7 @@ export function Viewer({
           </div>
         </aside>
         <ol className="viewer-strip">
-          {files.map((x, j) => (
+          {list.map((x, j) => (
             <li key={x.id}>
               <button
                 type="button"

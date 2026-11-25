@@ -1,6 +1,6 @@
 import type { LifecycleStatus, ProjectDetail } from '@heph/schema';
 import { TriangleDownIcon } from '@primer/octicons-react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link, NavLink, useParams } from 'react-router';
 import { api, isProposal } from '../../api/client.js';
 import { keys, useApiMutation, useProject, useProjects } from '../../api/queries.js';
@@ -14,6 +14,7 @@ import {
   Skeleton,
   StatusLabel,
   TagChip,
+  useDismiss,
 } from '../../components/ui.js';
 import { type MessageKey, useT } from '../../i18n/index.js';
 import { errorKey } from '../../lib/errors.js';
@@ -174,6 +175,9 @@ export function StatusMenu({ p }: { p: ProjectDetail }) {
   const t = useT();
   const notices = useNotices();
   const [open, setOpen] = useState(false);
+  const box = useRef<HTMLDivElement>(null);
+  const trigger = useRef<HTMLButtonElement>(null);
+  useDismiss(open, setOpen, box, trigger);
   const [asking, setAsking] = useState<LifecycleStatus | null>(null);
   const [note, setNote] = useState('');
   const set = useApiMutation(
@@ -195,8 +199,13 @@ export function StatusMenu({ p }: { p: ProjectDetail }) {
     } else set.mutate({ status: s });
   };
   return (
-    <div className="menu">
-      <Button aria-haspopup="true" aria-expanded={open} onClick={() => setOpen(!open)}>
+    <div className="menu" ref={box}>
+      <Button
+        ref={trigger}
+        aria-haspopup="true"
+        aria-expanded={open}
+        onClick={() => setOpen(!open)}
+      >
         {t('status.menu')} <TriangleDownIcon size={16} />
       </Button>
       {open && (
@@ -207,7 +216,6 @@ export function StatusMenu({ p }: { p: ProjectDetail }) {
                 type="button"
                 aria-current={s === p.lifecycleStatus}
                 onClick={() => choose(s)}
-                onKeyDown={(e) => e.key === 'Escape' && setOpen(false)}
               >
                 {t(`lifecycle.${s}` as MessageKey)}
               </button>

@@ -1,6 +1,6 @@
-import type { Settings } from '@heph/schema';
+import type { ProjectDetail, Settings } from '@heph/schema';
 import { GearIcon, PlusIcon } from '@primer/octicons-react';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, useMatch, useNavigate } from 'react-router';
 import { api } from '../api/client.js';
 import { keys, useApiMutation } from '../api/queries.js';
@@ -14,6 +14,13 @@ export function TopBar() {
   const qc = useQueryClient();
   const navigate = useNavigate();
   const project = useMatch('/p/:slug/*');
+  // The project page already has this query cached; show the name, not the slug.
+  const slug = project?.params.slug ?? '';
+  const projectName = useQuery<ProjectDetail>({
+    queryKey: keys.project(slug),
+    queryFn: () => api.project(slug),
+    enabled: false,
+  }).data?.name;
   const setLang = useApiMutation((l: Lang) => api.updateSettings({ uiLanguage: l }), {
     onSuccess: (s: Settings) => qc.setQueryData(keys.settings, s),
   });
@@ -31,7 +38,7 @@ export function TopBar() {
         {project?.params.slug && (
           <>
             <span aria-hidden="true">/</span>
-            <Link to={`/p/${project.params.slug}`}>{project.params.slug}</Link>
+            <Link to={`/p/${project.params.slug}`}>{projectName ?? project.params.slug}</Link>
           </>
         )}
       </nav>

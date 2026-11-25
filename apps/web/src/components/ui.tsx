@@ -3,6 +3,8 @@ import { KebabHorizontalIcon } from '@primer/octicons-react';
 import {
   type ButtonHTMLAttributes,
   type ReactNode,
+  type Ref,
+  type RefObject,
   useEffect,
   useId,
   useRef,
@@ -49,6 +51,7 @@ export function Button({
   className,
   ...rest
 }: ButtonHTMLAttributes<HTMLButtonElement> & {
+  ref?: Ref<HTMLButtonElement>;
   variant?: 'default' | 'primary' | 'danger' | 'invisible';
   size?: 'sm' | 'md';
 }) {
@@ -244,6 +247,33 @@ export function RelativeTime({ iso }: { iso: string }) {
   );
 }
 
+/** Closes a popup on Esc (focus back to the trigger) and on a click outside `box`. */
+export function useDismiss(
+  open: boolean,
+  setOpen: (v: boolean) => void,
+  box: RefObject<HTMLElement | null>,
+  trigger: RefObject<HTMLElement | null>,
+) {
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setOpen(false);
+        trigger.current?.focus();
+      }
+    };
+    const onClick = (e: MouseEvent) => {
+      if (!box.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('keydown', onKey);
+    document.addEventListener('mousedown', onClick);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.removeEventListener('mousedown', onClick);
+    };
+  }, [open, setOpen, box, trigger]);
+}
+
 /** ⋯ menu: real buttons, Esc and outside click close it, focus returns to the trigger. */
 export function Menu({
   label,
@@ -256,24 +286,7 @@ export function Menu({
   const id = useId();
   const ref = useRef<HTMLDivElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setOpen(false);
-        trigger.current?.focus();
-      }
-    };
-    const onClick = (e: MouseEvent) => {
-      if (!ref.current?.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener('keydown', onKey);
-    document.addEventListener('mousedown', onClick);
-    return () => {
-      document.removeEventListener('keydown', onKey);
-      document.removeEventListener('mousedown', onClick);
-    };
-  }, [open]);
+  useDismiss(open, setOpen, ref, trigger);
   return (
     <div className="menu" ref={ref}>
       <button
@@ -328,16 +341,40 @@ export function Dialog({
 }) {
   const id = useId();
   const ref = useRef<HTMLDivElement>(null);
+  // Callers pass inline handlers; keep the latest in a ref so the effect runs only on
+  // open/close. Re-running it on every render (e.g. a poll, D52) stole the focus.
+  const close = useRef(onClose);
+  close.current = onClose;
   useEffect(() => {
     const prev = document.activeElement as HTMLElement | null;
-    ref.current?.querySelector<HTMLElement>('input, textarea, select, button')?.focus();
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
+    const focusables = () =>
+      [
+        ...(ref.current?.querySelectorAll<HTMLElement>(
+          'input, textarea, select, button, a[href], [tabindex]:not([tabindex="-1"])',
+        ) ?? []),
+      ].filter((el) => !(el as HTMLButtonElement).disabled);
+    focusables()[0]?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') close.current();
+      if (e.key !== 'Tab') return;
+      // Keep Tab inside the modal.
+      const els = focusables();
+      const first = els[0];
+      const last = els.at(-1);
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last?.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first?.focus();
+      }
+    };
     document.addEventListener('keydown', onKey);
     return () => {
       document.removeEventListener('keydown', onKey);
       prev?.focus?.();
     };
-  }, [onClose]);
+  }, []);
   return (
     <div className="overlay">
       <div className="dialog" role="dialog" aria-modal="true" aria-labelledby={id} ref={ref}>

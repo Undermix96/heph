@@ -84,11 +84,14 @@ export function RoadmapBoard({ project }: { project: ProjectDetail }) {
     const a = String(active.id);
     const o = String(over.id);
     if (a.startsWith('phase-')) {
-      const overPhase = o.startsWith('phase-')
-        ? idOf(o)
-        : locateTask(project.phases, idOf(o))?.phaseId;
+      // `phase-<id>` (sortable) and `drop-<id>` (body) both name a phase; only
+      // `task-<id>` needs a lookup. Phase and task ids overlap, never mix them.
+      const overPhase = o.startsWith('task-')
+        ? locateTask(project.phases, idOf(o))?.phaseId
+        : idOf(o);
+      const from = project.phases.findIndex((p) => p.id === idOf(a));
       const to = project.phases.findIndex((p) => p.id === overPhase);
-      if (to >= 0) phaseMove.mutate({ id: idOf(a), to });
+      if (to >= 0 && to !== from) phaseMove.mutate({ id: idOf(a), to });
       return;
     }
     const taskId = idOf(a);
@@ -262,15 +265,20 @@ function PhaseBox({
             strategy={verticalListSortingStrategy}
           >
             <ul className="tasks">
-              {phase.tasks.map((task, ti) =>
-                visible(task) ? (
+              {phase.tasks.map((task, ti) => {
+                if (!visible(task)) return null;
+                // Move up / down jump over tasks hidden by the filter.
+                const vi = shown.indexOf(task);
+                const above = shown[vi - 1];
+                const below = shown[vi + 1];
+                return (
                   <TaskRow
                     key={task.id}
                     task={task}
                     number={`${index + 1}.${ti + 1}`}
                     isNext={task.id === nextId}
-                    first={ti === 0}
-                    last={ti === phase.tasks.length - 1}
+                    up={above?.position ?? null}
+                    down={below?.position ?? null}
                     projectRef={projectRef}
                     onMove={(position) =>
                       onMoveTask({ taskId: task.id, phaseId: phase.id, position })
@@ -278,8 +286,8 @@ function PhaseBox({
                     onEdit={() => onEdit({ kind: 'task', task })}
                     onDelete={() => onDelete({ kind: 'task', task })}
                   />
-                ) : null,
-              )}
+                );
+              })}
             </ul>
           </SortableContext>
           {shown.length === 0 && <p className="muted small">{t('roadmap.noTasks')}</p>}
@@ -294,8 +302,8 @@ function TaskRow({
   task,
   number,
   isNext,
-  first,
-  last,
+  up,
+  down,
   projectRef,
   onMove,
   onEdit,
@@ -304,8 +312,9 @@ function TaskRow({
   task: TaskView;
   number: string;
   isNext: boolean;
-  first: boolean;
-  last: boolean;
+  /** Position to move to with Move up / down, or null when there is no visible neighbour. */
+  up: number | null;
+  down: number | null;
   projectRef: string;
   onMove: (position: number) => void;
   onEdit: () => void;
@@ -361,13 +370,13 @@ function TaskRow({
           { label: t('roadmap.edit'), onSelect: onEdit },
           {
             label: t('roadmap.moveUp'),
-            onSelect: () => onMove(task.position - 1),
-            disabled: first,
+            onSelect: () => up !== null && onMove(up),
+            disabled: up === null,
           },
           {
             label: t('roadmap.moveDown'),
-            onSelect: () => onMove(task.position + 1),
-            disabled: last,
+            onSelect: () => down !== null && onMove(down),
+            disabled: down === null,
           },
           { label: t('roadmap.delete'), danger: true, onSelect: onDelete },
         ]}

@@ -167,6 +167,7 @@ export const en: Record<MessageKey, string> = {
   'newProject.phaseTasks': 'Tasks, one per line',
   'newProject.status': 'Initial status',
   'newProject.create': 'Create project',
+  'newProject.phaseTitleRequired': 'Give the phase a title: without it, its tasks would be lost.',
   'newProject.noteRequired': 'Write a note: it is required for this status.',
   'newProject.invalid.name': 'Write a name (at most 300 characters).',
   'newProject.invalid.description': 'The description is too long.',

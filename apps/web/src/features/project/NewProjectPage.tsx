@@ -88,6 +88,9 @@ export function NewProjectPage() {
     };
     const next: Record<string, MessageKey> = {};
     if (status !== 'in_development' && !note.trim()) next.note = 'newProject.noteRequired';
+    // Tasks typed under a phase without a title would be lost: ask for the title.
+    if (phases.some((p) => !p.title.trim() && p.tasks.trim()))
+      next.phases = 'newProject.phaseTitleRequired';
     const parsed = CreateProjectInput.safeParse(input);
     if (!parsed.success) {
       for (const issue of parsed.error.issues) {
@@ -152,19 +155,34 @@ export function NewProjectPage() {
                     addTag(tagInput);
                   }
                 }}
-                onBlur={() => tagInput && addTag(tagInput)}
+                onBlur={(e) => {
+                  // Leaving towards a suggestion: that button adds the tag itself.
+                  const to = e.relatedTarget as HTMLElement | null;
+                  if (tagInput && !to?.dataset.suggestion) addTag(tagInput);
+                }}
               />
             </div>
           </Field>
           {(suggestions.length > 0 || (typed && !known.includes(typed))) && (
             <div className="row small" aria-live="polite">
               {suggestions.map((s) => (
-                <Button key={s} size="sm" onClick={() => addTag(s)}>
+                <Button
+                  key={s}
+                  size="sm"
+                  data-suggestion="true"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => addTag(s)}
+                >
                   {s}
                 </Button>
               ))}
               {typed && !known.includes(typed) && (
-                <Button size="sm" onClick={() => addTag(typed)}>
+                <Button
+                  size="sm"
+                  data-suggestion="true"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => addTag(typed)}
+                >
                   {t('newProject.createTag', { tag: typed })}
                 </Button>
               )}
@@ -369,7 +387,7 @@ export function NewProjectPage() {
           <Button type="submit" variant="primary" disabled={create.isPending}>
             {t('newProject.create')}
           </Button>
-          <Button onClick={() => navigate(-1)}>{t('common.cancel')}</Button>
+          <Button onClick={() => navigate('/')}>{t('common.cancel')}</Button>
         </div>
       </form>
     </main>

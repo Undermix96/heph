@@ -168,6 +168,8 @@ export const it = {
   'newProject.phaseTasks': 'Task, uno per riga',
   'newProject.status': 'Stato iniziale',
   'newProject.create': 'Crea progetto',
+  'newProject.phaseTitleRequired':
+    'Dai un titolo alla fase: senza titolo i suoi task andrebbero persi.',
   'newProject.noteRequired': 'Scrivi una nota: è obbligatoria per questo stato.',
   'newProject.invalid.name': 'Scrivi un nome (al massimo 300 caratteri).',
   'newProject.invalid.description': 'La descrizione è troppo lunga.',

@@ -220,7 +220,7 @@
   background: var(--bg-subtle);
   z-index: 1;
 }
-.group-row th {
+.table .group-row th {
   background: var(--bg-canvas);
   font-weight: var(--weight-semibold);
 }

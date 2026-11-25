@@ -1,6 +1,13 @@
 import type { FileView } from '@heph/schema';
 import { PaperclipIcon, XIcon } from '@primer/octicons-react';
-import { type KeyboardEvent, useId, useRef, useState } from 'react';
+import {
+  type Dispatch,
+  type KeyboardEvent,
+  type SetStateAction,
+  useId,
+  useRef,
+  useState,
+} from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { api } from '../api/client.js';
@@ -51,7 +58,8 @@ export function MarkdownEditor({
   /** Enables attachments when set. */
   projectRef?: string;
   files?: FileView[];
-  onFiles?: (files: FileView[]) => void;
+  /** A state setter: uploads finishing in any order append to the latest list. */
+  onFiles?: Dispatch<SetStateAction<FileView[]>>;
   rows?: number;
   /** Submitting an empty text is meaningful (e.g. clearing the documentation). */
   allowEmpty?: boolean;
@@ -61,18 +69,20 @@ export function MarkdownEditor({
   const id = useId();
   const input = useRef<HTMLInputElement>(null);
   const [mode, setMode] = useState<'write' | 'preview'>('write');
-  const [uploading, setUploading] = useState(false);
+  // Several uploads can run at once (two drops): publish waits for all of them.
+  const [uploads, setUploads] = useState(0);
+  const uploading = uploads > 0;
 
   async function attach(list: FileList | null) {
     if (!list?.length || !projectRef || !onFiles) return;
-    setUploading(true);
+    setUploads((n) => n + 1);
     try {
       const added = await api.uploadFiles(projectRef, [...list]);
-      onFiles([...(files ?? []), ...added]);
+      onFiles((prev) => [...prev, ...added]);
     } catch (err) {
       notices.error(err);
     } finally {
-      setUploading(false);
+      setUploads((n) => n - 1);
       if (input.current) input.current.value = '';
     }
   }
@@ -132,7 +142,7 @@ export function MarkdownEditor({
                 type="button"
                 className="tag-x"
                 aria-label={t('editor.removeFile', { name: f.originalName })}
-                onClick={() => onFiles?.(files.filter((x) => x.id !== f.id))}
+                onClick={() => onFiles?.((prev) => prev.filter((x) => x.id !== f.id))}
               >
                 <XIcon size={12} />
               </button>

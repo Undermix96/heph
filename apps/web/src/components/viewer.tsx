@@ -37,6 +37,11 @@ export function Viewer({
   const ref = useRef<HTMLDivElement>(null);
   // The caller passes its live list (refetched after pin / delete); the current file is
   // tracked by id so a refetch keeps the place, and local changes show at once.
+  const close = useRef(onClose);
+  close.current = onClose;
+  const deleteBtn = useRef<HTMLButtonElement>(null);
+  const confirmBtn = useRef<HTMLButtonElement>(null);
+  const closeBtn = useRef<HTMLButtonElement>(null);
   const [currentId, setCurrentId] = useState(files[Math.min(start, files.length - 1)]?.id);
   const [deleted, setDeleted] = useState<number[]>([]);
   const [pinned, setPinned] = useState<Record<number, boolean>>({});
@@ -46,12 +51,20 @@ export function Viewer({
     .map((x) => (x.id in pinned ? { ...x, pinned: pinned[x.id] as boolean } : x));
   const last = useRef(0);
   let i = list.findIndex((x) => x.id === currentId);
-  if (i < 0) i = Math.min(last.current, list.length - 1);
+  if (i < 0) i = Math.max(0, Math.min(last.current, list.length - 1));
   last.current = i;
   const f = list[i];
+  // The current file left the list (e.g. unpinned in "Pinned"): follow the one now shown
+  // by id, and close when nothing is left.
+  useEffect(() => {
+    if (f && f.id !== currentId) setCurrentId(f.id);
+    if (!f) close.current();
+  }, [f, currentId]);
+  // Local pin overrides only bridge the time until the refetched list arrives; then the
+  // server (also changes made by Claude Code) wins.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: reset on every new list
+  useEffect(() => setPinned({}), [files]);
   const setI = (j: number) => setCurrentId(list[j]?.id);
-  const close = useRef(onClose);
-  close.current = onClose;
   const nav = useRef({ list, i });
   nav.current = { list, i };
 
@@ -95,6 +108,7 @@ export function Viewer({
   const del = useApiMutation((x: FileView) => api.deleteFile(x.id), {
     onSuccess: (_r, x) => {
       setConfirming(false);
+      closeBtn.current?.focus();
       const at = list.findIndex((y) => y.id === x.id);
       const next = list[at + 1] ?? list[at - 1];
       setDeleted((d) => [...d, x.id]);
@@ -141,6 +155,7 @@ export function Viewer({
             <button
               type="button"
               className="icon-btn"
+              ref={closeBtn}
               data-autofocus
               aria-label={t('common.dismiss')}
               onClick={onClose}
@@ -167,13 +182,33 @@ export function Viewer({
             </a>
             {confirming ? (
               <div className="row">
-                <Button variant="danger" disabled={del.isPending} onClick={() => del.mutate(f)}>
+                <Button
+                  ref={confirmBtn}
+                  variant="danger"
+                  disabled={del.isPending}
+                  onClick={() => del.mutate(f)}
+                >
                   {t('viewer.confirmDelete')}
                 </Button>
-                <Button onClick={() => setConfirming(false)}>{t('common.cancel')}</Button>
+                <Button
+                  onClick={() => {
+                    setConfirming(false);
+                    // The Delete button comes back: keep the focus inside the dialog.
+                    requestAnimationFrame(() => deleteBtn.current?.focus());
+                  }}
+                >
+                  {t('common.cancel')}
+                </Button>
               </div>
             ) : (
-              <Button variant="danger" onClick={() => setConfirming(true)}>
+              <Button
+                ref={deleteBtn}
+                variant="danger"
+                onClick={() => {
+                  setConfirming(true);
+                  requestAnimationFrame(() => confirmBtn.current?.focus());
+                }}
+              >
                 <TrashIcon size={16} /> {t('roadmap.delete')}
               </Button>
             )}

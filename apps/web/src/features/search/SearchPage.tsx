@@ -103,14 +103,16 @@ export function Snippet({ html }: { html: string }) {
   );
 }
 
+const NAMED: Record<string, string> = { lt: '<', gt: '>', quot: '"', amp: '&', apos: "'" };
+
+/** One pass, so text that itself reads "&lt;" (sent as "&#38;lt;") is not decoded twice. */
 function decode(s: string): string {
-  // The server escapes with numeric entities (&#38;), named ones are handled too.
-  return s
-    .replace(/&#x([0-9a-f]+);/gi, (_m, h: string) => String.fromCodePoint(Number.parseInt(h, 16)))
-    .replace(/&#(\d+);/g, (_m, d: string) => String.fromCodePoint(Number(d)))
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&amp;/g, '&');
+  return s.replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (m, e: string) => {
+    if (e[0] === '#') {
+      const code =
+        e[1] === 'x' || e[1] === 'X' ? Number.parseInt(e.slice(2), 16) : Number(e.slice(1));
+      return Number.isFinite(code) ? String.fromCodePoint(code) : m;
+    }
+    return NAMED[e.toLowerCase()] ?? m;
+  });
 }

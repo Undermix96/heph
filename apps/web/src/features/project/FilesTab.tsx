@@ -40,7 +40,9 @@ export function FilesTab({ projectRef }: { projectRef: string }) {
     refetchInterval: false,
   });
   const [kind, setKind] = useState<Kind>('all');
-  const [open, setOpen] = useState<{ which: 'pinned' | 'all'; at: number } | null>(null);
+  const [open, setOpen] = useState<{ which: 'pinned' | 'all'; at: number; seq: number } | null>(
+    null,
+  );
   const [pending, setPending] = useState<Pending[]>([]);
   const [over, setOver] = useState(false);
   const input = useRef<HTMLInputElement>(null);
@@ -164,16 +166,21 @@ export function FilesTab({ projectRef }: { projectRef: string }) {
         <>
           {pinned.length > 0 && (
             <Box title={t('files.pinned')}>
-              <FileGrid files={pinned} big onOpen={(at) => setOpen({ which: 'pinned', at })} />
+              <FileGrid
+                files={pinned}
+                big
+                onOpen={(at) => setOpen({ which: 'pinned', at, seq: ++seq })}
+              />
             </Box>
           )}
           <Box title={t('files.allFiles')} meta={String(all.length)}>
-            <FileGrid files={all} onOpen={(at) => setOpen({ which: 'all', at })} />
+            <FileGrid files={all} onOpen={(at) => setOpen({ which: 'all', at, seq: ++seq })} />
           </Box>
         </>
       )}
       {open && (
         <Viewer
+          key={`${open.which}-${open.at}-${open.seq}`}
           files={open.which === 'pinned' ? pinned : all}
           start={open.at}
           onClose={() => setOpen(null)}

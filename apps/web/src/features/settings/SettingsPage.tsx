@@ -1,6 +1,7 @@
 import type { Settings } from '@heph/schema';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { type FormEvent, useState } from 'react';
+import { type FormEvent, useEffect, useState } from 'react';
+import { useLocation } from 'react-router';
 import { api } from '../../api/client.js';
 import { keys, useApiMutation } from '../../api/queries.js';
 import { useNotices } from '../../app/notices.js';
@@ -12,6 +13,11 @@ import { errorKey } from '../../lib/errors.js';
 export function SettingsPage() {
   const t = useT();
   const q = useQuery({ queryKey: keys.settings, queryFn: api.settings, refetchInterval: false });
+  const { hash } = useLocation();
+  // Links such as /settings#s-claude: scroll once the sections are rendered.
+  useEffect(() => {
+    if (hash && q.data) document.getElementById(hash.slice(1))?.scrollIntoView();
+  }, [hash, q.data]);
   return (
     <main className="page narrow">
       <h1 className="page-title">{t('nav.settings')}</h1>

@@ -47,6 +47,18 @@ async function request<T>(method: string, path: string, body?: unknown): Promise
     throw new ApiError(0, NETWORK_ERROR, 'Network error');
   }
   const data = res.status === 204 ? null : await res.json().catch(() => null);
+  // Behind Cloudflare Access a stopped server answers with the proxy's own HTML error
+  // page (502–504, 520–530): that is "server not answering", not an API error.
+  if (
+    !res.ok &&
+    !data?.error &&
+    (res.status === 502 ||
+      res.status === 503 ||
+      res.status === 504 ||
+      (res.status >= 520 && res.status <= 530))
+  ) {
+    throw new ApiError(0, NETWORK_ERROR, 'Server unreachable');
+  }
   if (!res.ok) {
     throw new ApiError(
       res.status,

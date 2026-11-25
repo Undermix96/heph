@@ -25,7 +25,7 @@ export function makeQueryClient(): QueryClient {
   };
   const client: QueryClient = new QueryClient({
     queryCache: new QueryCache({ onError, onSuccess: () => setOffline(false) }),
-    mutationCache: new MutationCache({ onError }),
+    mutationCache: new MutationCache({ onError, onSuccess: () => setOffline(false) }),
     defaultOptions: {
       queries: {
         refetchInterval: POLL_MS,

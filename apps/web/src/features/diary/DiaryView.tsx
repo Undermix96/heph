@@ -1,6 +1,6 @@
 import type { DiaryEntryView, DiaryType, FileView, Source } from '@heph/schema';
 import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router';
 import { api, fileUrl } from '../../api/client.js';
 import { useApiMutation, useProjects } from '../../api/queries.js';
@@ -70,7 +70,7 @@ export function DiaryView({ projectRef }: { projectRef: string | null }) {
   const days = groupDiary(entries);
 
   return (
-    <div className="stack">
+    <div className="stack diary-view">
       {projectRef && (
         <NoteComposer
           projectRef={projectRef}
@@ -215,6 +215,10 @@ function DayBlock({
 }) {
   const t = useT();
   const [open, setOpen] = useState(startOpen);
+  // A search (or a newer page) can ask an already closed day to open.
+  useEffect(() => {
+    if (startOpen) setOpen(true);
+  }, [startOpen]);
   const all = day.items.flatMap((it) => (it.kind === 'entry' ? [it.entry] : it.entries));
   const bySource = sourceCounts(all);
   return (

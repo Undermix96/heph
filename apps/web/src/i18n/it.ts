@@ -282,8 +282,8 @@ export const it = {
   'diary.session': 'Sessione di Claude',
   'diary.sessionSummary':
     '✓ {tasks} task · ▶ {tests} test · ▣ {files} file · ◆ {status} stati · {notes} note',
-  'diary.showEvents': 'Mostra gli {n} eventi',
-  'diary.hideEvents': 'Nascondi gli {n} eventi',
+  'diary.showEvents': 'Mostra i {n} eventi',
+  'diary.hideEvents': 'Nascondi i {n} eventi',
   'diary.moreFiles': '+{n}',
   'diary.event.project_created': 'Progetto creato',
   'diary.event.task_completed': 'Task chiuso',
@@ -479,6 +479,8 @@ export const it = {
   'dash.start.account': 'Account creato',
   'dash.start.claude': 'Collega Claude Code con il token API',
   'dash.start.github': 'Collega GitHub (serve dalla fase 6)',
+  'error.pageLoad':
+    'Non riesco a caricare questa pagina: forse Heph è stato aggiornato. Ricarica la pagina.',
 } as const;
 
 export type MessageKey = keyof typeof it;

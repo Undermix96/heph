@@ -1083,3 +1083,27 @@
 .history a {
   text-decoration: underline;
 }
+
+@media (max-width: 599px) {
+  /* The diary composer stays on screen at the bottom (design §8); the timeline gets
+     room below so its last entries are not hidden behind it. */
+  .composer {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    max-height: 55vh;
+    overflow-y: auto;
+    border-radius: 0;
+  }
+  .diary-view {
+    padding-bottom: 240px;
+  }
+  .topbar-search input,
+  .tag-input input,
+  .lang,
+  .day-toggle,
+  .link-btn {
+    min-height: var(--control-touch-min);
+  }
+}

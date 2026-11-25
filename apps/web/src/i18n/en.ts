@@ -471,4 +471,5 @@ export const en: Record<MessageKey, string> = {
   'dash.start.account': 'Account created',
   'dash.start.claude': 'Connect Claude Code with the API token',
   'dash.start.github': 'Connect GitHub (needed from phase 6)',
+  'error.pageLoad': 'This page could not be loaded: Heph may have been updated. Reload the page.',
 };

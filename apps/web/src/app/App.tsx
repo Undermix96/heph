@@ -36,16 +36,23 @@ export const routes = [
   {
     element: <Layout />,
     children: [
-      { path: '/', element: <DashboardPage tab="projects" /> },
-      { path: '/tests', element: <DashboardPage tab="tests" /> },
-      { path: '/diary', element: <DashboardPage tab="diary" /> },
-      { path: '/proposals', element: <DashboardPage tab="proposals" /> },
-      { path: '/new', element: <NewProjectPage /> },
-      { path: '/p/:slug/edit', element: <EditProjectPage /> },
-      { path: '/p/:slug/:tab?', element: <ProjectPage /> },
-      { path: '/settings', element: <SettingsPage /> },
-      { path: '/search', element: <SearchPage /> },
-      { path: '*', element: <NotFound /> },
+      {
+        // Errors while loading or rendering a page (e.g. a page chunk gone after an
+        // update) stay inside the layout with a fixed text and Reload (D44).
+        errorElement: <PageError />,
+        children: [
+          { path: '/', element: <DashboardPage tab="projects" /> },
+          { path: '/tests', element: <DashboardPage tab="tests" /> },
+          { path: '/diary', element: <DashboardPage tab="diary" /> },
+          { path: '/proposals', element: <DashboardPage tab="proposals" /> },
+          { path: '/new', element: <NewProjectPage /> },
+          { path: '/p/:slug/edit', element: <EditProjectPage /> },
+          { path: '/p/:slug/:tab?', element: <ProjectPage /> },
+          { path: '/settings', element: <SettingsPage /> },
+          { path: '/search', element: <SearchPage /> },
+          { path: '*', element: <NotFound /> },
+        ],
+      },
     ],
   },
 ];
@@ -147,6 +154,20 @@ function OfflineNotice() {
       {t('error.offline')}
     </div>
   ) : null;
+}
+
+function PageError() {
+  const t = useT();
+  return (
+    <main className="page">
+      <Alert
+        tone="danger"
+        action={<Button onClick={() => window.location.reload()}>{t('common.retry')}</Button>}
+      >
+        {t('error.pageLoad')}
+      </Alert>
+    </main>
+  );
 }
 
 function NotFound() {

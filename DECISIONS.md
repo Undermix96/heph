@@ -467,3 +467,12 @@ Alternatives rejected:
 - User Markdown verbatim inside code fences: robust and fast, but the `.md` would show source instead of rendered text (user decision, 2026-11-25).
 - Writing each user field to a string and joining: the writer cannot see the surrounding context; the fifth verification round broke it three ways.
 - Checking the whole document in one parse: the parser is superlinear, so large projects would take minutes.
+
+## D54 — Threat model: trusted LAN, good-faith users (2026-11-25)
+
+Decision: Hephaestus is a personal project used only on the owner's trusted LAN and through Cloudflare Access. Tests and independent verification target bugs of normal use by good-faith users (the owner and Claude Code): realistic content, mistakes, real workflows and concurrency. They do not model malicious attackers, crafted payloads, denial of service or adversarial input. Existing security baselines (authentication in the app, login limits, secrets handling, hardened container) stay.
+Why: User decision, 2026-11-25, after the phase 4.0 export went through six adversarial verification rounds that hardened it against hostile Markdown nobody would write; the effort did not match the risk of a single-user, trusted-network app.
+Alternatives rejected:
+
+- Public-app threat model: costs far more than the risk of a personal LAN tool justifies.
+- Removing the hardening already done (D46, D53 checks): it works and is tested; removing it is work with no benefit.

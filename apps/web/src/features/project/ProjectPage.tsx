@@ -18,6 +18,7 @@ import {
 } from '../../components/ui.js';
 import { type MessageKey, useT } from '../../i18n/index.js';
 import { errorKey } from '../../lib/errors.js';
+import { DiaryView } from '../diary/DiaryView.js';
 import { FormDialog, RoadmapBoard } from '../roadmap/RoadmapBoard.js';
 import { Overview } from './Overview.js';
 
@@ -67,7 +68,8 @@ export function ProjectPage() {
             </nav>
             {tab === 'overview' && <Overview p={project.data} />}
             {tab === 'roadmap' && <RoadmapBoard project={project.data} />}
-            {tab !== 'overview' && tab !== 'roadmap' && (
+            {tab === 'diary' && <DiaryView projectRef={project.data.slug} />}
+            {tab !== 'overview' && tab !== 'roadmap' && tab !== 'diary' && (
               <Box>
                 <EmptyState
                   title={t(`project.tab.${tab}` as MessageKey)}

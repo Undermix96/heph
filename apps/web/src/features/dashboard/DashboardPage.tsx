@@ -5,7 +5,7 @@ import {
   type LifecycleStatus,
   type ProjectSummary,
 } from '@heph/schema';
-import { BeakerIcon, PlusIcon, ProjectIcon } from '@primer/octicons-react';
+import { BeakerIcon, BookIcon, PlusIcon, ProjectIcon } from '@primer/octicons-react';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { usePendingProposals, useProjects } from '../../api/queries.js';
@@ -24,6 +24,7 @@ import {
 } from '../../components/ui.js';
 import { type MessageKey, useI18n, useT } from '../../i18n/index.js';
 import { errorKey } from '../../lib/errors.js';
+import { DiaryView } from '../diary/DiaryView.js';
 import {
   applyFilters,
   CLOSED,
@@ -40,7 +41,7 @@ type View = 'tiles' | 'table';
 const TABLE_PAGE = 50;
 
 /** Dashboard (mockups 01, 02, 50, 54). */
-export function DashboardPage({ tab }: { tab: 'projects' | 'tests' }) {
+export function DashboardPage({ tab }: { tab: 'projects' | 'tests' | 'diary' }) {
   const t = useT();
   const projects = useProjects();
   const proposals = usePendingProposals();
@@ -74,6 +75,13 @@ export function DashboardPage({ tab }: { tab: 'projects' | 'tests' }) {
           {t('dash.tab.proposals')}
           <span className="counter counter-ai">{proposals.data?.length ?? 0}</span>
         </span>
+        <Link
+          to="/diary"
+          className={tab === 'diary' ? 'active' : ''}
+          aria-current={tab === 'diary' ? 'page' : undefined}
+        >
+          <BookIcon size={16} /> {t('dash.tab.diary')}
+        </Link>
       </nav>
       {projects.isPending ? (
         <Skeleton lines={6} />
@@ -86,6 +94,8 @@ export function DashboardPage({ tab }: { tab: 'projects' | 'tests' }) {
         </Alert>
       ) : tab === 'tests' ? (
         <TestsTab projects={testing} />
+      ) : tab === 'diary' ? (
+        <DiaryView projectRef={null} />
       ) : all.length === 0 ? (
         <FirstProject />
       ) : (

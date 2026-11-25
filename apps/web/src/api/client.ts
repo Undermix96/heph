@@ -2,11 +2,14 @@ import type {
   AddTaskInput,
   CreateProjectInput,
   DiaryEntryView,
+  DiaryType,
+  FileView,
   PhaseView,
   ProjectDetail,
   ProjectSummary,
   ProposalView,
   Settings,
+  Source,
   TaskView,
 } from '@heph/schema';
 
@@ -45,6 +48,35 @@ async function request<T>(method: string, path: string, body?: unknown): Promise
     );
   }
   return data as T;
+}
+
+/** Multipart upload; the browser sets the boundary. */
+async function upload<T>(path: string, form: FormData): Promise<T> {
+  let res: Response;
+  try {
+    res = await fetch(`/api${path}`, { method: 'POST', credentials: 'same-origin', body: form });
+  } catch {
+    throw new ApiError(0, NETWORK_ERROR, 'Network error');
+  }
+  const data = await res.json().catch(() => null);
+  if (!res.ok) {
+    throw new ApiError(
+      res.status,
+      data?.error?.code ?? 'http',
+      data?.error?.message ?? res.statusText,
+    );
+  }
+  return data as T;
+}
+
+export const fileUrl = (id: number, opts: { thumb?: boolean; download?: boolean } = {}) =>
+  `/api/files/${id}/${opts.thumb ? 'thumbnail' : 'content'}${opts.download ? '?download' : ''}`;
+
+export interface DiaryFilter {
+  limit?: number;
+  source?: Source;
+  type?: DiaryType;
+  withFiles?: boolean;
 }
 
 export interface User {
@@ -103,9 +135,40 @@ export const api = {
   reopenTask: (id: number) => request<unknown>('POST', `/tasks/${id}/reopen`),
   deleteTask: (id: number) => request<MaybeProposal<null>>('DELETE', `/tasks/${id}`),
 
-  // diary (read-only in group A)
+  // diary
   diary: (ref: string | number, limit = 5) =>
     request<DiaryEntryView[]>('GET', `/projects/${ref}/diary?limit=${limit}`),
+  /** One page of the diary, newest first; `ref` null = all projects. */
+  diaryPage: (
+    ref: string | number | null,
+    q: DiaryFilter & { before?: string; beforeId?: number },
+  ) => {
+    const qs = new URLSearchParams();
+    qs.set('limit', String(q.limit ?? 50));
+    if (q.before) qs.set('before', q.before);
+    if (q.beforeId !== undefined) qs.set('beforeId', String(q.beforeId));
+    if (q.source) qs.set('source', q.source);
+    if (q.type) qs.set('type', q.type);
+    if (q.withFiles) qs.set('withFiles', 'true');
+    return request<DiaryEntryView[]>(
+      'GET',
+      `${ref === null ? '/diary' : `/projects/${ref}/diary`}?${qs}`,
+    );
+  },
+  addNote: (ref: string | number, body: string, fileIds: number[]) =>
+    request<DiaryEntryView>('POST', `/projects/${ref}/diary`, { body, fileIds }),
+
+  // files
+  uploadFiles: (ref: string | number, files: File[], target: Record<string, string> = {}) => {
+    const form = new FormData();
+    for (const [k, v] of Object.entries(target)) form.append(k, v);
+    for (const f of files) form.append('file', f, f.name);
+    return upload<FileView[]>(`/projects/${ref}/files`, form);
+  },
+  files: (ref: string | number) => request<FileView[]>('GET', `/projects/${ref}/files`),
+  updateFile: (id: number, input: { pinned?: boolean; caption?: string | null }) =>
+    request<FileView>('PATCH', `/files/${id}`, input),
+  deleteFile: (id: number) => request<null>('DELETE', `/files/${id}`),
 
   // proposals (counts only in group A)
   proposals: (state = 'pending') => request<ProposalView[]>('GET', `/proposals?state=${state}`),

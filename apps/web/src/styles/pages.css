@@ -1457,3 +1457,9 @@ fieldset.m-chips {
     scrollbar-width: none;
   }
 }
+@media (min-width: 600px) {
+  /* Desktop searches from the top bar field. */
+  .search-form {
+    display: none;
+  }
+}

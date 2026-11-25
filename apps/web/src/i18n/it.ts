@@ -495,6 +495,7 @@ export const it = {
   'm.testPending': 'test in attesa',
   'm.send': 'Invia',
   'm.notePlaceholder': 'Scrivi una nota…',
+  'm.claudeWorkingOne': 'Claude al lavoro su 1 progetto',
 } as const;
 
 export type MessageKey = keyof typeof it;

@@ -100,7 +100,9 @@ export function MobileDashboard({ projects }: { projects: ProjectSummary[] }) {
           <div className="box-body">
             <h2 className="m-claude-title">
               <span className="dot dot-live" aria-hidden="true" />{' '}
-              {t('m.claudeWorking', { n: working.length })}
+              {t(working.length === 1 ? 'm.claudeWorkingOne' : 'm.claudeWorking', {
+                n: working.length,
+              })}
             </h2>
             {working.map((p) => (
               <p key={p.id} className="m-text">

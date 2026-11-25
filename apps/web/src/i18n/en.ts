@@ -486,4 +486,5 @@ export const en: Record<MessageKey, string> = {
   'm.testPending': 'test pending',
   'm.send': 'Send',
   'm.notePlaceholder': 'Write a note…',
+  'm.claudeWorkingOne': 'Claude is working on 1 project',
 };

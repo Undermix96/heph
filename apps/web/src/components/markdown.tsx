@@ -4,6 +4,7 @@ import {
   type Dispatch,
   type KeyboardEvent,
   type SetStateAction,
+  useEffect,
   useId,
   useRef,
   useState,
@@ -71,6 +72,11 @@ export function MarkdownEditor({
   const notices = useNotices();
   const id = useId();
   const input = useRef<HTMLInputElement>(null);
+  const area = useRef<HTMLTextAreaElement>(null);
+  // The compact field grows with its text; once cleared (e.g. after Send) it shrinks back.
+  useEffect(() => {
+    if (compact && !value && area.current) area.current.style.height = '';
+  }, [compact, value]);
   const [mode, setMode] = useState<'write' | 'preview'>('write');
   // Several uploads can run at once (two drops): publish waits for all of them.
   const [uploads, setUploads] = useState(0);
@@ -151,6 +157,7 @@ export function MarkdownEditor({
             {label}
           </label>
           <textarea
+            ref={area}
             id={id}
             rows={1}
             value={value}

@@ -58,6 +58,9 @@ export function TopBar() {
                 ? 'nav.search'
                 : 'nav.projectsTitle',
         );
+    // Back goes one level up: from the edit page to the project, otherwise home
+    // (the project tabs are siblings of the overview, not children).
+    const backTo = slug && location.pathname.endsWith('/edit') ? `/p/${slug}` : '/';
     // Phone top bar (mockups 60–62): back or logo, title, search, + or ⋯.
     return (
       <header className="topbar topbar-phone">
@@ -66,7 +69,7 @@ export function TopBar() {
             H
           </Link>
         ) : (
-          <Link to="/" className="icon-btn icon-btn-boxed" aria-label={t('nav.back')}>
+          <Link to={backTo} className="icon-btn icon-btn-boxed" aria-label={t('nav.back')}>
             <ChevronLeftIcon size={20} />
           </Link>
         )}

@@ -460,4 +460,15 @@ export const en: Record<MessageKey, string> = {
   'edit.deleteConfirm': 'This cannot be undone. Type “{name}” to confirm.',
   'edit.typeName': 'Project name',
   'settings.wrongPassword': 'The current password is wrong. Try again.',
+  'error.offline':
+    'The server is not responding: changes are not saved. Retrying every 10 seconds.',
+  'diary.months': 'Diary months',
+  'diary.latest': 'Latest',
+  'diary.daySummary': '{n} entries',
+  'dash.start.title': 'Getting started',
+  'dash.start.done': 'done',
+  'dash.start.todo': 'to do',
+  'dash.start.account': 'Account created',
+  'dash.start.claude': 'Connect Claude Code with the API token',
+  'dash.start.github': 'Connect GitHub (needed from phase 6)',
 };

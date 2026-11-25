@@ -14,6 +14,7 @@ import { SearchPage } from '../features/search/SearchPage.js';
 import { SettingsPage } from '../features/settings/SettingsPage.js';
 import { detectLang, I18nProvider, type Lang, useT } from '../i18n/index.js';
 import { NoticesProvider } from './notices.js';
+import { useOffline } from './online.js';
 import { TopBar } from './TopBar.js';
 
 export const routes = [
@@ -109,9 +110,20 @@ function Layout() {
   return (
     <div className="app">
       <TopBar />
+      <OfflineNotice />
       <Outlet />
     </div>
   );
+}
+
+function OfflineNotice() {
+  const t = useT();
+  const offline = useOffline();
+  return offline ? (
+    <div className="offline" role="alert">
+      {t('error.offline')}
+    </div>
+  ) : null;
 }
 
 function NotFound() {

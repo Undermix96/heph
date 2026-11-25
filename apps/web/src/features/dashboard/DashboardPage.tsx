@@ -12,9 +12,11 @@ import {
   PlusIcon,
   ProjectIcon,
 } from '@primer/octicons-react';
+import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { usePendingProposals, useProjects } from '../../api/queries.js';
+import { api } from '../../api/client.js';
+import { keys, usePendingProposals, useProjects } from '../../api/queries.js';
 import {
   Alert,
   Box,
@@ -121,19 +123,47 @@ export function DashboardPage({ tab }: { tab: 'projects' | 'tests' | 'diary' | '
 function FirstProject() {
   const t = useT();
   const navigate = useNavigate();
+  const settings = useQuery({
+    queryKey: keys.settings,
+    queryFn: api.settings,
+    refetchInterval: false,
+  });
+  const steps: { done: boolean; label: MessageKey; to?: string }[] = [
+    { done: true, label: 'dash.start.account' },
+    { done: false, label: 'dash.start.claude', to: '/settings#s-claude' },
+    {
+      done: Boolean(settings.data?.githubToken),
+      label: 'dash.start.github',
+      to: '/settings#s-github',
+    },
+  ];
   return (
-    <Box>
-      <EmptyState
-        icon={<ProjectIcon size={24} />}
-        title={t('dash.empty.title')}
-        text={t('dash.empty.text')}
-        actions={
-          <Button variant="primary" onClick={() => navigate('/new')}>
-            <PlusIcon size={16} /> {t('nav.newProject')}
-          </Button>
-        }
-      />
-    </Box>
+    <div className="stack">
+      <Box>
+        <EmptyState
+          icon={<ProjectIcon size={24} />}
+          title={t('dash.empty.title')}
+          text={t('dash.empty.text')}
+          actions={
+            <Button variant="primary" onClick={() => navigate('/new')}>
+              <PlusIcon size={16} /> {t('nav.newProject')}
+            </Button>
+          }
+        />
+      </Box>
+      <Box title={t('dash.start.title')}>
+        <ul className="checklist">
+          {steps.map((s) => (
+            <li key={s.label}>
+              <span className={`status ${s.done ? 'status-success' : 'status-muted'}`}>
+                {t(s.done ? 'dash.start.done' : 'dash.start.todo')}
+              </span>{' '}
+              {s.to && !s.done ? <Link to={s.to}>{t(s.label)}</Link> : t(s.label)}
+            </li>
+          ))}
+        </ul>
+      </Box>
+    </div>
   );
 }
 

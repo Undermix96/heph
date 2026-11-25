@@ -160,6 +160,8 @@ export function apiRoutes(domain: Domain) {
   // ------------------------------------------------------------ diary
 
   r.get('/diary', (c) => c.json(domain.diary.list(null, queryObject(c))));
+  r.get('/diary/months', (c) => c.json(domain.diary.months(null)));
+  r.get('/projects/:ref/diary/months', (c) => c.json(domain.diary.months(ref(c))));
   r.get('/diary/sessions/:sessionId', (c) =>
     c.json(domain.diary.bySession(c.req.param('sessionId'))),
   );

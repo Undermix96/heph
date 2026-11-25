@@ -468,6 +468,17 @@ export const it = {
   'edit.deleteConfirm': 'Non si può annullare. Scrivi «{name}» per confermare.',
   'edit.typeName': 'Nome del progetto',
   'settings.wrongPassword': 'La password attuale non è corretta. Riprova.',
+  'error.offline':
+    'Il server non risponde: le modifiche non vengono salvate. Riprovo da solo ogni 10 secondi.',
+  'diary.months': 'Mesi del diario',
+  'diary.latest': 'Più recenti',
+  'diary.daySummary': '{n} voci',
+  'dash.start.title': 'Per iniziare',
+  'dash.start.done': 'fatto',
+  'dash.start.todo': 'da fare',
+  'dash.start.account': 'Account creato',
+  'dash.start.claude': 'Collega Claude Code con il token API',
+  'dash.start.github': 'Collega GitHub (serve dalla fase 6)',
 } as const;
 
 export type MessageKey = keyof typeof it;

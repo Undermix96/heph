@@ -126,3 +126,28 @@ describe('diary', () => {
     );
   });
 });
+
+describe('diary.months', () => {
+  it('counts entries per UTC month, newest first, per project or for all', () => {
+    const t = makeDomain(Date.UTC(2026, 9, 30, 12));
+    try {
+      const a = seedProject(t.d);
+      const b = seedProject(t.d, { name: 'Altro' });
+      t.d.diary.addNote(a.id, { body: 'ottobre' }, UI);
+      t.clock.advance(5 * 24 * 3600 * 1000); // into November
+      t.d.diary.addNote(a.id, { body: 'novembre 1' }, UI);
+      t.d.diary.addNote(b.id, { body: 'novembre 2' }, UI);
+      const forA = t.d.diary.months(a.id);
+      expect(forA.map((m) => m.month)).toEqual(['2026-11', '2026-10']);
+      expect(forA.reduce((n, m) => n + m.count, 0)).toBe(
+        t.d.diary.list(a.id, { limit: 500 }).length,
+      );
+      const all = t.d.diary.months(null);
+      expect(all.reduce((n, m) => n + m.count, 0)).toBe(
+        t.d.diary.list(null, { limit: 500 }).length,
+      );
+    } finally {
+      t.cleanup();
+    }
+  });
+});

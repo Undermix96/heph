@@ -903,3 +903,73 @@
 .flex-1 {
   flex: 1 1 240px;
 }
+
+/* states (group C1) */
+.offline {
+  position: sticky;
+  top: 0;
+  z-index: 25;
+  padding: var(--space-2) var(--space-5);
+  background: var(--danger-subtle);
+  border-bottom: 1px solid var(--danger-border);
+  color: var(--danger-text);
+  font-size: var(--text-sm);
+}
+.months {
+  display: flex;
+  gap: var(--space-1);
+  overflow-x: auto;
+  padding-bottom: var(--space-1);
+}
+.months button {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--control-sm);
+  padding: 0 var(--space-2);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-pill);
+  background: var(--bg-canvas);
+  color: var(--fg-default);
+  font: inherit;
+  font-size: var(--text-sm);
+  cursor: pointer;
+  text-transform: capitalize;
+}
+.months button.active {
+  border-color: var(--accent-emphasis);
+  background: var(--accent-subtle);
+}
+.day-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: none;
+  border: 0;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  text-transform: capitalize;
+  cursor: pointer;
+}
+.day-summary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  text-transform: none;
+}
+.dot-src {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-round);
+}
+.checklist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}

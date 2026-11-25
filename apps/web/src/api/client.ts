@@ -178,6 +178,11 @@ export const api = {
       `${ref === null ? '/diary' : `/projects/${ref}/diary`}?${qs}`,
     );
   },
+  diaryMonths: (ref: string | number | null) =>
+    request<{ month: string; count: number }[]>(
+      'GET',
+      ref === null ? '/diary/months' : `/projects/${ref}/diary/months`,
+    ),
   addNote: (ref: string | number, body: string, fileIds: number[]) =>
     request<DiaryEntryView>('POST', `/projects/${ref}/diary`, { body, fileIds }),
 

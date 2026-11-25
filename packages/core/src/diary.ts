@@ -128,6 +128,25 @@ export class DiaryService {
     return this.toViews(rows);
   }
 
+  /**
+   * Entry counts per UTC month (YYYY-MM), newest first, for the month bar of a long
+   * diary (design 55). `projectRef` null = all projects.
+   */
+  months(projectRef: ProjectRef | null): { month: string; count: number }[] {
+    const month = sql<string>`substr(${diaryEntries.occurredAt}, 1, 7)`;
+    return this.d.db
+      .select({ month, count: sql<number>`count(*)` })
+      .from(diaryEntries)
+      .where(
+        projectRef === null
+          ? undefined
+          : eq(diaryEntries.projectId, this.d.projects.row(projectRef).id),
+      )
+      .groupBy(month)
+      .orderBy(desc(month))
+      .all();
+  }
+
   /** Entries of one Claude Code session, oldest first. */
   bySession(sessionId: string): DiaryEntryView[] {
     const rows = this.d.db

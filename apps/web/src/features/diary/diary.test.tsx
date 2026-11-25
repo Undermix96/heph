@@ -6,7 +6,7 @@ import { HttpResponse, http } from 'msw';
 import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { renderApp } from '../../test/render.js';
-import { DiaryView } from './DiaryView.js';
+import { DiaryView, monthEnd } from './DiaryView.js';
 
 // Invented data.
 const file: FileView = {
@@ -90,5 +90,12 @@ describe('DiaryView', () => {
     await user.click(await screen.findByRole('button', { name: 'Carica i giorni precedenti' }));
     expect(await screen.findByText('Più vecchia')).toBeTruthy();
     expect(screen.queryByRole('button', { name: 'Carica i giorni precedenti' })).toBeNull();
+  });
+});
+
+describe('monthEnd', () => {
+  it('is the first instant of the next UTC month, also across the year end', () => {
+    expect(monthEnd('2026-11')).toBe('2026-12-01T00:00:00.000Z');
+    expect(monthEnd('2026-12')).toBe('2027-01-01T00:00:00.000Z');
   });
 });

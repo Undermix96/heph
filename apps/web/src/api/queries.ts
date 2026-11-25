@@ -9,7 +9,8 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import { useNotices } from '../app/notices.js';
-import { ApiError, api } from './client.js';
+import { setOffline } from '../app/online.js';
+import { ApiError, api, NETWORK_ERROR } from './client.js';
 
 /** Visible-tab polling interval (D52). */
 export const POLL_MS = 10_000;
@@ -17,12 +18,13 @@ export const POLL_MS = 10_000;
 export function makeQueryClient(): QueryClient {
   // An expired session anywhere sends the user back to sign-in instead of failing silently.
   const onError = (err: unknown) => {
+    if (err instanceof ApiError && err.code === NETWORK_ERROR) setOffline(true);
     if (err instanceof ApiError && err.status === 401) {
       client.setQueryData(['auth'], { setupDone: true, user: null });
     }
   };
   const client: QueryClient = new QueryClient({
-    queryCache: new QueryCache({ onError }),
+    queryCache: new QueryCache({ onError, onSuccess: () => setOffline(false) }),
     mutationCache: new MutationCache({ onError }),
     defaultOptions: {
       queries: {

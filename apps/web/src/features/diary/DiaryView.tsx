@@ -1,5 +1,5 @@
 import type { DiaryEntryView, DiaryType, FileView, Source } from '@heph/schema';
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router';
 import { api, fileUrl } from '../../api/client.js';
@@ -18,7 +18,7 @@ import {
 import { Viewer } from '../../components/viewer.js';
 import { type MessageKey, useI18n, useT } from '../../i18n/index.js';
 import { errorKey } from '../../lib/errors.js';
-import { type DiaryItem, groupDiary, sourceCounts } from './group.js';
+import { type DiaryDay, type DiaryItem, groupDiary, sourceCounts } from './group.js';
 
 const PAGE = 50;
 type SourceFilter = 'all' | Source;
@@ -41,8 +41,14 @@ export function DiaryView({ projectRef }: { projectRef: string | null }) {
     [projects.data],
   );
 
+  // Month bar (design 55): jumping starts the list at the end of the chosen month.
+  const [from, setFrom] = useState<string | null>(null);
+  const months = useQuery({
+    queryKey: ['diary', 'months', projectRef],
+    queryFn: () => api.diaryMonths(projectRef),
+  });
   const q = useInfiniteQuery({
-    queryKey: ['diary', projectRef, source, type, withFiles],
+    queryKey: ['diary', projectRef, source, type, withFiles, from],
     queryFn: ({ pageParam }) =>
       api.diaryPage(projectRef, {
         limit: PAGE,
@@ -51,7 +57,7 @@ export function DiaryView({ projectRef }: { projectRef: string | null }) {
         withFiles,
         ...pageParam,
       }),
-    initialPageParam: {} as { before?: string; beforeId?: number },
+    initialPageParam: (from ? { before: from } : {}) as { before?: string; beforeId?: number },
     getNextPageParam: (last) => {
       const end = last.at(-1);
       return last.length < PAGE || !end ? undefined : { before: end.occurredAt, beforeId: end.id };
@@ -70,6 +76,29 @@ export function DiaryView({ projectRef }: { projectRef: string | null }) {
           projectRef={projectRef}
           onAdded={() => qc.invalidateQueries({ queryKey: ['diary'] })}
         />
+      )}
+      {(months.data?.length ?? 0) > 1 && (
+        <nav className="months" aria-label={t('diary.months')}>
+          <button
+            type="button"
+            className={from === null ? 'active' : ''}
+            aria-current={from === null}
+            onClick={() => setFrom(null)}
+          >
+            {t('diary.latest')}
+          </button>
+          {months.data?.map((m) => (
+            <button
+              key={m.month}
+              type="button"
+              className={from === monthEnd(m.month) ? 'active' : ''}
+              aria-current={from === monthEnd(m.month)}
+              onClick={() => setFrom(monthEnd(m.month))}
+            >
+              <MonthLabel month={m.month} /> <span className="counter">{m.count}</span>
+            </button>
+          ))}
+        </nav>
       )}
       <div className="toolbar">
         <Segmented<SourceFilter>
@@ -132,22 +161,14 @@ export function DiaryView({ projectRef }: { projectRef: string | null }) {
         </Box>
       ) : (
         <ol className="timeline">
-          {days.map((d) => (
-            <li key={d.day} className="day">
-              <h3 className="day-head">
-                <DayLabel day={d.day} />
-              </h3>
-              <ol className="day-items">
-                {d.items.map((it) => (
-                  <TimelineItem
-                    key={it.kind === 'entry' ? it.entry.id : `s-${it.sessionId}-${it.end}`}
-                    item={it}
-                    projectName={(e) => names.get(e.projectId)}
-                    showProject={projectRef === null}
-                  />
-                ))}
-              </ol>
-            </li>
+          {days.map((d, di) => (
+            <DayBlock
+              key={d.day}
+              day={d}
+              startOpen={di < OPEN_DAYS || needle.length > 0}
+              projectName={(e) => names.get(e.projectId)}
+              showProject={projectRef === null}
+            />
           ))}
         </ol>
       )}
@@ -157,6 +178,86 @@ export function DiaryView({ projectRef }: { projectRef: string | null }) {
         </Button>
       )}
     </div>
+  );
+}
+
+/** Days after the first few start closed with their summary (design 55). */
+const OPEN_DAYS = 7;
+
+/** First instant of the next UTC month: the keyset cursor that starts at a month's end. */
+export function monthEnd(month: string): string {
+  const [y, m] = month.split('-').map(Number);
+  return new Date(Date.UTC(y as number, m as number, 1)).toISOString();
+}
+
+function MonthLabel({ month }: { month: string }) {
+  const { lang } = useI18n();
+  const [y, m] = month.split('-').map(Number);
+  return (
+    <>
+      {new Intl.DateTimeFormat(lang, { month: 'short', year: 'numeric', timeZone: 'UTC' }).format(
+        new Date(Date.UTC(y as number, (m as number) - 1, 1)),
+      )}
+    </>
+  );
+}
+
+function DayBlock({
+  day,
+  startOpen,
+  projectName,
+  showProject,
+}: {
+  day: DiaryDay;
+  startOpen: boolean;
+  projectName: NameOf;
+  showProject: boolean;
+}) {
+  const t = useT();
+  const [open, setOpen] = useState(startOpen);
+  const all = day.items.flatMap((it) => (it.kind === 'entry' ? [it.entry] : it.entries));
+  const bySource = sourceCounts(all);
+  return (
+    <li className="day">
+      <h3 className="day-head">
+        <button
+          type="button"
+          className="day-toggle"
+          aria-expanded={open}
+          onClick={() => setOpen(!open)}
+        >
+          <DayLabel day={day.day} />
+          {!open && (
+            <span className="meta day-summary">
+              {t('diary.daySummary', { n: all.length })}{' '}
+              {Object.entries(bySource).map(([src, n]) => (
+                <span
+                  key={src}
+                  className={`dot-src avatar-${src}`}
+                  title={`${t(`source.${src}` as MessageKey)}: ${n}`}
+                >
+                  <span className="sr-only">
+                    {t(`source.${src}` as MessageKey)}: {n}
+                  </span>
+                </span>
+              ))}
+            </span>
+          )}
+        </button>
+      </h3>
+      {open && (
+        <ol className="day-items">
+          {day.items.map((it) => (
+            <TimelineItem
+              key={it.kind === 'entry' ? it.entry.id : `s-${it.sessionId}-${it.end}`}
+              item={it}
+              projectName={projectName}
+              showProject={showProject}
+            />
+          ))}
+        </ol>
+      )}
+    </li>
   );
 }
 

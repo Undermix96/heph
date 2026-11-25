@@ -185,6 +185,15 @@ export const api = {
     request<FileView>('PATCH', `/files/${id}`, input),
   deleteFile: (id: number) => request<null>('DELETE', `/files/${id}`),
 
-  // proposals (counts only in group A)
+  // proposals
+  proposalsOf: (ref: string | number | null, state: string) =>
+    request<ProposalView[]>(
+      'GET',
+      `${ref === null ? '/proposals' : `/projects/${ref}/proposals`}?state=${state}`,
+    ),
+  approveProposal: (id: number, note?: string) =>
+    request<ProposalView>('POST', `/proposals/${id}/approve`, { note }),
+  rejectProposal: (id: number, note?: string) =>
+    request<ProposalView>('POST', `/proposals/${id}/reject`, { note }),
   proposals: (state = 'pending') => request<ProposalView[]>('GET', `/proposals?state=${state}`),
 };

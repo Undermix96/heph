@@ -20,6 +20,7 @@ export const routes = [
       { path: '/', element: <DashboardPage tab="projects" /> },
       { path: '/tests', element: <DashboardPage tab="tests" /> },
       { path: '/diary', element: <DashboardPage tab="diary" /> },
+      { path: '/proposals', element: <DashboardPage tab="proposals" /> },
       { path: '/new', element: <NewProjectPage /> },
       { path: '/p/:slug/:tab?', element: <ProjectPage /> },
       { path: '*', element: <NotFound /> },

@@ -24,8 +24,9 @@ import {
   GrabberIcon,
   PlusIcon,
 } from '@primer/octicons-react';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { type FormEvent, type ReactNode, useState } from 'react';
+import { Link } from 'react-router';
 import { api } from '../../api/client.js';
 import { keys, setProjectCache, useApiMutation } from '../../api/queries.js';
 import { Button, Dialog, Field, Menu, ProgressBar, Segmented } from '../../components/ui.js';
@@ -113,6 +114,15 @@ export function RoadmapBoard({ project }: { project: ProjectDetail }) {
   }
 
   const nextId = project.nextTask?.id ?? null;
+  const pending = useQuery({
+    queryKey: ['proposals', 'pending', ref],
+    queryFn: () => api.proposalsOf(ref, 'pending'),
+  });
+  const pendingTasks = new Set(
+    (pending.data ?? [])
+      .filter((p) => p.kind === 'delete_task')
+      .map((p) => Number((p.payload as { taskId?: unknown }).taskId)),
+  );
   const visible = (task: TaskView) =>
     filter === 'all' || (filter === 'open' ? !task.done : task.done);
 
@@ -146,6 +156,7 @@ export function RoadmapBoard({ project }: { project: ProjectDetail }) {
               index={pi}
               count={project.phases.length}
               nextId={nextId}
+              pendingTasks={pendingTasks}
               visible={visible}
               projectRef={ref}
               onMove={(to) => phaseMove.mutate({ id: phase.id, to })}
@@ -173,6 +184,7 @@ function PhaseBox({
   index,
   count,
   nextId,
+  pendingTasks,
   visible,
   projectRef,
   onMove,
@@ -184,6 +196,7 @@ function PhaseBox({
   index: number;
   count: number;
   nextId: number | null;
+  pendingTasks: Set<number>;
   visible: (t: TaskView) => boolean;
   projectRef: string;
   onMove: (to: number) => void;
@@ -277,6 +290,7 @@ function PhaseBox({
                     task={task}
                     number={`${index + 1}.${ti + 1}`}
                     isNext={task.id === nextId}
+                    proposed={pendingTasks.has(task.id)}
                     up={above?.position ?? null}
                     down={below?.position ?? null}
                     projectRef={projectRef}
@@ -302,6 +316,7 @@ function TaskRow({
   task,
   number,
   isNext,
+  proposed,
   up,
   down,
   projectRef,
@@ -312,6 +327,8 @@ function TaskRow({
   task: TaskView;
   number: string;
   isNext: boolean;
+  /** A pending proposal deletes this task (shown under it, design §6). */
+  proposed: boolean;
   /** Position to move to with Move up / down, or null when there is no visible neighbour. */
   up: number | null;
   down: number | null;
@@ -361,6 +378,11 @@ function TaskRow({
       <span className="task-num">{number}</span>
       <span className="task-title">{task.title}</span>
       {isNext && <span className="label label-attention">{t('roadmap.nextLabel')}</span>}
+      {proposed && (
+        <Link className="label label-ai" to="/proposals">
+          {t('roadmap.proposedDelete')}
+        </Link>
+      )}
       <Menu
         label={t('roadmap.taskMenu', { title: task.title })}
         items={[

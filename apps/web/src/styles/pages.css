@@ -839,3 +839,33 @@
     grid-template-rows: 1fr auto auto;
   }
 }
+
+/* proposals */
+.diff {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-box);
+  padding: var(--space-2) var(--space-3);
+  margin: 0 0 var(--space-3);
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+.diff-remove {
+  color: var(--danger-text);
+  background: var(--danger-subtle);
+  display: block;
+}
+.diff-add {
+  color: var(--success-fg);
+  background: var(--success-subtle);
+  display: block;
+}
+.diff-same {
+  display: block;
+  color: var(--fg-muted);
+}
+.label-ai {
+  color: var(--ai-fg);
+}

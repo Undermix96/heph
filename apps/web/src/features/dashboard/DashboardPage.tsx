@@ -5,7 +5,13 @@ import {
   type LifecycleStatus,
   type ProjectSummary,
 } from '@heph/schema';
-import { BeakerIcon, BookIcon, PlusIcon, ProjectIcon } from '@primer/octicons-react';
+import {
+  BeakerIcon,
+  BookIcon,
+  GitPullRequestIcon,
+  PlusIcon,
+  ProjectIcon,
+} from '@primer/octicons-react';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { usePendingProposals, useProjects } from '../../api/queries.js';
@@ -25,6 +31,7 @@ import {
 import { type MessageKey, useI18n, useT } from '../../i18n/index.js';
 import { errorKey } from '../../lib/errors.js';
 import { DiaryView } from '../diary/DiaryView.js';
+import { ProposalsView } from '../proposals/ProposalsView.js';
 import {
   applyFilters,
   CLOSED,
@@ -41,7 +48,7 @@ type View = 'tiles' | 'table';
 const TABLE_PAGE = 50;
 
 /** Dashboard (mockups 01, 02, 50, 54). */
-export function DashboardPage({ tab }: { tab: 'projects' | 'tests' | 'diary' }) {
+export function DashboardPage({ tab }: { tab: 'projects' | 'tests' | 'diary' | 'proposals' }) {
   const t = useT();
   const projects = useProjects();
   const proposals = usePendingProposals();
@@ -71,10 +78,14 @@ export function DashboardPage({ tab }: { tab: 'projects' | 'tests' | 'diary' }) 
             {testing.length}
           </span>
         </Link>
-        <span className="tab-disabled" title={t('common.groupB')}>
-          {t('dash.tab.proposals')}
+        <Link
+          to="/proposals"
+          className={tab === 'proposals' ? 'active' : ''}
+          aria-current={tab === 'proposals' ? 'page' : undefined}
+        >
+          <GitPullRequestIcon size={16} /> {t('dash.tab.proposals')}
           <span className="counter counter-ai">{proposals.data?.length ?? 0}</span>
-        </span>
+        </Link>
         <Link
           to="/diary"
           className={tab === 'diary' ? 'active' : ''}
@@ -96,6 +107,8 @@ export function DashboardPage({ tab }: { tab: 'projects' | 'tests' | 'diary' }) 
         <TestsTab projects={testing} />
       ) : tab === 'diary' ? (
         <DiaryView projectRef={null} />
+      ) : tab === 'proposals' ? (
+        <ProposalsView />
       ) : all.length === 0 ? (
         <FirstProject />
       ) : (

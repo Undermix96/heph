@@ -6,6 +6,7 @@ import { type Context, Hono } from 'hono';
 import { requireUi } from '../http/auth.js';
 import { type AppEnv, body, idParam, queryObject } from '../http/common.js';
 import { cleanup, parseMultipart } from '../http/multipart.js';
+import { zipStream } from '../http/zip.js';
 
 const MAX_FILES_PER_REQUEST = 20;
 
@@ -71,6 +72,50 @@ export function apiRoutes(domain: Domain) {
   r.delete('/repos/:id', (c) => c.json(domain.projects.unlinkRepo(idParam(c), c.get('ctx'))));
 
   r.get('/tags', (c) => c.json(domain.projects.allTags()));
+
+  // ------------------------------------------------------------ docs & export
+
+  /** Documentation tab: internal docs (edited via PATCH /projects/:ref) and cached repo docs. */
+  r.get('/projects/:ref/docs', (c) => c.json(domain.projects.docs(ref(c))));
+
+  /**
+   * Whole-project export (§11, D32, D53): a zip with `<slug>.md`, `project.json` and
+   * `files/`; `?format=md` returns the Markdown file alone.
+   */
+  r.get('/projects/:ref/export', (c) => {
+    const format = c.req.query('format') ?? 'zip';
+    if (format !== 'zip' && format !== 'md') {
+      throw new DomainError('validation', 'format: expected "zip" or "md"');
+    }
+    const x = domain.export.build(ref(c));
+    const day = x.json.exportedAt.slice(0, 10);
+    c.header('cache-control', 'no-store');
+    c.header('x-content-type-options', 'nosniff');
+    if (format === 'md') {
+      c.header('content-type', 'text/markdown; charset=utf-8');
+      c.header('content-disposition', `attachment; filename="${x.slug}-${day}.md"`);
+      return c.body(x.markdown);
+    }
+    const enc = new TextEncoder();
+    const md = enc.encode(x.markdown);
+    const json = enc.encode(`${JSON.stringify(x.json, null, 2)}\n`);
+    const fileBytes = x.json.files.reduce((n, f) => n + (f.exportPath ? f.size : 0), 0);
+    if (!fitsZip32(md.length + json.length + fileBytes, x.files.length + 2)) {
+      throw new DomainError(
+        'too_large',
+        'The project files exceed the 4 GiB zip limit; download them one by one or use ?format=md',
+      );
+    }
+    c.header('content-type', 'application/zip');
+    c.header('content-disposition', `attachment; filename="${x.slug}-${day}.zip"`);
+    return c.body(
+      zipStream([
+        { name: `${x.slug}.md`, data: md },
+        { name: 'project.json', data: json },
+        ...x.files.map((f) => ({ name: f.zipPath, path: f.absPath })),
+      ]),
+    );
+  });
 
   // ------------------------------------------------------------ roadmap
 
@@ -230,6 +275,15 @@ export function apiRoutes(domain: Domain) {
   });
 
   return r;
+}
+
+/**
+ * fflate writes classic zip without Zip64 (D53): every size and offset must stay below
+ * 4 GiB and the archive below 65 535 entries. Each entry costs about 330 bytes of headers
+ * (names are at most ~120 characters); 1 KiB per entry plus 1 MiB is kept as margin.
+ */
+export function fitsZip32(contentBytes: number, entries: number): boolean {
+  return contentBytes + entries * 1024 + 1024 * 1024 < 0xffffffff && entries < 0xffff;
 }
 
 function targetFromFields(fields: Record<string, string>) {

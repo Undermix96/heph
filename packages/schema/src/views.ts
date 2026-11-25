@@ -220,3 +220,30 @@ export interface SearchHit {
 
 /** Result of an operation that may need user confirmation (graduated trust). */
 export type Gated<T> = { applied: true; result: T } | { applied: false; proposal: ProposalView };
+
+/** Cached docs of one linked repo (read-only in Heph; phase 6 fetches them). */
+export interface RepoDocsView extends RepoView {
+  /** Cached content, null until the repo docs were synced. */
+  content: string | null;
+}
+
+/** The Documentation tab: internal docs, or one entry per linked repo (D30). */
+export interface ProjectDocsView {
+  projectId: number;
+  source: DocsSource;
+  internal: string;
+  repos: RepoDocsView[];
+}
+
+/** `project.json` inside the project export (D32, D53). */
+export interface ProjectExportJson {
+  format: 'heph-project-export';
+  version: 1;
+  exportedAt: IsoTime;
+  project: ProjectDetail;
+  docs: ProjectDocsView;
+  diary: DiaryEntryView[];
+  materials: MaterialView[];
+  files: (FileView & { exportPath: string | null })[];
+  proposals: ProposalView[];
+}

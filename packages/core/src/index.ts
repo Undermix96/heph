@@ -4,6 +4,8 @@ export * from './context.js';
 export { type Db, DEFAULT_MIGRATIONS_DIR, openDb, schema } from './db/index.js';
 export { createDomain, Domain, type DomainOptions } from './domain.js';
 export * from './errors.js';
+export type { ExportFile, ProjectExport } from './export.js';
+export { safeName } from './export.js';
 export { type IngestInput, UPLOAD_TOKEN_TTL_MS } from './files.js';
 export * from './format.js';
 export type { ProjectRef } from './projects.js';

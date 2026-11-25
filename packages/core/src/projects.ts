@@ -6,6 +6,7 @@ import {
   type LinkInput,
   normalizeRepo,
   type ProjectDetail,
+  type ProjectDocsView,
   ProjectListQuery,
   type ProjectSummary,
   RepoFullName,
@@ -496,6 +497,17 @@ export class ProjectsService {
       });
     });
     return this.get(repo.projectId);
+  }
+
+  /** Documentation tab: internal docs and the cached docs of every linked repo (D30). */
+  docs(ref: ProjectRef): ProjectDocsView {
+    const row = this.row(ref);
+    return {
+      projectId: row.id,
+      source: row.docsSource,
+      internal: row.internalDocs,
+      repos: this.repoRows(row.id).map((r) => ({ ...toRepoView(r), content: r.docsContent })),
+    };
   }
 
   repoRows(projectId: number): RepoRow[] {

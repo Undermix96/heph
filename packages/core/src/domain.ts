@@ -3,6 +3,7 @@ import { AuthService } from './auth.js';
 import { BriefingService } from './briefing.js';
 import type { Db } from './db/index.js';
 import { DiaryService } from './diary.js';
+import { ExportService } from './export.js';
 import { FilesService } from './files.js';
 import { MaterialsService } from './materials.js';
 import { ProjectsService } from './projects.js';
@@ -45,6 +46,7 @@ export class Domain {
   readonly search: SearchService;
   readonly restructure: RestructureService;
   readonly briefing: BriefingService;
+  readonly export: ExportService;
 
   constructor(opts: DomainOptions) {
     this.db = opts.db;
@@ -64,6 +66,7 @@ export class Domain {
     this.search = new SearchService(this);
     this.restructure = new RestructureService(this);
     this.briefing = new BriefingService(this);
+    this.export = new ExportService(this);
   }
 
   /** Runs `fn` in a SQLite transaction (synchronous, as better-sqlite3 requires). */

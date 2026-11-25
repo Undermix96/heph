@@ -34,6 +34,19 @@ export const NETWORK_ERROR = 'network';
 /** Wrong current password on a password change (client-side code). */
 export const WRONG_PASSWORD = 'wrong_password';
 
+/**
+ * Behind Cloudflare Access a stopped server answers with the proxy's own HTML error page
+ * (502–504, 520–530): that is "server not answering", not an API error.
+ */
+function throwIfProxyError(res: Response, data: { error?: unknown } | null): void {
+  const proxy =
+    res.status === 502 ||
+    res.status === 503 ||
+    res.status === 504 ||
+    (res.status >= 520 && res.status <= 530);
+  if (!res.ok && !data?.error && proxy) throw new ApiError(0, NETWORK_ERROR, 'Server unreachable');
+}
+
 async function request<T>(method: string, path: string, body?: unknown): Promise<T> {
   let res: Response;
   try {
@@ -47,18 +60,7 @@ async function request<T>(method: string, path: string, body?: unknown): Promise
     throw new ApiError(0, NETWORK_ERROR, 'Network error');
   }
   const data = res.status === 204 ? null : await res.json().catch(() => null);
-  // Behind Cloudflare Access a stopped server answers with the proxy's own HTML error
-  // page (502–504, 520–530): that is "server not answering", not an API error.
-  if (
-    !res.ok &&
-    !data?.error &&
-    (res.status === 502 ||
-      res.status === 503 ||
-      res.status === 504 ||
-      (res.status >= 520 && res.status <= 530))
-  ) {
-    throw new ApiError(0, NETWORK_ERROR, 'Server unreachable');
-  }
+  throwIfProxyError(res, data);
   if (!res.ok) {
     throw new ApiError(
       res.status,
@@ -78,6 +80,7 @@ async function upload<T>(path: string, form: FormData): Promise<T> {
     throw new ApiError(0, NETWORK_ERROR, 'Network error');
   }
   const data = await res.json().catch(() => null);
+  throwIfProxyError(res, data);
   if (!res.ok) {
     throw new ApiError(
       res.status,

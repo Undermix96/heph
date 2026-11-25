@@ -1,6 +1,6 @@
 import type { DiaryEntryView, DiaryType, FileView, Source } from '@heph/schema';
 import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router';
 import { api, fileUrl } from '../../api/client.js';
 import { useApiMutation, useProjects } from '../../api/queries.js';
@@ -18,6 +18,7 @@ import {
 import { Viewer } from '../../components/viewer.js';
 import { type MessageKey, useI18n, useT } from '../../i18n/index.js';
 import { errorKey } from '../../lib/errors.js';
+import { PHONE, useMedia } from '../../lib/media.js';
 import { type DiaryDay, type DiaryItem, groupDiary, sourceCounts } from './group.js';
 
 const PAGE = 50;
@@ -43,6 +44,8 @@ export function DiaryView({ projectRef }: { projectRef: string | null }) {
 
   // Month bar (design 55): jumping starts the list at the end of the chosen month.
   const [from, setFrom] = useState<string | null>(null);
+  const phone = useMedia(PHONE);
+  const [composerH, setComposerH] = useState(0);
   const months = useQuery({
     queryKey: ['diary', 'months', projectRef],
     queryFn: () => api.diaryMonths(projectRef),
@@ -70,9 +73,14 @@ export function DiaryView({ projectRef }: { projectRef: string | null }) {
   const days = groupDiary(entries);
 
   return (
-    <div className="stack diary-view">
+    <div
+      className="stack diary-view"
+      // On the phone the composer is fixed at the bottom: keep exactly its height free.
+      style={phone && composerH ? { paddingBottom: composerH + 16 } : undefined}
+    >
       {projectRef && (
         <NoteComposer
+          onHeight={setComposerH}
           projectRef={projectRef}
           onAdded={() => qc.invalidateQueries({ queryKey: ['diary'] })}
         />
@@ -281,7 +289,23 @@ function DayLabel({ day }: { day: string }) {
   );
 }
 
-function NoteComposer({ projectRef, onAdded }: { projectRef: string; onAdded: () => void }) {
+function NoteComposer({
+  projectRef,
+  onAdded,
+  onHeight,
+}: {
+  projectRef: string;
+  onAdded: () => void;
+  onHeight: (h: number) => void;
+}) {
+  const box = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = box.current;
+    if (!el || typeof ResizeObserver === 'undefined') return;
+    const ro = new ResizeObserver(() => onHeight(el.getBoundingClientRect().height));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [onHeight]);
   const t = useT();
   const [body, setBody] = useState('');
   const [files, setFiles] = useState<FileView[]>([]);
@@ -301,19 +325,21 @@ function NoteComposer({ projectRef, onAdded }: { projectRef: string; onAdded: ()
     },
   );
   return (
-    <Box className="composer">
-      <MarkdownEditor
-        label={t('diary.newNote')}
-        value={body}
-        onChange={setBody}
-        onSubmit={() => add.mutate(undefined)}
-        submitLabel={t('diary.publish')}
-        busy={add.isPending}
-        projectRef={projectRef}
-        files={files}
-        onFiles={setFiles}
-      />
-    </Box>
+    <div ref={box} className="composer">
+      <Box>
+        <MarkdownEditor
+          label={t('diary.newNote')}
+          value={body}
+          onChange={setBody}
+          onSubmit={() => add.mutate(undefined)}
+          submitLabel={t('diary.publish')}
+          busy={add.isPending}
+          projectRef={projectRef}
+          files={files}
+          onFiles={setFiles}
+        />
+      </Box>
+    </div>
   );
 }
 

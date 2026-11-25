@@ -129,6 +129,9 @@ function ProjectHeader({ p }: { p: ProjectDetail }) {
           {p.progress.done}/{p.progress.total} · {Math.round(p.progress.ratio * 100)}%
         </span>
         <div className="topbar-spacer" />
+        <Link className="btn btn-default btn-md" to={`/p/${p.slug}/edit`}>
+          {t('roadmap.edit')}
+        </Link>
         <StatusMenu p={p} />
       </div>
       {p.description && (

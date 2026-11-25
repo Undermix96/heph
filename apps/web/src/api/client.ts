@@ -11,6 +11,7 @@ import type {
   ProjectDocsView,
   ProjectSummary,
   ProposalView,
+  SearchHit,
   Settings,
   Source,
   TaskView,
@@ -104,6 +105,13 @@ export const api = {
     request<{ user: User }>('POST', '/auth/login', { username, password }),
   logout: () => request<null>('POST', '/auth/logout'),
 
+  // account and settings
+  changePassword: (currentPassword: string, newPassword: string) =>
+    request<{ ok: true }>('POST', '/auth/password', { currentPassword, newPassword }),
+  apiToken: () => request<{ apiToken: string }>('GET', '/settings/api-token'),
+  rotateApiToken: () => request<{ apiToken: string }>('POST', '/settings/api-token/rotate'),
+  search: (q: string) => request<SearchHit[]>('GET', `/search?q=${encodeURIComponent(q)}`),
+
   // settings
   settings: () => request<Settings>('GET', '/settings'),
   updateSettings: (patch: Partial<Settings>) => request<Settings>('PATCH', '/settings', patch),
@@ -161,6 +169,17 @@ export const api = {
   },
   addNote: (ref: string | number, body: string, fileIds: number[]) =>
     request<DiaryEntryView>('POST', `/projects/${ref}/diary`, { body, fileIds }),
+
+  // repos and project lifecycle
+  linkRepo: (ref: string | number, fullName: string) =>
+    request<ProjectDetail>('POST', `/projects/${ref}/repos`, { fullName }),
+  updateRepo: (id: number, input: { docsPath?: string; showCommits?: boolean }) =>
+    request<ProjectDetail>('PATCH', `/repos/${id}`, {
+      docsPath: input.docsPath,
+      showCommits: input.showCommits,
+    }),
+  unlinkRepo: (id: number) => request<ProjectDetail>('DELETE', `/repos/${id}`),
+  deleteProject: (ref: string | number) => request<null>('DELETE', `/projects/${ref}`),
 
   // docs and materials
   docs: (ref: string | number) => request<ProjectDocsView>('GET', `/projects/${ref}/docs`),

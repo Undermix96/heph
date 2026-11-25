@@ -1,6 +1,7 @@
 import type { ProjectDetail, Settings } from '@heph/schema';
 import { GearIcon, PlusIcon } from '@primer/octicons-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useMatch, useNavigate } from 'react-router';
 import { api } from '../api/client.js';
 import { keys, useApiMutation } from '../api/queries.js';
@@ -13,6 +14,19 @@ export function TopBar() {
   const { lang } = useI18n();
   const qc = useQueryClient();
   const navigate = useNavigate();
+  const [query, setQuery] = useState('');
+  const search = useRef<HTMLInputElement>(null);
+  // "/" focuses the search field unless the user is typing somewhere (design §4).
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const el = e.target as HTMLElement;
+      if (e.key !== '/' || el.closest('input, textarea, select, [contenteditable]')) return;
+      e.preventDefault();
+      search.current?.focus();
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, []);
   const project = useMatch('/p/:slug/*');
   // The project page already has this query cached; show the name, not the slug.
   const slug = project?.params.slug ?? '';
@@ -43,6 +57,26 @@ export function TopBar() {
         )}
       </nav>
       <div className="topbar-spacer" />
+      <search className="topbar-search">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (query.trim()) navigate(`/search?q=${encodeURIComponent(query.trim())}`);
+          }}
+        >
+          <label className="sr-only" htmlFor="top-search">
+            {t('nav.search')}
+          </label>
+          <input
+            id="top-search"
+            ref={search}
+            type="search"
+            placeholder={t('nav.searchPlaceholder')}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+        </form>
+      </search>
       <label className="sr-only" htmlFor="lang">
         {t('nav.language')}
       </label>
@@ -58,15 +92,9 @@ export function TopBar() {
       <button type="button" className="btn btn-primary btn-md" onClick={() => navigate('/new')}>
         <PlusIcon size={16} /> {t('nav.newProject')}
       </button>
-      <button
-        type="button"
-        className="icon-btn"
-        aria-label={t('nav.settings')}
-        title={t('nav.settingsSoon')}
-        disabled
-      >
+      <Link to="/settings" className="icon-btn" aria-label={t('nav.settings')}>
         <GearIcon size={16} />
-      </button>
+      </Link>
       <Menu
         label={t('nav.account')}
         items={[{ label: t('auth.signOut'), onSelect: () => logout.mutate(undefined) }]}

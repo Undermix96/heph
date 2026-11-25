@@ -7,8 +7,11 @@ import { keys, makeQueryClient } from '../api/queries.js';
 import { Alert, Button, Skeleton } from '../components/ui.js';
 import { AuthShell, CredentialsForm, TokenNotice } from '../features/auth/AuthPages.js';
 import { DashboardPage } from '../features/dashboard/DashboardPage.js';
+import { EditProjectPage } from '../features/project/EditProjectPage.js';
 import { NewProjectPage } from '../features/project/NewProjectPage.js';
 import { ProjectPage } from '../features/project/ProjectPage.js';
+import { SearchPage } from '../features/search/SearchPage.js';
+import { SettingsPage } from '../features/settings/SettingsPage.js';
 import { detectLang, I18nProvider, type Lang, useT } from '../i18n/index.js';
 import { NoticesProvider } from './notices.js';
 import { TopBar } from './TopBar.js';
@@ -22,7 +25,10 @@ export const routes = [
       { path: '/diary', element: <DashboardPage tab="diary" /> },
       { path: '/proposals', element: <DashboardPage tab="proposals" /> },
       { path: '/new', element: <NewProjectPage /> },
+      { path: '/p/:slug/edit', element: <EditProjectPage /> },
       { path: '/p/:slug/:tab?', element: <ProjectPage /> },
+      { path: '/settings', element: <SettingsPage /> },
+      { path: '/search', element: <SearchPage /> },
       { path: '*', element: <NotFound /> },
     ],
   },

@@ -476,3 +476,13 @@ Alternatives rejected:
 
 - Public-app threat model: costs far more than the risk of a personal LAN tool justifies.
 - Removing the hardening already done (D46, D53 checks): it works and is tested; removing it is work with no benefit.
+
+## D55 — Faster workflow: grouped steps, verification per group (2026-11-25)
+
+Decision: For this project, the global rule "independent verification after each step" is replaced by: steps are grouped (phase 4 remaining work in three groups: A app shell, dashboard and project page with roadmap; B diary, docs, materials, files, proposals, settings and export in the UI; C empty/loading/error states, phone layout, accessibility, Playwright end-to-end and screenshots, release); each working step is still a commit with its tests; only affected tests run during development and the full CI checks once before each commit; the local Docker smoke test runs only when Docker files or dependencies change; one independent verification per group by a fresh subagent on the same model, in depth but within the D54 threat model; at most 2 rounds per group, plus up to 2 more only if the second round finds serious problems for D54; findings outside D54 are listed, not fixed; Playwright end-to-end tests and screenshots only in the last group of a phase. Recorded in the project CLAUDE.md.
+Why: Sub-phase 4.0 took a full day and about 1.06 million subagent tokens in eight verification rounds; the user asked to speed up and save usage while keeping in-depth tests (user decision, 2026-11-25).
+Alternatives rejected:
+
+- A cheaper model for verification: the user wants in-depth verification kept.
+- A hard cap of 2 rounds: serious problems found in round 2 must still be fixed and verified.
+- Verification after every step (global rule): too costly for the pace needed.

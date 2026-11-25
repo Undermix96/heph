@@ -20,6 +20,8 @@ import { type MessageKey, useT } from '../../i18n/index.js';
 import { errorKey } from '../../lib/errors.js';
 import { DiaryView } from '../diary/DiaryView.js';
 import { FormDialog, RoadmapBoard } from '../roadmap/RoadmapBoard.js';
+import { DocsTab } from './DocsTab.js';
+import { MaterialsTab } from './MaterialsTab.js';
 import { Overview } from './Overview.js';
 
 const TABS = ['overview', 'roadmap', 'diary', 'docs', 'materials', 'files'] as const;
@@ -69,7 +71,9 @@ export function ProjectPage() {
             {tab === 'overview' && <Overview p={project.data} />}
             {tab === 'roadmap' && <RoadmapBoard project={project.data} />}
             {tab === 'diary' && <DiaryView projectRef={project.data.slug} />}
-            {tab !== 'overview' && tab !== 'roadmap' && tab !== 'diary' && (
+            {tab === 'docs' && <DocsTab projectRef={project.data.slug} />}
+            {tab === 'materials' && <MaterialsTab projectRef={project.data.slug} />}
+            {tab === 'files' && (
               <Box>
                 <EmptyState
                   title={t(`project.tab.${tab}` as MessageKey)}

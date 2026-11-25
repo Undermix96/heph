@@ -4,13 +4,17 @@ import type {
   DiaryEntryView,
   DiaryType,
   FileView,
+  MaterialInput,
+  MaterialView,
   PhaseView,
   ProjectDetail,
+  ProjectDocsView,
   ProjectSummary,
   ProposalView,
   Settings,
   Source,
   TaskView,
+  UpdateProjectInput,
 } from '@heph/schema';
 
 /** Error from the REST API: `code` drives the fixed UI text (D44), never `message`. */
@@ -157,6 +161,17 @@ export const api = {
   },
   addNote: (ref: string | number, body: string, fileIds: number[]) =>
     request<DiaryEntryView>('POST', `/projects/${ref}/diary`, { body, fileIds }),
+
+  // docs and materials
+  docs: (ref: string | number) => request<ProjectDocsView>('GET', `/projects/${ref}/docs`),
+  updateProject: (ref: string | number, input: UpdateProjectInput) =>
+    request<ProjectDetail>('PATCH', `/projects/${ref}`, input),
+  materials: (ref: string | number) => request<MaterialView[]>('GET', `/projects/${ref}/materials`),
+  addMaterial: (ref: string | number, input: MaterialInput) =>
+    request<MaterialView>('POST', `/projects/${ref}/materials`, input),
+  updateMaterial: (id: number, input: Partial<MaterialInput>) =>
+    request<MaterialView>('PATCH', `/materials/${id}`, input),
+  deleteMaterial: (id: number) => request<null>('DELETE', `/materials/${id}`),
 
   // files
   uploadFiles: (ref: string | number, files: File[], target: Record<string, string> = {}) => {

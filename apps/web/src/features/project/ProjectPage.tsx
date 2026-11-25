@@ -193,6 +193,8 @@ export function StatusMenu({ p }: { p: ProjectDetail }) {
   );
   const choose = (s: LifecycleStatus) => {
     setOpen(false);
+    // Focus the trigger first so the note dialog returns the focus there on close.
+    trigger.current?.focus();
     if (s === 'awaiting_manual_test' || s === 'on_hold') {
       setNote(s === p.lifecycleStatus ? p.statusNote : '');
       setAsking(s);

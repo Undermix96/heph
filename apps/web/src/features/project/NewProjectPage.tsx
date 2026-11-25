@@ -60,10 +60,11 @@ export function NewProjectPage() {
 
   function submit(e: FormEvent) {
     e.preventDefault();
+    const allTags = typed && !tags.includes(typed) ? [...tags, typed] : tags;
     const input = {
       name,
       description: description || undefined,
-      tags: tags.length ? tags : undefined,
+      tags: allTags.length ? allTags : undefined,
       links: links
         .filter((l) => l.label.trim() || l.url.trim())
         .map(({ label, url }) => ({ label, url })),
@@ -156,9 +157,11 @@ export function NewProjectPage() {
                   }
                 }}
                 onBlur={(e) => {
-                  // Leaving towards a suggestion: that button adds the tag itself.
-                  const to = e.relatedTarget as HTMLElement | null;
-                  if (tagInput && !to?.dataset.suggestion) addTag(tagInput);
+                  // Tab onto an existing tag that differs from the text keeps the text, so
+                  // Enter can pick that tag; anywhere else the typed tag is added. Text still
+                  // pending at submit is added too, so a typed tag is never lost.
+                  const to = (e.relatedTarget as HTMLElement | null)?.dataset.suggestion;
+                  if (tagInput && (!to || to === typed)) addTag(tagInput);
                 }}
               />
             </div>
@@ -169,7 +172,7 @@ export function NewProjectPage() {
                 <Button
                   key={s}
                   size="sm"
-                  data-suggestion="true"
+                  data-suggestion={s}
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={() => addTag(s)}
                 >
@@ -179,7 +182,7 @@ export function NewProjectPage() {
               {typed && !known.includes(typed) && (
                 <Button
                   size="sm"
-                  data-suggestion="true"
+                  data-suggestion={typed}
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={() => addTag(typed)}
                 >

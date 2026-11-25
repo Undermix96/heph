@@ -1,4 +1,4 @@
-import { createContext, type ReactNode, useCallback, useContext, useMemo } from 'react';
+import { createContext, type ReactNode, useCallback, useContext, useEffect, useMemo } from 'react';
 import { en } from './en.js';
 import { it, type MessageKey } from './it.js';
 
@@ -72,6 +72,10 @@ export function makeI18n(lang: Lang, now: () => number = Date.now): I18n {
 
 export function I18nProvider({ lang, children }: { lang: Lang; children: ReactNode }) {
   const value = useMemo(() => makeI18n(lang), [lang]);
+  // Screen readers and hyphenation follow the chosen language (WCAG 3.1.1).
+  useEffect(() => {
+    document.documentElement.lang = lang;
+  }, [lang]);
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 

@@ -1,21 +1,36 @@
 import type { Settings } from '@heph/schema';
 import { QueryClientProvider, useQuery, useQueryClient } from '@tanstack/react-query';
-import { type ReactNode, useState } from 'react';
+import { lazy, type ReactNode, Suspense, useState } from 'react';
 import { createBrowserRouter, Outlet, RouterProvider } from 'react-router';
 import { api, type User } from '../api/client.js';
 import { keys, makeQueryClient } from '../api/queries.js';
 import { Alert, Button, Skeleton } from '../components/ui.js';
 import { AuthShell, CredentialsForm, TokenNotice } from '../features/auth/AuthPages.js';
-import { DashboardPage } from '../features/dashboard/DashboardPage.js';
-import { EditProjectPage } from '../features/project/EditProjectPage.js';
-import { NewProjectPage } from '../features/project/NewProjectPage.js';
-import { ProjectPage } from '../features/project/ProjectPage.js';
-import { SearchPage } from '../features/search/SearchPage.js';
-import { SettingsPage } from '../features/settings/SettingsPage.js';
 import { detectLang, I18nProvider, type Lang, useT } from '../i18n/index.js';
 import { NoticesProvider } from './notices.js';
 import { useOffline } from './online.js';
 import { TopBar } from './TopBar.js';
+
+// One chunk per page so the first load stays small (Markdown, drag and drop and the
+// viewer load only where used).
+const DashboardPage = lazy(() =>
+  import('../features/dashboard/DashboardPage.js').then((m) => ({ default: m.DashboardPage })),
+);
+const ProjectPage = lazy(() =>
+  import('../features/project/ProjectPage.js').then((m) => ({ default: m.ProjectPage })),
+);
+const EditProjectPage = lazy(() =>
+  import('../features/project/EditProjectPage.js').then((m) => ({ default: m.EditProjectPage })),
+);
+const NewProjectPage = lazy(() =>
+  import('../features/project/NewProjectPage.js').then((m) => ({ default: m.NewProjectPage })),
+);
+const SettingsPage = lazy(() =>
+  import('../features/settings/SettingsPage.js').then((m) => ({ default: m.SettingsPage })),
+);
+const SearchPage = lazy(() =>
+  import('../features/search/SearchPage.js').then((m) => ({ default: m.SearchPage })),
+);
 
 export const routes = [
   {
@@ -111,7 +126,15 @@ function Layout() {
     <div className="app">
       <TopBar />
       <OfflineNotice />
-      <Outlet />
+      <Suspense
+        fallback={
+          <main className="page">
+            <Skeleton lines={6} />
+          </main>
+        }
+      >
+        <Outlet />
+      </Suspense>
     </div>
   );
 }

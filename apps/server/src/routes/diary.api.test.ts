@@ -269,3 +269,26 @@ describe('diary listing', () => {
     expect((await t.uiReq('GET', `/api/diary/${n.data.id}`)).data.body).toBe('keep');
   });
 });
+
+describe('request body encoding (task #42)', () => {
+  it('keeps UTF-8 text intact and refuses a body that is not UTF-8', async () => {
+    const t = await startApi();
+    try {
+      const p = await t.seed();
+      const text = 'Nota: più è già €';
+      const ok = await t.agentReq('POST', `/api/projects/${p.id}/diary`, { json: { body: text } });
+      expect(ok.status).toBe(201);
+      expect(ok.data.body).toBe(text);
+      const latin1 = new Uint8Array(Buffer.from(JSON.stringify({ body: 'più' }), 'latin1'));
+      const res = await t.agent.request(`/api/projects/${p.id}/diary`, {
+        method: 'POST',
+        headers: { authorization: `Bearer ${t.token}`, 'content-type': 'application/json' },
+        body: latin1,
+      });
+      expect(res.status).toBe(400);
+      expect(((await res.json()) as { error: { code: string } }).error.code).toBe('validation');
+    } finally {
+      t.cleanup();
+    }
+  });
+});

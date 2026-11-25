@@ -66,6 +66,8 @@ export function errorHandler(log: Logger): ErrorHandler<AppEnv> {
  * `requireJson`: the Content-Type must be application/json (browsers cannot send that
  * cross-site without a CORS preflight, which this server never grants).
  */
+const UTF8 = new TextDecoder('utf-8', { fatal: true });
+
 export async function body(
   c: Context,
   opts: { requireJson?: boolean } = {},
@@ -76,7 +78,17 @@ export async function body(
   ) {
     throw new DomainError('validation', 'Content-Type must be application/json');
   }
-  const text = await c.req.text();
+  // Bodies must be UTF-8: a lenient decode would store U+FFFD for every bad byte
+  // (task #42: a Windows shell sent Latin-1 and accents were silently lost).
+  let text: string;
+  try {
+    text = UTF8.decode(await c.req.arrayBuffer());
+  } catch {
+    throw new DomainError(
+      'validation',
+      'The request body is not valid UTF-8: send JSON encoded as UTF-8',
+    );
+  }
   if (!text.trim()) return {};
   const value: unknown = JSON.parse(text);
   if (value === null || typeof value !== 'object' || Array.isArray(value)) {

@@ -17,6 +17,7 @@ import {
   ProgressBar,
   RelativeTime,
   Segmented,
+  SegmentedProgress,
   Skeleton,
   StatusLabel,
   TagChip,
@@ -296,7 +297,11 @@ function ProjectTile({ p }: { p: ProjectSummary }) {
       <NextStep p={p} />
       {note && <p className="tile-note">{note}</p>}
       <div className="tile-progress">
-        <ProgressBar progress={p.progress} />
+        {p.phaseProgress.length > 0 ? (
+          <SegmentedProgress phases={p.phaseProgress} />
+        ) : (
+          <ProgressBar progress={p.progress} />
+        )}
         <span className="meta">
           {p.currentPhase ? `${p.currentPhase.title} · ` : ''}
           {pct}%
@@ -388,7 +393,9 @@ function ProjectTable({ projects }: { projects: ProjectSummary[] }) {
                         (CLOSED.includes(p.lifecycleStatus) ? '' : t('badge.no_next_step'))}
                     </td>
                     <td>
-                      <ProgressBar progress={p.progress} width={100} />{' '}
+                      <span className="table-progress">
+                        <SegmentedProgress phases={p.phaseProgress} />
+                      </span>{' '}
                       <span className="meta">{Math.round(p.progress.ratio * 100)}%</span>
                     </td>
                     <td>

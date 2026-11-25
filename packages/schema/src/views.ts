@@ -119,6 +119,8 @@ export interface ProjectSummary {
   statusChangedAt: IsoTime;
   coverFileId: number | null;
   progress: Progress;
+  /** Progress per phase, in roadmap order, for the segmented bar of the dashboard. */
+  phaseProgress: { id: number; title: string; progress: Progress }[];
   currentPhase: { id: number; title: string; position: number } | null;
   nextTask: NextTaskRef | null;
   lastActivityAt: IsoTime;

@@ -86,6 +86,7 @@ export function summary(over: Partial<ProjectSummary> = {}): ProjectSummary {
     statusChangedAt: T0,
     coverFileId: null,
     progress: { done: 0, total: 0, ratio: 0 },
+    phaseProgress: [],
     currentPhase: null,
     nextTask: null,
     lastActivityAt: T0,

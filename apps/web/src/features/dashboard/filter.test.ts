@@ -15,6 +15,7 @@ function project(over: Partial<ProjectSummary>): ProjectSummary {
     statusChangedAt: '2026-11-20T00:00:00.000Z',
     coverFileId: null,
     progress: { done: 0, total: 0, ratio: 0 },
+    phaseProgress: [],
     currentPhase: null,
     nextTask: null,
     lastActivityAt: '2026-11-20T00:00:00.000Z',

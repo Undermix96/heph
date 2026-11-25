@@ -434,3 +434,21 @@ describe('projects: list', () => {
     expect(noNext.nextTask).toBeNull();
   });
 });
+
+describe('projects.list phaseProgress', () => {
+  it('lists every phase in roadmap order with the same progress as the detail', () => {
+    const t = makeDomain();
+    try {
+      const p = seedProject(t.d);
+      t.d.roadmap.completeTask(p.phases[0]!.tasks[0]!.id, UI);
+      const [s] = t.d.projects.list();
+      const detail = t.d.projects.get(p.id);
+      expect(s!.phaseProgress).toEqual(
+        detail.phases.map((ph) => ({ id: ph.id, title: ph.title, progress: ph.progress })),
+      );
+      expect(s!.phaseProgress[0]!.progress).toEqual({ done: 1, total: 2, ratio: 0.5 });
+    } finally {
+      t.cleanup();
+    }
+  });
+});

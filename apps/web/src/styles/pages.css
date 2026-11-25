@@ -179,6 +179,11 @@
   align-items: center;
   gap: var(--space-2);
 }
+.table-progress {
+  display: inline-flex;
+  width: 100px;
+  vertical-align: middle;
+}
 .tile-progress .meta {
   white-space: nowrap;
 }

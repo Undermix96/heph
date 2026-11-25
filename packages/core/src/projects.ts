@@ -176,6 +176,7 @@ export class ProjectsService {
         statusChangedAt: iso(r.statusChangedAt),
         coverFileId: r.coverFileId,
         progress: progressOf(allTasks),
+        phaseProgress: phaseViews.map((p) => ({ id: p.id, title: p.title, progress: p.progress })),
         currentPhase: current
           ? { id: current.id, title: current.title, position: current.position }
           : null,

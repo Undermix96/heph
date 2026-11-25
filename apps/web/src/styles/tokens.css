@@ -94,6 +94,8 @@
   --control-sm: 28px; /* bottoni dentro righe e intestazioni */
   --control-md: 32px; /* bottoni e campi standard */
   --control-touch: 40px; /* telefono (area minima di tocco 44px incluso il margine) */
+  /* Heph addition (D56): the owner's rule asks for 44px touch targets without margins. */
+  --control-touch-min: 44px;
 
   /* Layout */
   --header-h: 56px;

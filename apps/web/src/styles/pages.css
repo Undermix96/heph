@@ -973,3 +973,105 @@
   flex-direction: column;
   gap: var(--space-2);
 }
+
+/* phone and tablet (group C2, design §8) */
+@media (max-width: 999px) {
+  .with-sidebar {
+    flex-direction: column;
+  }
+  .filters,
+  .project-list {
+    flex: none;
+    width: 100%;
+  }
+  .doc-index {
+    position: static;
+  }
+}
+@media (max-width: 599px) {
+  .hide-phone {
+    display: none;
+  }
+  .topbar {
+    gap: var(--space-2);
+    padding: 0 var(--space-4);
+  }
+  .crumbs > a:first-child,
+  .crumbs > span {
+    display: none;
+  }
+  .crumbs a {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .topbar-search input {
+    width: 120px;
+  }
+  .page,
+  .with-sidebar {
+    padding: var(--space-4);
+  }
+  .tiles,
+  .grid-2 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .path {
+    flex-direction: column;
+  }
+  .path-group {
+    max-width: none;
+  }
+  .composer {
+    position: sticky;
+    bottom: 0;
+    z-index: 3;
+    box-shadow: var(--shadow-overlay);
+  }
+  .composer textarea {
+    min-height: 72px;
+  }
+  .viewer {
+    padding: var(--space-2);
+  }
+  /* Touch targets: at least 44 px (D56). */
+  .btn,
+  .icon-btn,
+  .grip,
+  .task-icon,
+  .segmented button,
+  .menu-list button,
+  .months button,
+  .tabs a,
+  input,
+  select,
+  .check {
+    min-height: var(--control-touch-min);
+  }
+  .icon-btn,
+  .grip,
+  .task-icon {
+    min-width: var(--control-touch-min);
+  }
+  .task {
+    min-height: var(--control-touch-min);
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 999px) {
+  .with-sidebar > .content {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+@media (max-width: 599px) {
+  .topbar-search {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  .topbar-search input {
+    width: 100%;
+  }
+  .topbar-spacer {
+    display: none;
+  }
+}

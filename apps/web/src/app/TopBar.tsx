@@ -89,8 +89,13 @@ export function TopBar() {
         <option value="it">IT</option>
         <option value="en">EN</option>
       </select>
-      <button type="button" className="btn btn-primary btn-md" onClick={() => navigate('/new')}>
-        <PlusIcon size={16} /> {t('nav.newProject')}
+      <button
+        type="button"
+        className="btn btn-primary btn-md"
+        aria-label={t('nav.newProject')}
+        onClick={() => navigate('/new')}
+      >
+        <PlusIcon size={16} /> <span className="hide-phone">{t('nav.newProject')}</span>
       </button>
       <Link to="/settings" className="icon-btn" aria-label={t('nav.settings')}>
         <GearIcon size={16} />

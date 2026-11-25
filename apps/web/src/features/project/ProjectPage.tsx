@@ -88,7 +88,7 @@ function ProjectList({ current }: { current: string }) {
     p.name.toLowerCase().includes(q.trim().toLowerCase()),
   );
   return (
-    <aside className="project-list" aria-label={t('project.list')}>
+    <aside className="project-list hide-phone" aria-label={t('project.list')}>
       <label className="sr-only" htmlFor="pl-filter">
         {t('project.listFilter')}
       </label>

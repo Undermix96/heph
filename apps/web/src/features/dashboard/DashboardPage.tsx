@@ -32,6 +32,7 @@ import {
 } from '../../components/ui.js';
 import { type MessageKey, useI18n, useT } from '../../i18n/index.js';
 import { errorKey } from '../../lib/errors.js';
+import { PHONE, useMedia } from '../../lib/media.js';
 import { DiaryView } from '../diary/DiaryView.js';
 import { ProposalsView } from '../proposals/ProposalsView.js';
 import {
@@ -173,6 +174,8 @@ function ProjectsTab({ projects }: { projects: ProjectSummary[] }) {
   const [f, setF] = useState<Filters>(EMPTY_FILTERS);
   const [sort, setSort] = useState<Sort>('attention');
   const [view, setView] = useState<View>('tiles');
+  const phone = useMedia(PHONE);
+  const [showFilters, setShowFilters] = useState(false);
   const shown = useMemo(
     () => sortProjects(applyFilters(projects, f), sort, lang),
     [projects, f, sort, lang],
@@ -193,35 +196,47 @@ function ProjectsTab({ projects }: { projects: ProjectSummary[] }) {
   return (
     <div className="with-sidebar">
       <aside className="filters" aria-label={t('dash.filters')}>
-        <FilterGroup<LifecycleStatus>
-          title={t('dash.filter.status')}
-          values={[...LIFECYCLE_STATUSES]}
-          label={(v) => t(`lifecycle.${v}` as MessageKey)}
-          counts={statusCounts}
-          selected={f.statuses}
-          onToggle={(v) => setF({ ...f, statuses: toggle(f.statuses, v) })}
-        />
-        <FilterGroup<ActivityState>
-          title={t('dash.filter.activity')}
-          values={[...ACTIVITY_STATES]}
-          label={(v) => t(`activity.${v}` as MessageKey)}
-          counts={activityCounts}
-          selected={f.activities}
-          onToggle={(v) => setF({ ...f, activities: toggle(f.activities, v) })}
-        />
-        {tags.length > 0 && (
-          <FilterGroup<string>
-            title={t('dash.filter.tags')}
-            values={tags}
-            label={(v) => v}
-            counts={tagCounts}
-            selected={f.tags}
-            onToggle={(v) => setF({ ...f, tags: toggle(f.tags, v) })}
-          />
+        {phone && (
+          <button
+            type="button"
+            className="btn btn-default btn-md filters-toggle"
+            aria-expanded={showFilters}
+            onClick={() => setShowFilters(!showFilters)}
+          >
+            {t('dash.filters')} ▾
+          </button>
         )}
-        <Box className="queue-placeholder" title={t('dash.queue.title')}>
-          <p className="muted small">{t('dash.queue.soon')}</p>
-        </Box>
+        <div className="filters-body" hidden={phone && !showFilters}>
+          <FilterGroup<LifecycleStatus>
+            title={t('dash.filter.status')}
+            values={[...LIFECYCLE_STATUSES]}
+            label={(v) => t(`lifecycle.${v}` as MessageKey)}
+            counts={statusCounts}
+            selected={f.statuses}
+            onToggle={(v) => setF({ ...f, statuses: toggle(f.statuses, v) })}
+          />
+          <FilterGroup<ActivityState>
+            title={t('dash.filter.activity')}
+            values={[...ACTIVITY_STATES]}
+            label={(v) => t(`activity.${v}` as MessageKey)}
+            counts={activityCounts}
+            selected={f.activities}
+            onToggle={(v) => setF({ ...f, activities: toggle(f.activities, v) })}
+          />
+          {tags.length > 0 && (
+            <FilterGroup<string>
+              title={t('dash.filter.tags')}
+              values={tags}
+              label={(v) => v}
+              counts={tagCounts}
+              selected={f.tags}
+              onToggle={(v) => setF({ ...f, tags: toggle(f.tags, v) })}
+            />
+          )}
+          <Box className="queue-placeholder" title={t('dash.queue.title')}>
+            <p className="muted small">{t('dash.queue.soon')}</p>
+          </Box>
+        </div>
       </aside>
       <section className="content">
         <div className="toolbar">

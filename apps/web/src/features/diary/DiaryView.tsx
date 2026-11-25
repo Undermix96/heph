@@ -297,7 +297,7 @@ function NoteComposer({ projectRef, onAdded }: { projectRef: string; onAdded: ()
     },
   );
   return (
-    <Box>
+    <Box className="composer">
       <MarkdownEditor
         label={t('diary.newNote')}
         value={body}

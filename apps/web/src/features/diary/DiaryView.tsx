@@ -15,6 +15,7 @@ import {
   Skeleton,
   SourceAvatar,
 } from '../../components/ui.js';
+import { Viewer } from '../../components/viewer.js';
 import { type MessageKey, useI18n, useT } from '../../i18n/index.js';
 import { errorKey } from '../../lib/errors.js';
 import { type DiaryItem, groupDiary, sourceCounts } from './group.js';
@@ -349,31 +350,43 @@ function SessionView({
 
 export function Attachments({ files, more = 0 }: { files: FileView[]; more?: number }) {
   const t = useT();
+  const qc = useQueryClient();
+  const [open, setOpen] = useState<number | null>(null);
   if (files.length === 0) return null;
   return (
-    <ul className="thumbs">
-      {files.map((f) => (
-        <li key={f.id}>
-          <a
-            href={fileUrl(f.id)}
-            target="_blank"
-            rel="noreferrer noopener"
-            title={f.caption ?? f.originalName}
-          >
-            {f.hasThumbnail ? (
-              <img
-                src={fileUrl(f.id, { thumb: true })}
-                alt={f.caption ?? f.originalName}
-                loading="lazy"
-              />
-            ) : (
-              <span className="thumb-file">{f.originalName}</span>
-            )}
-          </a>
-        </li>
-      ))}
-      {more > 0 && <li className="meta">{t('diary.moreFiles', { n: more })}</li>}
-    </ul>
+    <>
+      <ul className="thumbs">
+        {files.map((f, i) => (
+          <li key={f.id}>
+            <button
+              type="button"
+              className="thumb-btn"
+              title={f.caption ?? f.originalName}
+              onClick={() => setOpen(i)}
+            >
+              {f.hasThumbnail ? (
+                <img
+                  src={fileUrl(f.id, { thumb: true })}
+                  alt={f.caption ?? f.originalName}
+                  loading="lazy"
+                />
+              ) : (
+                <span className="thumb-file">{f.originalName}</span>
+              )}
+            </button>
+          </li>
+        ))}
+        {more > 0 && <li className="meta">{t('diary.moreFiles', { n: more })}</li>}
+      </ul>
+      {open !== null && (
+        <Viewer
+          files={files}
+          start={open}
+          onClose={() => setOpen(null)}
+          onChanged={() => void qc.invalidateQueries({ queryKey: ['diary'] })}
+        />
+      )}
+    </>
   );
 }
 

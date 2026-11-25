@@ -336,6 +336,30 @@ export const it = {
   'materials.deleteText': '«{name}» verrà eliminato dalla lista.',
   'materials.nameRequired': 'Scrivi il nome del materiale.',
   'materials.badNumber': 'Quantità e prezzo devono essere numeri (quantità maggiore di zero).',
+  'viewer.prev': 'Precedente',
+  'viewer.next': 'Successivo',
+  'viewer.pin': 'Fissa',
+  'viewer.unpin': 'Togli da fissati',
+  'viewer.download': 'Scarica',
+  'viewer.confirmDelete': 'Elimina davvero',
+  'viewer.onTask': 'Collegato a un task',
+  'viewer.onPhase': 'Collegato a una fase',
+  'viewer.onDiary': 'Collegato a una voce del diario',
+  'viewer.onProject': 'Collegato al progetto',
+  'viewer.retention':
+    'Caricato da Claude e non fissato: può essere eliminato quando arrivano screenshot più recenti.',
+  'files.filter': 'Tipo di file',
+  'files.all': 'Tutti',
+  'files.images': 'Immagini',
+  'files.other': 'Altri',
+  'files.drop': 'Trascina qui i file da caricare',
+  'files.choose': 'Scegli i file',
+  'files.retention':
+    'Degli screenshot di Claude non fissati si tengono gli ultimi {n} per elemento collegato; fissa quelli da conservare.',
+  'files.empty.title': 'Nessun file',
+  'files.empty.text': 'Carica foto, schemi e documenti del progetto.',
+  'files.pinned': 'Fissati',
+  'files.allFiles': 'Tutti i file',
 } as const;
 
 export type MessageKey = keyof typeof it;

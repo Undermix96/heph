@@ -7,9 +7,7 @@ import { keys, useApiMutation, useProject, useProjects } from '../../api/queries
 import { useNotices } from '../../app/notices.js';
 import {
   Alert,
-  Box,
   Button,
-  EmptyState,
   Field,
   Skeleton,
   StatusLabel,
@@ -21,6 +19,7 @@ import { errorKey } from '../../lib/errors.js';
 import { DiaryView } from '../diary/DiaryView.js';
 import { FormDialog, RoadmapBoard } from '../roadmap/RoadmapBoard.js';
 import { DocsTab } from './DocsTab.js';
+import { FilesTab } from './FilesTab.js';
 import { MaterialsTab } from './MaterialsTab.js';
 import { Overview } from './Overview.js';
 
@@ -73,14 +72,7 @@ export function ProjectPage() {
             {tab === 'diary' && <DiaryView projectRef={project.data.slug} />}
             {tab === 'docs' && <DocsTab projectRef={project.data.slug} />}
             {tab === 'materials' && <MaterialsTab projectRef={project.data.slug} />}
-            {tab === 'files' && (
-              <Box>
-                <EmptyState
-                  title={t(`project.tab.${tab}` as MessageKey)}
-                  text={t('common.groupB')}
-                />
-              </Box>
-            )}
+            {tab === 'files' && <FilesTab projectRef={project.data.slug} />}
           </>
         )}
       </main>

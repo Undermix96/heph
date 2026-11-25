@@ -125,11 +125,11 @@ test.describe('verifyC phone', () => {
     await page.goto('/');
     const toggle = page.getByRole('button', { name: /Filtri/ });
     await expect(toggle).toHaveAttribute('aria-expanded', 'false');
-    await expect(page.locator('.filters-body')).toBeHidden();
+    await expect(page.locator('.m-filter-panel')).toBeHidden();
     await toggle.focus();
     await page.keyboard.press('Enter');
     await expect(toggle).toHaveAttribute('aria-expanded', 'true');
-    await expect(page.locator('.filters-body')).toBeVisible();
+    await expect(page.locator('.m-filter-panel')).toBeVisible();
   });
 
   test('the project list is reachable from a project page (logo or back)', async ({ page }) => {
@@ -144,7 +144,12 @@ test.describe('verifyC phone', () => {
   test('axe with menus, dialogs and the viewer open', async ({ page }) => {
     const p = await ensureProject();
     const bad: string[] = [];
+    // Phone (mockup 61): the page header has no status button; it is in ⋯ > Modifica.
     await page.goto(`/p/${p.slug}`);
+    await page.locator('header.topbar').getByRole('button', { name: 'Altre azioni' }).click();
+    bad.push(...(await axe(page)).map((v) => `top bar menu: ${v}`));
+    await page.keyboard.press('Escape');
+    await page.goto(`/p/${p.slug}/edit`);
     await page.getByRole('button', { name: 'Stato' }).click();
     bad.push(...(await axe(page)).map((v) => `status menu: ${v}`));
     await page.getByRole('button', { name: 'In pausa' }).click();

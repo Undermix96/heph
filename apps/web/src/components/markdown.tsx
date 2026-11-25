@@ -48,6 +48,7 @@ export function MarkdownEditor({
   onFiles,
   rows = 5,
   allowEmpty = false,
+  compact = false,
 }: {
   label: string;
   value: string;
@@ -63,6 +64,8 @@ export function MarkdownEditor({
   rows?: number;
   /** Submitting an empty text is meaningful (e.g. clearing the documentation). */
   allowEmpty?: boolean;
+  /** Phone bottom bar (mockup 62): attach icon, one-line field, submit; no preview. */
+  compact?: boolean;
 }) {
   const t = useT();
   const notices = useNotices();
@@ -94,6 +97,81 @@ export function MarkdownEditor({
       onSubmit();
     }
   };
+
+  const chips = files && files.length > 0 && (
+    <div className="tags">
+      {files.map((f) => (
+        <span key={f.id} className="tag">
+          {f.originalName}
+          <button
+            type="button"
+            className="tag-x"
+            aria-label={t('editor.removeFile', { name: f.originalName })}
+            onClick={() => onFiles?.((prev) => prev.filter((x) => x.id !== f.id))}
+          >
+            <XIcon size={12} />
+          </button>
+        </span>
+      ))}
+    </div>
+  );
+  const fileInput = (
+    <input
+      ref={input}
+      type="file"
+      multiple
+      className="sr-only"
+      tabIndex={-1}
+      aria-hidden="true"
+      onChange={(e) => void attach(e.target.files)}
+    />
+  );
+  const canSubmit = (allowEmpty || value.trim()) && !busy && !uploading;
+
+  if (compact) {
+    return (
+      <div className="md-editor md-compact">
+        {chips}
+        <div className="md-compact-row">
+          {projectRef && onFiles && (
+            <>
+              {fileInput}
+              <button
+                type="button"
+                className="icon-btn icon-btn-boxed"
+                disabled={uploading}
+                aria-label={t(uploading ? 'editor.uploading' : 'editor.attach')}
+                onClick={() => input.current?.click()}
+              >
+                <PaperclipIcon size={18} />
+              </button>
+            </>
+          )}
+          <label htmlFor={id} className="sr-only">
+            {label}
+          </label>
+          <textarea
+            id={id}
+            rows={1}
+            value={value}
+            placeholder={label}
+            onChange={(e) => {
+              onChange(e.target.value);
+              // Grow with the text up to a few lines (max-height in CSS).
+              e.target.style.height = 'auto';
+              e.target.style.height = `${e.target.scrollHeight}px`;
+            }}
+            onKeyDown={onKey}
+          />
+          {onSubmit && (
+            <Button variant="primary" disabled={!canSubmit} onClick={onSubmit}>
+              {submitLabel}
+            </Button>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="md-editor">
@@ -133,35 +211,11 @@ export function MarkdownEditor({
           {value.trim() ? <Markdown text={value} /> : <p className="muted">{t('editor.empty')}</p>}
         </div>
       )}
-      {files && files.length > 0 && (
-        <div className="tags">
-          {files.map((f) => (
-            <span key={f.id} className="tag">
-              {f.originalName}
-              <button
-                type="button"
-                className="tag-x"
-                aria-label={t('editor.removeFile', { name: f.originalName })}
-                onClick={() => onFiles?.((prev) => prev.filter((x) => x.id !== f.id))}
-              >
-                <XIcon size={12} />
-              </button>
-            </span>
-          ))}
-        </div>
-      )}
+      {chips}
       <div className="row md-editor-foot">
         {projectRef && onFiles && (
           <>
-            <input
-              ref={input}
-              type="file"
-              multiple
-              className="sr-only"
-              tabIndex={-1}
-              aria-hidden="true"
-              onChange={(e) => void attach(e.target.files)}
-            />
+            {fileInput}
             <Button size="sm" disabled={uploading} onClick={() => input.current?.click()}>
               <PaperclipIcon size={16} /> {t(uploading ? 'editor.uploading' : 'editor.attach')}
             </Button>
@@ -170,11 +224,7 @@ export function MarkdownEditor({
         <span className="meta">{t('editor.hint')}</span>
         <div className="topbar-spacer" />
         {onSubmit && (
-          <Button
-            variant="primary"
-            disabled={(!allowEmpty && !value.trim()) || busy || uploading}
-            onClick={onSubmit}
-          >
+          <Button variant="primary" disabled={!canSubmit} onClick={onSubmit}>
             {submitLabel}
           </Button>
         )}

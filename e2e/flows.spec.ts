@@ -21,7 +21,8 @@ async function openProject(page: Page, tab = '') {
   if (tab) {
     await page
       .getByRole('navigation', { name: 'Sezioni del progetto' })
-      .getByRole('link', { name: tab, exact: true })
+      // Tabs carry counters ("Roadmap 4").
+      .getByRole('link', { name: new RegExp(`^${tab}(\\s|$)`) })
       .click();
   }
 }
@@ -71,6 +72,12 @@ test('roadmap: keyboard move persists and a change via the API appears without r
   const phaseId = detail.phases[0].id;
   await api.post(`/api/phases/${phaseId}/tasks`, { data: { title: 'Aggiunto da Claude' } });
   await expect(page.getByText('Aggiunto da Claude')).toBeVisible({ timeout: 15_000 });
+});
+
+test('the project description is rendered as Markdown, not raw', async ({ page }) => {
+  await openProject(page);
+  await expect(page.locator('.project-head strong', { hasText: 'dati inventati' })).toBeVisible();
+  await expect(page.getByText('**dati inventati**')).toHaveCount(0);
 });
 
 test('mark done shows the next step computed by the server', async ({ page }) => {

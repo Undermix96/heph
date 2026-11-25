@@ -32,11 +32,12 @@ export default defineConfig({
     {
       name: 'desktop',
       use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 } },
+      testIgnore: /phone\.spec\.ts/,
     },
     {
       name: 'phone',
       use: { ...devices['Pixel 7'], viewport: { width: 390, height: 844 } },
-      testMatch: /(a11y|screens)\.spec\.ts/,
+      testMatch: /(a11y|screens|phone)\.spec\.ts/,
     },
   ],
   webServer: {

@@ -1,10 +1,12 @@
 import type { LifecycleStatus, ProjectDetail } from '@heph/schema';
 import { TriangleDownIcon } from '@primer/octicons-react';
+import { useQuery } from '@tanstack/react-query';
 import { useRef, useState } from 'react';
 import { Link, NavLink, useParams } from 'react-router';
 import { api, isProposal } from '../../api/client.js';
 import { keys, useApiMutation, useProject, useProjects } from '../../api/queries.js';
 import { useNotices } from '../../app/notices.js';
+import { Markdown } from '../../components/markdown.js';
 import {
   Alert,
   Button,
@@ -16,6 +18,7 @@ import {
 } from '../../components/ui.js';
 import { type MessageKey, useT } from '../../i18n/index.js';
 import { errorKey } from '../../lib/errors.js';
+import { PHONE, useMedia } from '../../lib/media.js';
 import { DiaryView } from '../diary/DiaryView.js';
 import { FormDialog, RoadmapBoard } from '../roadmap/RoadmapBoard.js';
 import { DocsTab } from './DocsTab.js';
@@ -34,6 +37,19 @@ export function ProjectPage() {
     ? (rawTab as Tab)
     : 'overview';
   const project = useProject(slug);
+  const months = useQuery({
+    queryKey: ['diary', 'months', slug],
+    queryFn: () => api.diaryMonths(slug),
+    // Only for a project that exists (a missing one shows the not-found state).
+    enabled: project.isSuccess,
+  });
+  // Tab counters (design §4): open tasks and diary entries.
+  const counts: Partial<Record<Tab, number>> = project.data
+    ? {
+        roadmap: project.data.progress.total - project.data.progress.done,
+        diary: months.data?.reduce((n, m) => n + m.count, 0),
+      }
+    : {};
 
   return (
     <div className="with-sidebar">
@@ -64,6 +80,7 @@ export function ProjectPage() {
                   className={({ isActive }) => (isActive ? 'active' : '')}
                 >
                   {t(`project.tab.${k}` as MessageKey)}
+                  {counts[k] !== undefined && <span className="counter">{counts[k]}</span>}
                 </NavLink>
               ))}
             </nav>
@@ -120,6 +137,21 @@ function ProjectList({ current }: { current: string }) {
 function ProjectHeader({ p }: { p: ProjectDetail }) {
   const t = useT();
   const [more, setMore] = useState(false);
+  const phone = useMedia(PHONE);
+  if (phone) {
+    // Phone (mockup 61): name, Edit and Status are in the top bar and its ⋯ menu.
+    return (
+      <header className="project-head m-project-head">
+        <div className="row small">
+          <StatusLabel badge={p.badge} />
+          <span className="meta">
+            {p.progress.done}/{p.progress.total} · {Math.round(p.progress.ratio * 100)}%
+          </span>
+          {p.tags.length > 0 && <span className="meta">{p.tags.join(' · ')}</span>}
+        </div>
+      </header>
+    );
+  }
   return (
     <header className="project-head">
       <div className="project-title-row">
@@ -136,7 +168,9 @@ function ProjectHeader({ p }: { p: ProjectDetail }) {
       </div>
       {p.description && (
         <div className="project-desc">
-          <p className={more ? 'pre' : 'clamp-2 pre'}>{p.description}</p>
+          <div className={more ? '' : 'clamp-2'}>
+            <Markdown text={p.description} />
+          </div>
           {p.description.length > 160 && (
             <button type="button" className="link-btn" onClick={() => setMore(!more)}>
               {t(more ? 'common.showLess' : 'common.showAll')}

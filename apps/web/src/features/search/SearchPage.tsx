@@ -17,7 +17,7 @@ const GROUPS: { key: MessageKey; kinds: SearchHit['kind'][] }[] = [
 /** Search (mockup 30): results grouped by kind, matches highlighted. */
 export function SearchPage() {
   const t = useT();
-  const [params] = useSearchParams();
+  const [params, setParams] = useSearchParams();
   const q = (params.get('q') ?? '').trim();
   const res = useQuery({
     queryKey: ['search', q],
@@ -28,6 +28,28 @@ export function SearchPage() {
   return (
     <main className="page">
       <h1 className="page-title">{q ? t('search.titleFor', { q }) : t('search.title')}</h1>
+      <search className="search-form">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            const v = new FormData(e.currentTarget).get('q');
+            if (typeof v === 'string' && v.trim()) setParams({ q: v.trim() });
+          }}
+        >
+          <label className="sr-only" htmlFor="search-q">
+            {t('nav.search')}
+          </label>
+          <input
+            id="search-q"
+            name="q"
+            type="search"
+            defaultValue={q}
+            key={q}
+            placeholder={t('nav.search')}
+          />
+          <Button type="submit">{t('nav.search')}</Button>
+        </form>
+      </search>
       {!q ? (
         <p className="muted">{t('search.hint')}</p>
       ) : res.isPending ? (

@@ -29,6 +29,8 @@ type SourceFilter = 'all' | Source;
  * stay visible, Claude sessions summarized, older days loaded on demand.
  * `projectRef` null shows every project (dashboard).
  */
+const SOURCES = ['all', 'ui', 'claude_code', 'github', 'system'] as const;
+
 export function DiaryView({ projectRef }: { projectRef: string | null }) {
   const t = useT();
   const qc = useQueryClient();
@@ -108,51 +110,75 @@ export function DiaryView({ projectRef }: { projectRef: string | null }) {
           ))}
         </nav>
       )}
-      <div className="toolbar">
-        <Segmented<SourceFilter>
-          label={t('diary.filterSource')}
-          value={source}
-          onChange={setSource}
-          options={(['all', 'ui', 'claude_code', 'github', 'system'] as const).map((s) => ({
-            value: s,
-            label:
-              s === 'all'
-                ? t('diary.all')
-                : `${t(`source.${s}` as MessageKey)}${source === 'all' ? ` ${counts[s] ?? 0}` : ''}`,
-          }))}
-        />
-        <label className="sr-only" htmlFor="diary-type">
-          {t('diary.type')}
-        </label>
-        <select
-          id="diary-type"
-          value={type}
-          onChange={(e) => setType(e.target.value as '' | DiaryType)}
-        >
-          <option value="">{t('diary.type.all')}</option>
-          <option value="note">{t('diary.type.note')}</option>
-          <option value="session">{t('diary.type.session')}</option>
-          <option value="event">{t('diary.type.event')}</option>
-        </select>
-        <label className="check">
-          <input
-            type="checkbox"
-            checked={withFiles}
-            onChange={(e) => setWithFiles(e.target.checked)}
+      {phone ? (
+        <fieldset className="m-chips m-chips-scroll">
+          <legend className="sr-only">{t('diary.filterSource')}</legend>
+          {SOURCES.map((s) => (
+            <button
+              key={s}
+              type="button"
+              className={`chip${source === s ? ' active' : ''}`}
+              aria-pressed={source === s}
+              onClick={() => setSource(s)}
+            >
+              {s === 'all' ? t('diary.all') : t(`source.${s}` as MessageKey)}
+              {source === 'all' && (
+                <span className="counter">
+                  {s === 'all'
+                    ? (months.data?.reduce((n, m) => n + m.count, 0) ?? all.length)
+                    : (counts[s] ?? 0)}
+                </span>
+              )}
+            </button>
+          ))}
+        </fieldset>
+      ) : (
+        <div className="toolbar">
+          <Segmented<SourceFilter>
+            label={t('diary.filterSource')}
+            value={source}
+            onChange={setSource}
+            options={SOURCES.map((s) => ({
+              value: s,
+              label:
+                s === 'all'
+                  ? t('diary.all')
+                  : `${t(`source.${s}` as MessageKey)}${source === 'all' ? ` ${counts[s] ?? 0}` : ''}`,
+            }))}
           />
-          {t('diary.withFiles')}
-        </label>
-        <label className="sr-only" htmlFor="diary-search">
-          {t('diary.search')}
-        </label>
-        <input
-          id="diary-search"
-          type="search"
-          placeholder={t('diary.search')}
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-        />
-      </div>
+          <label className="sr-only" htmlFor="diary-type">
+            {t('diary.type')}
+          </label>
+          <select
+            id="diary-type"
+            value={type}
+            onChange={(e) => setType(e.target.value as '' | DiaryType)}
+          >
+            <option value="">{t('diary.type.all')}</option>
+            <option value="note">{t('diary.type.note')}</option>
+            <option value="session">{t('diary.type.session')}</option>
+            <option value="event">{t('diary.type.event')}</option>
+          </select>
+          <label className="check">
+            <input
+              type="checkbox"
+              checked={withFiles}
+              onChange={(e) => setWithFiles(e.target.checked)}
+            />
+            {t('diary.withFiles')}
+          </label>
+          <label className="sr-only" htmlFor="diary-search">
+            {t('diary.search')}
+          </label>
+          <input
+            id="diary-search"
+            type="search"
+            placeholder={t('diary.search')}
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+          />
+        </div>
+      )}
 
       {q.isPending ? (
         <Skeleton lines={6} />
@@ -299,6 +325,7 @@ function NoteComposer({
   onHeight: (h: number) => void;
 }) {
   const box = useRef<HTMLDivElement>(null);
+  const phone = useMedia(PHONE);
   useEffect(() => {
     const el = box.current;
     if (!el || typeof ResizeObserver === 'undefined') return;
@@ -328,11 +355,12 @@ function NoteComposer({
     <div ref={box} className="composer">
       <Box>
         <MarkdownEditor
-          label={t('diary.newNote')}
+          label={t(phone ? 'm.notePlaceholder' : 'diary.newNote')}
           value={body}
           onChange={setBody}
           onSubmit={() => add.mutate(undefined)}
-          submitLabel={t('diary.publish')}
+          submitLabel={t(phone ? 'm.send' : 'diary.publish')}
+          compact={phone}
           busy={add.isPending}
           projectRef={projectRef}
           files={files}

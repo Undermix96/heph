@@ -8,6 +8,7 @@ import { keys, useApiMutation } from '../../api/queries.js';
 import { useNotices } from '../../app/notices.js';
 import { Alert, Box, Button, Field, RelativeTime, SourceAvatar } from '../../components/ui.js';
 import { useI18n, useT } from '../../i18n/index.js';
+import { PHONE, useMedia } from '../../lib/media.js';
 import { FormDialog } from '../roadmap/RoadmapBoard.js';
 import { pathGroups } from './path.js';
 
@@ -19,6 +20,7 @@ export function Overview({ p }: { p: ProjectDetail }) {
   const t = useT();
   const { date } = useI18n();
   const live = p.liveSessions[0];
+  const phone = useMedia(PHONE);
   const openTasks = p.phases
     .filter((ph) => ph.status !== 'done')
     .flatMap((ph) => ph.tasks.filter((x) => !x.done));
@@ -40,19 +42,12 @@ export function Overview({ p }: { p: ProjectDetail }) {
         ) : (
           <NoNextStep p={p} openTasks={openTasks} />
         )}
-        {p.lifecycleStatus === 'awaiting_manual_test' && (
-          <Box tone="attention" title={t('overview.pendingTest')}>
-            <p className="pre">{p.statusNote || t('tests.noNote')}</p>
-            <Link className="btn btn-default btn-md" to="/tests">
-              {t('dash.action.testOutcome')}
-            </Link>
-          </Box>
-        )}
+        {p.lifecycleStatus === 'awaiting_manual_test' && <PendingTest p={p} />}
       </div>
-      <PathBox p={p} />
+      {phone ? <PhaseList p={p} /> : <PathBox p={p} />}
       <div className="grid-2">
-        <CurrentPhase p={p} />
-        <LatestDiary p={p} />
+        <CurrentPhase p={p} checkboxes={phone} />
+        {!phone && <LatestDiary p={p} />}
       </div>
     </div>
   );
@@ -75,9 +70,13 @@ function NextStepBox({
     onSuccess: () => notices.info('overview.doneNewNext'),
   });
   return (
-    <Box tone="attention" title={t('overview.nextStep')} meta={next.phaseTitle}>
+    <Box
+      tone="attention"
+      title={t('overview.nextStep')}
+      meta={`${next.phaseTitle} · ${taskNumber(p, next.id)}`}
+    >
       <p className="next-title">{next.title}</p>
-      <div className="row">
+      <div className="row next-actions">
         <Button variant="primary" disabled={done.isPending} onClick={() => done.mutate(undefined)}>
           {t('overview.markDone')}
         </Button>
@@ -201,9 +200,127 @@ function PathBox({ p }: { p: ProjectDetail }) {
   );
 }
 
-function CurrentPhase({ p }: { p: ProjectDetail }) {
+/** "3.4": phase and task number of a task, as on the roadmap. */
+function taskNumber(p: ProjectDetail, taskId: number): string {
+  for (const [i, ph] of p.phases.entries()) {
+    const j = ph.tasks.findIndex((x) => x.id === taskId);
+    if (j >= 0) return `${i + 1}.${j + 1}`;
+  }
+  return '';
+}
+
+/** Pending manual test with the outcome in place (mockups 10 and 61). */
+function PendingTest({ p }: { p: ProjectDetail }) {
+  const t = useT();
+  const notices = useNotices();
+  const [notes, setNotes] = useState('');
+  const record = useApiMutation(
+    (passed: boolean) => api.testOutcome(p.slug, { passed, notes: notes.trim() || undefined }),
+    {
+      invalidate: () => [keys.project(p.slug)],
+      onSuccess: (_r, passed) => {
+        setNotes('');
+        notices.info(passed ? 'tests.recordedPassed' : 'tests.recordedFailed');
+      },
+    },
+  );
+  return (
+    <Box tone="attention" title={t('overview.pendingTest')}>
+      <p className="pre">{p.statusNote || t('tests.noNote')}</p>
+      <label className="sr-only" htmlFor="ov-test-notes">
+        {t('tests.outcome')}
+      </label>
+      <textarea
+        id="ov-test-notes"
+        rows={2}
+        placeholder={t('m.outcomeNote')}
+        value={notes}
+        onChange={(e) => setNotes(e.target.value)}
+      />
+      <div className="row m-split">
+        <Button variant="primary" disabled={record.isPending} onClick={() => record.mutate(true)}>
+          {t('tests.passed')}
+        </Button>
+        <Button variant="danger" disabled={record.isPending} onClick={() => record.mutate(false)}>
+          {t('tests.failed')}
+        </Button>
+      </div>
+    </Box>
+  );
+}
+
+/** Phone path (mockup 61): one row per phase with its count and "you are here". */
+function PhaseList({ p }: { p: ProjectDetail }) {
+  const t = useT();
+  const left = p.progress.total - p.progress.done;
+  const testing = p.lifecycleStatus === 'awaiting_manual_test';
+  return (
+    <Box title={t('overview.path')} meta={t('m.left', { n: left })}>
+      <ol className="m-path">
+        {p.phases.map((ph) => {
+          const here = ph.id === p.nextTask?.phaseId;
+          const state = ph.status === 'done' ? 'done' : here ? 'here' : 'todo';
+          return (
+            <li
+              key={ph.id}
+              className={`m-path-item m-path-${state}${testing && here ? ' testing' : ''}`}
+            >
+              <span className="m-path-dot" aria-hidden="true" />
+              <span className="m-path-title">
+                {ph.title}
+                {here && (
+                  <span className="m-path-note">
+                    {t('overview.youAreHere')}
+                    {testing ? ` · ${t('m.testPending')}` : ''}
+                  </span>
+                )}
+              </span>
+              <span className="meta">
+                {ph.progress.done}/{ph.progress.total}
+              </span>
+            </li>
+          );
+        })}
+      </ol>
+    </Box>
+  );
+}
+
+function CurrentPhase({ p, checkboxes }: { p: ProjectDetail; checkboxes: boolean }) {
   const t = useT();
   const phase = p.phases.find((x) => x.id === p.currentPhase?.id);
+  const toggle = useApiMutation(
+    (x: TaskView) => (x.done ? api.reopenTask(x.id) : api.completeTask(x.id)),
+    { invalidate: () => [keys.project(p.slug)] },
+  );
+  const pi = phase ? p.phases.indexOf(phase) + 1 : 0;
+  if (phase && checkboxes) {
+    // Phone (mockup 61): the tasks of the current phase as checkboxes.
+    return (
+      <Box
+        title={t('overview.currentPhase')}
+        meta={`${phase.progress.done}/${phase.progress.total}`}
+      >
+        <ul className="m-checks">
+          {phase.tasks.map((x, i) => (
+            <li key={x.id} className={x.id === p.nextTask?.id ? 'task-next' : ''}>
+              <label className="check">
+                <input
+                  type="checkbox"
+                  checked={x.done}
+                  disabled={toggle.isPending}
+                  onChange={() => toggle.mutate(x)}
+                />
+                <span className={x.done ? 'muted' : ''}>
+                  {pi}.{i + 1} {x.title}
+                </span>
+              </label>
+            </li>
+          ))}
+        </ul>
+      </Box>
+    );
+  }
   return (
     <Box
       title={t('overview.currentPhase')}

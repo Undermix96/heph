@@ -481,6 +481,20 @@ export const it = {
   'dash.start.github': 'Collega GitHub (serve dalla fase 6)',
   'error.pageLoad':
     'Non riesco a caricare questa pagina: forse Heph è stato aggiornato. Ricarica la pagina.',
+  'nav.projectsTitle': 'Progetti',
+  'nav.back': 'Indietro',
+  'nav.more': 'Altre azioni',
+  'm.attention': 'Richiede attenzione',
+  'm.stalled': 'Fermo da tempo: scegli come ripartire',
+  'm.claudeWorking': 'Claude al lavoro su {n} progetti',
+  'm.all': 'Tutti',
+  'm.test': 'Test',
+  'm.proposal': 'Proposta',
+  'm.outcomeNote': 'Nota sull’esito (facoltativa)',
+  'm.left': 'mancano {n}',
+  'm.testPending': 'test in attesa',
+  'm.send': 'Invia',
+  'm.notePlaceholder': 'Scrivi una nota…',
 } as const;
 
 export type MessageKey = keyof typeof it;

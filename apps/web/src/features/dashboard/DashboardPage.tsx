@@ -45,6 +45,7 @@ import {
   sortProjects,
   toggle,
 } from './filter.js';
+import { MobileDashboard } from './MobileDashboard.js';
 import { TestsTab } from './TestsTab.js';
 
 type View = 'tiles' | 'table';
@@ -55,6 +56,7 @@ export function DashboardPage({ tab }: { tab: 'projects' | 'tests' | 'diary' | '
   const t = useT();
   const projects = useProjects();
   const proposals = usePendingProposals();
+  const phoneLayout = useMedia(PHONE);
   const all = projects.data ?? [];
   const testing = all.filter((p) => p.lifecycleStatus === 'awaiting_manual_test');
 
@@ -114,6 +116,8 @@ export function DashboardPage({ tab }: { tab: 'projects' | 'tests' | 'diary' | '
         <ProposalsView />
       ) : all.length === 0 ? (
         <FirstProject />
+      ) : phoneLayout ? (
+        <MobileDashboard projects={all} />
       ) : (
         <ProjectsTab projects={all} />
       )}

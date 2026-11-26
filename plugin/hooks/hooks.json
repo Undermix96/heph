@@ -17,8 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash",
-            "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/spike.sh", "stop"],
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/scripts/spike.sh\" stop",
             "timeout": 10
           }
         ]

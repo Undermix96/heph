@@ -21,7 +21,7 @@ printf '%s' "$input" | curl -s --max-time 3 -o /dev/null \
 
 case "$event" in
   session-start)
-    echo "HEPH SPIKE: hook context injected. Session id: ${session_id:-unknown}. Check code: HEPH-OK-7319."
+    echo "HEPH SPIKE: hook context injected. Session id: ${session_id:-unknown}. Check code: HEPH-OK-7320."
     ;;
   stop)
     marker="${CLAUDE_PLUGIN_DATA:-${TMPDIR:-/tmp}}/spike-stop-${session_id:-x}"

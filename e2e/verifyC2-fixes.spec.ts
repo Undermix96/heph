@@ -94,7 +94,9 @@ for (const height of [844, 500]) {
       await check('empty composer');
       // Writing a longer note (several short paragraphs) is normal use on the phone.
       await composer.locator('textarea').fill('Riga\n'.repeat(8));
-      await check('composer with an 8-line note');
+      // The page padding follows the composer through a ResizeObserver: wait for that
+      // layout pass instead of racing it (flaky on CI from 2026-11-26), same assertions.
+      await expect(async () => check('composer with an 8-line note')).toPass({ timeout: 5_000 });
     });
   });
 }

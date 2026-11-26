@@ -1,0 +1,21 @@
+{
+  "name": "heph",
+  "description": "FEASIBILITY SPIKE (phase 5.0): checks userConfig, hooks and MCP config. Not the final plugin.",
+  "author": { "name": "Undermix96" },
+  "license": "MIT",
+  "userConfig": {
+    "heph_url": {
+      "type": "string",
+      "title": "Heph agent URL",
+      "description": "Base URL of the Heph agent port, e.g. http://heph.lan:8081 (no trailing slash)",
+      "required": true
+    },
+    "heph_token": {
+      "type": "string",
+      "title": "Heph API token",
+      "description": "API token from Heph Settings > Connect Claude Code",
+      "required": true,
+      "sensitive": true
+    }
+  }
+}

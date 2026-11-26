@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "heph": {
+      "type": "http",
+      "url": "${user_config.heph_url}/mcp",
+      "headers": { "Authorization": "Bearer ${user_config.heph_token}" }
+    }
+  }
+}

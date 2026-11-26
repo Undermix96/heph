@@ -1,0 +1,11 @@
+{
+  "name": "heph",
+  "owner": { "name": "Undermix96" },
+  "plugins": [
+    {
+      "name": "heph",
+      "source": "./plugin",
+      "description": "Hephaestus (heph) integration for Claude Code: briefing, live sessions, auto-diary."
+    }
+  ]
+}

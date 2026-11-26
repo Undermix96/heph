@@ -55,6 +55,8 @@ export function authenticate(
       if (!domain.auth.verifyApiToken(token)) {
         return c.json({ error: { code: 'unauthorized', message: 'Invalid API token' } }, 401);
       }
+      // "Connected · last call N ago" on the Connect Claude Code page.
+      domain.settings.recordAgentCall();
       c.set('user', domain.auth.getUser());
       c.set('sessionToken', null);
       c.set('ctx', {
@@ -107,3 +109,26 @@ export function sameOrigin(c: Context): boolean {
     return false;
   }
 }
+
+/** Browsers must not drive agent endpoints (MCP, hooks) from other origins. */
+export const refuseCrossOrigin: MiddlewareHandler<AppEnv> = async (c, next) => {
+  const origin = c.req.header('origin');
+  if (origin && !sameOrigin(c)) {
+    return c.json({ error: { code: 'forbidden', message: 'Cross-origin request refused' } }, 403);
+  }
+  if (origin && c.req.method === 'GET') {
+    // sameOrigin() only checks unsafe methods; for GET compare explicitly.
+    const host = c.req.header('host');
+    try {
+      if (new URL(origin).host !== host) {
+        return c.json(
+          { error: { code: 'forbidden', message: 'Cross-origin request refused' } },
+          403,
+        );
+      }
+    } catch {
+      return c.json({ error: { code: 'forbidden', message: 'Bad Origin header' } }, 403);
+    }
+  }
+  return next();
+};

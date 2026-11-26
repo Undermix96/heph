@@ -24,6 +24,8 @@ services:
       - "${HEPH_AGENT_PORT:-8081}:8081"
     environment:
       TZ: ${TZ:-Europe/Rome}
+      # Agent URL as Claude Code machines reach it (Connect Claude Code page, upload links).
+      HEPH_PUBLIC_AGENT_URL: ${HEPH_PUBLIC_AGENT_URL:-}
     volumes:
       # Must be local volumes (not NFS/SMB): SQLite needs working file locks.
       - heph-db:/data/db

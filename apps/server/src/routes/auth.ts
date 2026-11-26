@@ -1,8 +1,9 @@
 import type { Domain } from '@heph/core';
-import { DomainError } from '@heph/core';
+import { DomainError, iso } from '@heph/core';
 import { LoginInput } from '@heph/schema';
 import { Hono, type MiddlewareHandler } from 'hono';
 import { getCookie } from 'hono/cookie';
+import { publicAgentUrl } from '../config.js';
 import {
   authenticate,
   clearSessionCookie,
@@ -202,6 +203,15 @@ export function authRoutes(domain: Domain, limiter = defaultLoginLimiter()) {
   authed.get('/settings/api-token', auth, requireUi, (c) =>
     c.json({ apiToken: domain.auth.getApiToken() }),
   );
+
+  // "Connect Claude Code" page (§4, D60): what to paste into the plugin's configuration.
+  authed.get('/settings/connect', auth, requireUi, (c) => {
+    const last = domain.settings.lastAgentCallAt();
+    return c.json({
+      agentUrl: publicAgentUrl(),
+      lastAgentCallAt: last === null ? null : iso(last),
+    });
+  });
 
   authed.post('/settings/api-token/rotate', auth, requireUi, (c) =>
     c.json({ apiToken: domain.auth.rotateApiToken(c.get('ctx')) }),

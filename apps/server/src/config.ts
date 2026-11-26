@@ -45,3 +45,13 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): ServerConfig {
     logLevel: env.HEPH_LOG_LEVEL ?? 'info',
   };
 }
+
+/**
+ * Base URL agents use for the agent port as seen from their machine
+ * (`HEPH_PUBLIC_AGENT_URL`, e.g. `http://192.168.1.10:8081`): the server cannot
+ * know the host port Docker publishes. Read at call time; null when unset.
+ */
+export function publicAgentUrl(env: NodeJS.ProcessEnv = process.env): string | null {
+  const v = env.HEPH_PUBLIC_AGENT_URL?.trim().replace(/\/+$/, '');
+  return v || null;
+}

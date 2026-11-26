@@ -10,6 +10,7 @@ import { type AppEnv, errorHandler } from './http/common.js';
 import { mcpRoutes } from './mcp/route.js';
 import { apiRoutes } from './routes/api.js';
 import { authRoutes, defaultLoginLimiter, type LoginLimiter } from './routes/auth.js';
+import { hookRoutes } from './routes/hooks.js';
 import { uploadRoutes } from './routes/upload.js';
 
 export interface AppOptions {
@@ -56,7 +57,7 @@ export function createUiApp(opts: AppOptions): Hono<AppEnv> {
 
 /**
  * Agent app (LAN only): REST API with the bearer token, one-time uploads,
- * and later MCP and hook endpoints.
+ * MCP and the Claude Code plugin hooks (D24, D58).
  */
 export function createAgentApp(opts: AppOptions): Hono<AppEnv> {
   const app = new Hono<AppEnv>();
@@ -66,6 +67,7 @@ export function createAgentApp(opts: AppOptions): Hono<AppEnv> {
   );
   app.route('/upload', uploadRoutes(opts.domain));
   app.route('/mcp', mcpRoutes(opts.domain));
+  app.route('/hooks', hookRoutes(opts.domain));
   const api = new Hono<AppEnv>();
   api.use('*', authenticate(opts.domain, { allowCookie: false }));
   api.route('/', apiRoutes(opts.domain));

@@ -3,6 +3,7 @@ import { Readable } from 'node:stream';
 import { type Domain, DomainError, iso } from '@heph/core';
 import { FileTarget, ProposalState } from '@heph/schema';
 import { type Context, Hono } from 'hono';
+import { publicAgentUrl } from '../config.js';
 import { requireUi } from '../http/auth.js';
 import { type AppEnv, body, idParam, queryObject } from '../http/common.js';
 import { cleanup, parseMultipart } from '../http/multipart.js';
@@ -306,7 +307,7 @@ function stateParam(c: Context) {
 
 /** Origin agents should use for upload URLs: HEPH_PUBLIC_AGENT_URL, else the request's own origin. */
 function publicAgentOrigin(c: Context): string {
-  return process.env.HEPH_PUBLIC_AGENT_URL || new URL(c.req.url).origin;
+  return publicAgentUrl() ?? new URL(c.req.url).origin;
 }
 
 function sendFile(

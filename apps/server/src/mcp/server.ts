@@ -174,11 +174,15 @@ export function createHephMcpServer(domain: Domain, opts: McpServerOptions): Mcp
     { instructions: INSTRUCTIONS },
   );
   const now = () => domain.now();
-  const ctx = (a: { session_id?: string; confirmed?: boolean }): Ctx => ({
-    source: 'claude_code',
-    sessionId: a.session_id ?? null,
-    confirmed: a.confirmed === true,
-  });
+  const ctx = (a: { session_id?: string; confirmed?: boolean }): Ctx => {
+    // A write within a live Claude Code session keeps it alive (D58).
+    if (a.session_id) domain.sessions.heartbeat(a.session_id);
+    return {
+      source: 'claude_code',
+      sessionId: a.session_id ?? null,
+      confirmed: a.confirmed === true,
+    };
+  };
   const ro = { readOnlyHint: true, openWorldHint: false } as const;
   const additive = { readOnlyHint: false, destructiveHint: false, openWorldHint: false } as const;
   const destructive = { readOnlyHint: false, destructiveHint: true, openWorldHint: false } as const;

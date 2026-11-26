@@ -1,5 +1,5 @@
 import { XIcon } from '@primer/octicons-react';
-import { useId, useState } from 'react';
+import { useId, useRef, useState } from 'react';
 import { Button } from '../../components/ui.js';
 import { useT } from '../../i18n/index.js';
 
@@ -22,6 +22,18 @@ export function TestPatterns({
   const t = useT();
   const id = useId();
   const [draft, setDraft] = useState('');
+  const input = useRef<HTMLInputElement>(null);
+  const list = useRef<HTMLUListElement>(null);
+  /** Removes a pattern and keeps keyboard focus: next remove button, else the input. */
+  const remove = (index: number) => {
+    setError(null);
+    onChange(value.filter((_, i) => i !== index));
+    requestAnimationFrame(() => {
+      const buttons = list.current?.querySelectorAll('button');
+      const next = buttons?.[Math.min(index, buttons.length - 1)];
+      (next ?? input.current)?.focus();
+    });
+  };
   const [error, setError] = useState<'connect.patternDuplicate' | 'connect.patternFull' | null>(
     null,
   );
@@ -37,15 +49,15 @@ export function TestPatterns({
   return (
     <div className="patterns">
       {value.length === 0 && <p className="hint">{t('connect.patternsEmpty')}</p>}
-      <ul>
-        {value.map((p) => (
+      <ul ref={list}>
+        {value.map((p, i) => (
           <li key={p}>
             <code>{p}</code>
             <Button
               size="sm"
               variant="invisible"
               aria-label={t('connect.removePattern', { pattern: p })}
-              onClick={() => onChange(value.filter((x) => x !== p))}
+              onClick={() => remove(i)}
             >
               <XIcon size={16} />
             </Button>
@@ -57,11 +69,15 @@ export function TestPatterns({
           {t('connect.newPattern')}
         </label>
         <input
+          ref={input}
           id={id}
           value={draft}
           maxLength={MAX_LENGTH}
           placeholder={t('connect.patternPlaceholder')}
-          onChange={(e) => setDraft(e.target.value)}
+          onChange={(e) => {
+            setDraft(e.target.value);
+            setError(null);
+          }}
           onKeyDown={(e) => {
             // Enter adds the pattern instead of submitting the whole form.
             if (e.key === 'Enter') {

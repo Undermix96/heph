@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { api } from '../../api/client.js';
 import { useApiMutation } from '../../api/queries.js';
 import { useNotices } from '../../app/notices.js';
-import { Box, Button, Dialog, RelativeTime } from '../../components/ui.js';
+import { Alert, Box, Button, Dialog, RelativeTime } from '../../components/ui.js';
 import { useT } from '../../i18n/index.js';
+import { errorKey } from '../../lib/errors.js';
 
 /** Where the plugin is published (D57: marketplace in this repo). */
 const MARKETPLACE = 'Undermix96/heph';
@@ -22,8 +23,14 @@ const CONNECTED_MS = 60 * 60_000;
 export function ConnectBox() {
   const t = useT();
   const connect = useQuery({ queryKey: ['settings', 'connect'], queryFn: api.connect });
+  // Re-render every minute so "connected" turns into "last call" without new data.
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 60_000);
+    return () => clearInterval(id);
+  }, []);
   const last = connect.data?.lastAgentCallAt ?? null;
-  const recent = last !== null && Date.now() - Date.parse(last) < CONNECTED_MS;
+  const recent = last !== null && now - Date.parse(last) < CONNECTED_MS;
   return (
     <section id="s-claude">
       <Box
@@ -44,6 +51,14 @@ export function ConnectBox() {
         }
       >
         <p className="muted">{t('settings.claudeHint')}</p>
+        {connect.isError && (
+          <Alert
+            tone="danger"
+            action={<Button onClick={() => connect.refetch()}>{t('common.retry')}</Button>}
+          >
+            {t(errorKey(connect.error))}
+          </Alert>
+        )}
         <ol className="connect-steps">
           <li>
             <b>{t('connect.step.marketplace')}</b>
@@ -56,14 +71,18 @@ export function ConnectBox() {
           <li>
             <b>{t('connect.step.configure')}</b>
             <Command text={`/plugin configure ${PLUGIN}`} />
-            <p className="hint">{t('connect.urlLabel')}</p>
-            {connect.data?.agentUrl ? (
-              <Command text={connect.data.agentUrl} />
-            ) : connect.data ? (
-              <p className="hint">{t('connect.urlTbd')}</p>
-            ) : null}
-            <p className="hint">{t('connect.tokenLabel')}</p>
-            <TokenControls />
+            <div className="connect-field">
+              <span className="field-label">{t('connect.urlLabel')}</span>
+              {connect.data?.agentUrl ? (
+                <Command text={connect.data.agentUrl} />
+              ) : connect.data ? (
+                <Alert tone="attention">{t('connect.urlTbd')}</Alert>
+              ) : null}
+            </div>
+            <div className="connect-field">
+              <span className="field-label">{t('connect.tokenLabel')}</span>
+              <TokenControls />
+            </div>
           </li>
           <li>
             <b>{t('connect.step.removeManual')}</b>

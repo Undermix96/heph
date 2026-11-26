@@ -5,7 +5,7 @@ import { useLocation } from 'react-router';
 import { api } from '../../api/client.js';
 import { keys, useApiMutation } from '../../api/queries.js';
 import { useNotices } from '../../app/notices.js';
-import { Alert, Box, Button, Dialog, Field, Skeleton } from '../../components/ui.js';
+import { Alert, Box, Button, Field, Skeleton } from '../../components/ui.js';
 import { type MessageKey, useT } from '../../i18n/index.js';
 import { errorKey } from '../../lib/errors.js';
 import { ConnectBox } from './ConnectBox.js';
@@ -31,9 +31,9 @@ export function SettingsPage() {
             'claude',
             'github',
             'activity',
-            'tests',
             'files',
             'other',
+            'tests',
           ] as const
         ).map((s) => (
           <a key={s} href={`#s-${s}`}>
@@ -53,7 +53,6 @@ export function SettingsPage() {
       ) : (
         <div className="stack">
           <PasswordBox />
-          <ConnectBox />
           <SettingsForm settings={q.data} />
         </div>
       )}
@@ -203,6 +202,8 @@ function SettingsForm({ settings }: { settings: Settings }) {
           </Field>
         </Box>
       </section>
+      {/* Its own requests and buttons (type="button"): not part of the settings PATCH. */}
+      <ConnectBox />
       <section id="s-github">
         <Box title={t('settings.github')}>
           <p className="meta">
@@ -227,15 +228,6 @@ function SettingsForm({ settings }: { settings: Settings }) {
           {num('sessionExpiryMinutes', 'settings.sessionExpiry')}
           {num('diaryNudgeTurns', 'settings.diaryTurns', 'settings.diaryHint')}
           {num('diaryNudgeMinutes', 'settings.diaryMinutes')}
-        </Box>
-      </section>
-      <section id="s-tests">
-        <Box title={t('settings.tests')}>
-          <p className="muted">{t('connect.patternsIntro')}</p>
-          <TestPatterns
-            value={s.testCommandPatterns}
-            onChange={(testCommandPatterns) => setS({ ...s, testCommandPatterns })}
-          />
         </Box>
       </section>
       <section id="s-files">
@@ -263,6 +255,15 @@ function SettingsForm({ settings }: { settings: Settings }) {
             {t('settings.allowConfirm')}
           </label>
           <p className="hint">{t('settings.allowConfirmHint')}</p>
+        </Box>
+      </section>
+      <section id="s-tests">
+        <Box title={t('settings.tests')}>
+          <p className="muted">{t('connect.patternsIntro')}</p>
+          <TestPatterns
+            value={s.testCommandPatterns}
+            onChange={(testCommandPatterns) => setS({ ...s, testCommandPatterns })}
+          />
         </Box>
       </section>
       {error && <Alert tone="danger">{t(error)}</Alert>}

@@ -1489,7 +1489,20 @@ fieldset.m-chips {
   font-size: var(--text-sm);
   line-height: 1.6;
   white-space: pre-wrap;
-  word-break: break-all;
+  /* Break only where it must, never inside a word that fits (verification C5). */
+  overflow-wrap: anywhere;
+}
+.connect-field {
+  margin-top: var(--space-3);
+}
+.connect-field > .field-label {
+  display: block;
+  margin-bottom: var(--space-1);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+.connect-field > .alert {
+  margin-top: var(--space-2);
 }
 .patterns {
   max-width: 520px;
@@ -1529,4 +1542,10 @@ fieldset.m-chips {
   flex: 1;
   min-width: 0;
   font-family: var(--font-mono);
+}
+@media (max-width: 599px) {
+  /* D56: icon-only remove buttons are 44 x 44 px on the phone. */
+  .patterns li .btn {
+    min-width: var(--control-touch-min);
+  }
 }

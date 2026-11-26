@@ -10,7 +10,7 @@ Self-hosted, AI-first project tracker. Short name `heph` (CLI, Docker image/cont
 
 ## Work state
 
-- Work state (phases, tasks, next step, diary, open questions) is tracked in Heph itself, project `hephaestus`, through the `heph` MCP server (D47). Start with `get_briefing` (repo `Undermix96/heph`); there is no `PROGRESS.md`.
+- Work state (phases, tasks, next step, diary, open questions) is tracked in Heph itself, project `hephaestus`, through the `heph` MCP server (D47); there is no `PROGRESS.md`. With the heph plugin installed the SessionStart hook injects the briefing; otherwise start with `get_briefing` (repo `Undermix96/heph`).
 
 ## Threat model and testing (D54)
 

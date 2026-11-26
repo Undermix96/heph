@@ -21,6 +21,13 @@ Security posture of Hephaestus (heph), stated as it is. Decisions are referenced
 - Claude Code acts with source `claude_code`; every change is recorded in `change_log` with its source and session.
 - Destructive agent changes become proposals unless Claude says the user confirmed them in chat (D12, D37); that claim is recorded, and the `allowClaudeConfirm` setting can turn it off. A project can disable Claude writes entirely.
 
+## Claude Code plugin (D57, D58)
+
+- The plugin keeps the agent URL and the API token in Claude Code's plugin options; the token is a `sensitive` option, kept in the system credential store, not in `settings.json`.
+- The hooks call the agent port only (LAN), with the token in an `Authorization` header; it is visible in the local `curl` command line while a hook runs.
+- What the hooks send: the hook input from Claude Code (session id, folder, tool name, shell commands and their output for shell tools), the git remote URL, HEAD, a hash of `git status`, and the repo's docs file when it changed. Heph stores the session state and the docs content, not the commands or their output. Credentials in a remote URL are never echoed back into Claude's context.
+- The hooks never block a session: with Heph unreachable or misconfigured they print a one-line notice at start and nothing else.
+
 ## Files
 
 - Uploads are type-sniffed from their content. Raster images are re-encoded: EXIF, GPS and other metadata are removed and the orientation is applied.

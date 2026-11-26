@@ -1,6 +1,6 @@
 # Hephaestus (heph)
 
-> **Work in progress.** The backend (data model, REST API, auth, CLI) and the MCP server work; the web UI is only a setup/login page for now, and the Claude Code plugin (hooks, automatic diary) is not built yet.
+> **Work in progress.** The backend, the MCP server and the web UI work; the Claude Code plugin (phase 5) is being built. GitHub integration and the new-project skill come next.
 
 Hephaestus is a self-hosted, AI-first tracker for personal software and DIY projects.
 Its core job: let you resume any project after weeks without reconstructing context.
@@ -27,12 +27,12 @@ To build from source instead of pulling: `docker compose -f compose.yaml -f comp
 
 Then open `http://<server>:8080` and complete the one-time setup wizard (username + password). The wizard shows the **API token** once; you can see it again later in Settings.
 
-| Port   | Serves                                                                           | Expose                                          |
-| ------ | -------------------------------------------------------------------------------- | ----------------------------------------------- |
-| `8080` | Web UI + REST API (`/api`)                                                       | LAN, and through your Cloudflare Tunnel         |
-| `8081` | MCP (`/mcp`), REST API with the token, one-time uploads (`/upload`), later hooks | **LAN only**: never route it through the tunnel |
+| Port   | Serves                                                                                       | Expose                                          |
+| ------ | -------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| `8080` | Web UI + REST API (`/api`)                                                                   | LAN, and through your Cloudflare Tunnel         |
+| `8081` | MCP (`/mcp`), plugin hooks (`/hooks`), REST API with the token, one-time uploads (`/upload`) | **LAN only**: never route it through the tunnel |
 
-To change the host ports or time zone, copy `.env.example` to `.env` and edit it.
+To change the host ports or time zone, copy `.env.example` to `.env` and edit it. Set `HEPH_PUBLIC_AGENT_URL` there to the agent URL as your Claude Code machines reach it (e.g. `http://192.168.1.10:8081`): Settings > Connect Claude Code then shows the exact values to paste.
 
 Data lives in two named volumes: `heph-db` (`/data/db`, SQLite) and `heph-files` (`/data/files`, uploads and thumbnails). They must be on local storage, not NFS/SMB. Back up by copying both volumes while the container is stopped.
 
@@ -45,18 +45,18 @@ docker exec heph heph rotate-token                   # new API token; the old on
 docker compose logs -f heph
 ```
 
-### Connect Claude Code (MCP)
+### Connect Claude Code (plugin)
 
-Heph exposes an MCP server at `http://<server>:8081/mcp` (Streamable HTTP, bearer token). Register it once at user level, with the API token from the setup wizard or Settings:
+The Claude Code plugin in [`plugin/`](plugin/README.md) bundles Heph's MCP server and the hooks that inject the project briefing at session start, show live sessions and test runs on the dashboard, remind Claude to keep the diary and sync local `DECISIONS.md` edits. Install it once at user level:
 
 ```sh
-claude mcp add --scope user --transport http heph http://<server>:8081/mcp \
-  --header "Authorization: Bearer <api-token>"
+claude plugin marketplace add Undermix96/heph
+claude plugin install heph@heph --scope user
 ```
 
-Then ask Claude Code for the briefing of a project (tool `get_briefing`), or use the `heph_overview` and `heph_resume` prompts. Destructive changes Claude asks for (deleting phases or tasks, restructuring the roadmap, marking a project completed or abandoned) are stored as proposals for you to approve, unless you confirmed them in the chat. After `heph rotate-token`, update the header.
+Then run `/plugin configure heph@heph` in a Claude Code session and enter the agent URL and the API token (Settings > Connect Claude Code shows both). The hooks need `bash`, `git` and `curl` (Git Bash on Windows). Destructive changes Claude asks for (deleting phases or tasks, restructuring the roadmap, marking a project completed or abandoned) are stored as proposals for you to approve, unless you confirmed them in the chat. After `heph rotate-token`, update the token with `/plugin configure heph@heph`.
 
-The Claude Code plugin (phase 5) will replace this manual step and add the hooks that keep the diary up to date.
+Without the plugin you can still add the MCP server by hand (`claude mcp add --scope user --transport http heph http://<server>:8081/mcp --header "Authorization: Bearer <api-token>"`), but not both: Claude Code skips the plugin's server when the same one is configured by hand.
 
 ### Cloudflare Tunnel
 
@@ -83,6 +83,7 @@ Layout: `packages/schema` (shared Zod schemas and types), `packages/core` (datab
 - [`DECISIONS.md`](DECISIONS.md): architectural and technical decisions (D1…).
 - Work state (roadmap, next step, diary, open questions): tracked in Heph itself through its MCP server (D47).
 - [`SECURITY.md`](SECURITY.md): security posture and how to report a vulnerability.
+- [`plugin/`](plugin/README.md): the Claude Code plugin.
 - Package READMEs: [`packages/schema`](packages/schema/README.md), [`packages/core`](packages/core/README.md), [`apps/server`](apps/server/README.md), [`apps/web`](apps/web/README.md), [`scripts`](scripts/README.md).
 - [`docs/design/`](docs/design/): approved UI design (mockups, tokens).
 

@@ -1,13 +1,13 @@
 {
-  "description": "FEASIBILITY SPIKE (phase 5.0): every hook reports to the local echo server on 127.0.0.1:18399.",
+  "description": "Heph: briefing at session start, live sessions, test detection, auto-diary and docs sync (D57, D58).",
   "hooks": {
     "SessionStart": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/scripts/spike.sh\" session-start",
-            "timeout": 10
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/scripts/heph-hook.sh\" session-start",
+            "timeout": 15
           }
         ]
       }
@@ -17,36 +17,32 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/scripts/spike.sh\" stop",
-            "timeout": 10
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/scripts/heph-hook.sh\" stop",
+            "timeout": 25
           }
         ]
       }
     ],
     "PreToolUse": [
       {
-        "matcher": "Bash",
+        "matcher": "Bash|PowerShell",
         "hooks": [
           {
-            "type": "http",
-            "url": "http://127.0.0.1:18399/hooks/v1/pre-tool-use",
-            "timeout": 3,
-            "headers": { "Authorization": "Bearer $CLAUDE_PLUGIN_OPTION_HEPH_TOKEN" },
-            "allowedEnvVars": ["CLAUDE_PLUGIN_OPTION_HEPH_TOKEN"]
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/scripts/heph-hook.sh\" pre-tool-use",
+            "timeout": 5
           }
         ]
       }
     ],
     "PostToolUse": [
       {
-        "matcher": "Bash",
+        "matcher": "Bash|PowerShell",
         "hooks": [
           {
-            "type": "http",
-            "url": "http://127.0.0.1:18399/hooks/v1/post-tool-use",
-            "timeout": 3,
-            "headers": { "Authorization": "Bearer ${CLAUDE_PLUGIN_OPTION_HEPH_TOKEN}" },
-            "allowedEnvVars": ["CLAUDE_PLUGIN_OPTION_HEPH_TOKEN"]
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/scripts/heph-hook.sh\" post-tool-use",
+            "timeout": 5
           }
         ]
       }
@@ -55,11 +51,9 @@
       {
         "hooks": [
           {
-            "type": "http",
-            "url": "http://127.0.0.1:18399/hooks/v1/session-end",
-            "timeout": 2,
-            "headers": { "Authorization": "Bearer $CLAUDE_PLUGIN_OPTION_HEPH_TOKEN" },
-            "allowedEnvVars": ["CLAUDE_PLUGIN_OPTION_HEPH_TOKEN"]
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/scripts/heph-hook.sh\" session-end",
+            "timeout": 5
           }
         ]
       }

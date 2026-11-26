@@ -1,6 +1,6 @@
 # Plugin feasibility spike (phase 5.0)
 
-**Done on 2026-11-26; outcome in DECISIONS.md D57.** The Stop hook no longer blocks.
+**Superseded: done on 2026-11-26, outcome in DECISIONS.md D57.** The spike files (`plugin/scripts/spike.sh`, `scripts/plugin-spike-echo.mjs`) were removed when the real plugin replaced them; they are in git history (commit 55cc6db).
 
 Throwaway plugin that checks the Claude Code facts the phase 5 design depends on.
 It is replaced by the real plugin in phase 5 group B. Every hook reports to a local

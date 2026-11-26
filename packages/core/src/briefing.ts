@@ -188,7 +188,11 @@ export class BriefingService {
       for (const r of p.repoDetails) {
         out.push(
           `- \`${r.docsPath}\` in ${r.fullName}` +
-            (r.docsUpdatedAt ? ` (synced ${relTime(r.docsUpdatedAt, now)})` : ' (not synced yet)'),
+            (r.docsUpdatedAt
+              ? r.docsOrigin === 'hook'
+                ? ` (local copy from Claude Code, ${relTime(r.docsUpdatedAt, now)})`
+                : ` (from GitHub, synced ${relTime(r.docsUpdatedAt, now)})`
+              : ' (not synced yet)'),
         );
       }
     }

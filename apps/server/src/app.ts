@@ -5,6 +5,7 @@ import { serveStatic } from '@hono/node-server/serve-static';
 import { Hono } from 'hono';
 import { secureHeaders } from 'hono/secure-headers';
 import type { Logger } from 'pino';
+import type { GitHubClients } from './github/clients.js';
 import { authenticate } from './http/auth.js';
 import { type AppEnv, errorHandler } from './http/common.js';
 import { mcpRoutes } from './mcp/route.js';
@@ -19,6 +20,8 @@ export interface AppOptions {
   /** Built web UI directory; when null the UI port serves only the API. */
   webDir: string | null;
   limiter?: LoginLimiter;
+  /** GitHub access (phase 6); without it the GitHub routes answer "no token". */
+  github?: GitHubClients;
 }
 
 const notFoundJson = (c: { json: (b: unknown, s: 404) => Response }) =>
@@ -39,7 +42,7 @@ export function createUiApp(opts: AppOptions): Hono<AppEnv> {
   app.route('/api', authRoutes(opts.domain, opts.limiter ?? defaultLoginLimiter()));
   const api = new Hono<AppEnv>();
   api.use('*', authenticate(opts.domain, { allowCookie: true }));
-  api.route('/', apiRoutes(opts.domain));
+  api.route('/', apiRoutes(opts.domain, opts.github));
   app.route('/api', api);
   app.all('/api/*', notFoundJson);
 
@@ -70,7 +73,7 @@ export function createAgentApp(opts: AppOptions): Hono<AppEnv> {
   app.route('/hooks', hookRoutes(opts.domain));
   const api = new Hono<AppEnv>();
   api.use('*', authenticate(opts.domain, { allowCookie: false }));
-  api.route('/', apiRoutes(opts.domain));
+  api.route('/', apiRoutes(opts.domain, opts.github));
   app.route('/api', api);
   app.notFound(notFoundJson);
   return app;

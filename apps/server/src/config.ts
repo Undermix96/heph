@@ -17,6 +17,8 @@ export interface ServerConfig {
   /** Directory with SQL migrations. */
   migrationsDir: string;
   logLevel: string;
+  /** GitHub REST API base URL; a local fake in tests and e2e (D61). */
+  githubApiUrl: string;
 }
 
 function intEnv(env: NodeJS.ProcessEnv, name: string, fallback: number): number {
@@ -43,6 +45,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): ServerConfig {
       env.HEPH_MIGRATIONS_DIR ??
       path.resolve(import.meta.dirname, '../../../packages/core/drizzle'),
     logLevel: env.HEPH_LOG_LEVEL ?? 'info',
+    githubApiUrl: env.HEPH_GITHUB_API_URL || 'https://api.github.com',
   };
 }
 

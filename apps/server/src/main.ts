@@ -5,6 +5,7 @@ import { serve } from '@hono/node-server';
 import pino from 'pino';
 import { createAgentApp, createUiApp } from './app.js';
 import { loadConfig } from './config.js';
+import { GitHubClients } from './github/clients.js';
 
 const config = loadConfig();
 const log = pino({ level: config.logLevel });
@@ -20,7 +21,8 @@ log.info(
   'Database ready',
 );
 
-const opts = { domain, log, webDir: config.webDir };
+const github = new GitHubClients(domain, config.githubApiUrl);
+const opts = { domain, log, webDir: config.webDir, github };
 const servers = [
   serve({ fetch: createUiApp(opts).fetch, port: config.uiPort, hostname: config.host }, (i) =>
     log.info({ port: i.port }, 'UI/REST listening'),
@@ -51,8 +53,35 @@ function housekeeping() {
     log.error({ err }, 'Housekeeping failed');
   }
 }
+/** GitHub polling (D61): repos due by the interval; logs counts and error codes only. */
+function pollGitHub() {
+  github
+    .syncDue()
+    .then((run) => {
+      const events = run.repos.reduce((n, r) => n + r.commitEvents + r.releaseEvents, 0);
+      const errors = run.repos.filter((r) => r.error).map((r) => r.error);
+      if (run.repos.length || run.skipped === 'rate_limited') {
+        log.info(
+          {
+            repos: run.repos.length,
+            events,
+            errors,
+            skipped: run.skipped,
+            status: domain.github.status().error,
+          },
+          'GitHub sync',
+        );
+      }
+    })
+    .catch((err) => log.error({ err: (err as Error).name }, 'GitHub sync failed'));
+}
+
 housekeeping();
-const timer = setInterval(housekeeping, 60_000);
+pollGitHub();
+const timer = setInterval(() => {
+  housekeeping();
+  pollGitHub();
+}, 60_000);
 timer.unref();
 
 function shutdown(signal: string) {

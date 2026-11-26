@@ -4,6 +4,7 @@ import { type Domain, DomainError, iso } from '@heph/core';
 import { FileTarget, ProposalState } from '@heph/schema';
 import { type Context, Hono } from 'hono';
 import { publicAgentUrl } from '../config.js';
+import type { GitHubClients } from '../github/clients.js';
 import { requireUi } from '../http/auth.js';
 import { type AppEnv, body, idParam, queryObject } from '../http/common.js';
 import { cleanup, parseMultipart } from '../http/multipart.js';
@@ -25,9 +26,29 @@ const INLINE_MIME = new Set([
  * REST API (spec §11). Every route is a thin adapter over the domain layer;
  * the caller has already been authenticated and `ctx` says who they are.
  */
-export function apiRoutes(domain: Domain) {
+export function apiRoutes(domain: Domain, github?: GitHubClients) {
   const r = new Hono<AppEnv>();
   const ref = (c: Context) => c.req.param('ref') as string;
+
+  // ------------------------------------------------------------ GitHub (phase 6, D61)
+
+  /** Token set (never its value), global sync status and interval. */
+  r.get('/github/status', (c) => {
+    const s = domain.settings.get();
+    return c.json({
+      tokenSet: Boolean(s.githubToken),
+      pollMinutes: s.githubPollMinutes,
+      ...domain.github.status(),
+    });
+  });
+  r.post('/github/verify', requireUi, async (c) =>
+    c.json(github ? await github.verify() : { ok: false, error: 'no_token' }),
+  );
+  r.post('/projects/:ref/github/sync', async (c) => {
+    const p = domain.projects.row(ref(c));
+    const run = github ? await github.syncProject(p.id) : { skipped: 'no_token', repos: [] };
+    return c.json({ ...run, status: domain.github.status() });
+  });
 
   // ------------------------------------------------------------ projects
 

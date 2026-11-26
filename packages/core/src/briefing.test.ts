@@ -456,13 +456,19 @@ describe('briefing: build', () => {
 
     d.db
       .update(projectRepos)
-      .set({ docsUpdatedAt: clock.now })
+      .set({ docsUpdatedAt: clock.now, docsOrigin: 'github' })
       .where(eq(projectRepos.id, repo.id))
       .run();
     clock.advance(2 * 3_600_000);
     text = d.briefing.build({ project: q.id });
     expect(section(text, 'Documentation')).toContain(
-      `- \`${repo.docsPath}\` in ${repo.fullName} (synced 2 h ago)`,
+      `- \`${repo.docsPath}\` in ${repo.fullName} (from GitHub, synced 2 h ago)`,
+    );
+    // A copy uploaded by the Stop hook says so (D63).
+    d.db.update(projectRepos).set({ docsOrigin: 'hook' }).where(eq(projectRepos.id, repo.id)).run();
+    text = d.briefing.build({ project: q.id });
+    expect(section(text, 'Documentation')).toContain(
+      `- \`${repo.docsPath}\` in ${repo.fullName} (local copy from Claude Code, 2 h ago)`,
     );
   });
 

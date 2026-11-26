@@ -1,5 +1,7 @@
 # Plugin feasibility spike (phase 5.0)
 
+**Done on 2026-11-26; outcome in DECISIONS.md D57.** The Stop hook no longer blocks.
+
 Throwaway plugin that checks the Claude Code facts the phase 5 design depends on.
 It is replaced by the real plugin in phase 5 group B. Every hook reports to a local
 echo server (`scripts/plugin-spike-echo.mjs`, port 18399), which logs field names and

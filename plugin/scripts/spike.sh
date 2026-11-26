@@ -24,14 +24,7 @@ case "$event" in
     echo "HEPH SPIKE: hook context injected. Session id: ${session_id:-unknown}. Check code: HEPH-OK-7320."
     ;;
   stop)
-    marker="${CLAUDE_PLUGIN_DATA:-${TMPDIR:-/tmp}}/spike-stop-${session_id:-x}"
-    if printf '%s' "$input" | grep -q '"stop_hook_active"[[:space:]]*:[[:space:]]*true'; then
-      exit 0
-    fi
-    if [ ! -e "$marker" ]; then
-      mkdir -p "$(dirname "$marker")" && : >"$marker"
-      echo '{"decision":"block","reason":"Heph spike: reply with the single line SPIKE-STOP-OK and then stop."}'
-    fi
+    # The spike is over (D57): Stop no longer blocks.
     ;;
 esac
 exit 0

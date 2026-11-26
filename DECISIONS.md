@@ -497,3 +497,22 @@ Alternatives rejected:
 - E2E only locally: regressions would wait for the next manual run.
 - Month counts from the loaded entries only: cannot jump to months not loaded yet.
 - Decoding bodies leniently: silent loss of characters.
+
+## D57 — Plugin configuration and hook transport, from the 5.0 spike (2026-11-26)
+
+Decision: The plugin takes the Heph agent URL and API token through `userConfig` in `plugin.json` (token `sensitive`, kept in the OS secure store), not through `HEPH_URL` / `HEPH_TOKEN` environment variables; the MCP server reads them as `${user_config.*}`, the hooks as `CLAUDE_PLUGIN_OPTION_HEPH_URL` / `CLAUDE_PLUGIN_OPTION_HEPH_TOKEN`. Every hook (SessionStart, Stop, PreToolUse, PostToolUse, SessionEnd) is a shell-form command hook, `bash "${CLAUDE_PLUGIN_ROOT}/scripts/…" <event>`, depending only on `git` and `curl`. Tool hooks match `Bash|PowerShell`. `plugin.json` has no `version`, so the installed version is the commit SHA and `claude plugin update` picks up every push. The plugin and the marketplace (`.claude-plugin/marketplace.json`, source `./plugin`) live in this repo. Supersedes the env-var part of D18 and §9.
+Why: User decision of 2026-11-26 (token not in a plain-text file), then measured by the owner in real Claude Code sessions on Windows on 2026-11-26 (Claude Code CLI and desktop app, Git Bash 5.3, checklist in `plugin/SPIKE.md`):
+
+- `claude plugin install` does not prompt for `userConfig`; values are set with `/plugin configure heph@heph`. The sensitive token is not written to `settings.json`.
+- `${user_config.*}` works in the `.mcp.json` URL and header. A plugin MCP server pointing at the same server as a manually added one is skipped ("same server as already-configured"), so the manual `heph` server must be removed.
+- Shell-form command hooks run in Git Bash and receive both plugin options, including the sensitive token. SessionStart stdout is injected into the context. Stop `{"decision":"block"}` makes Claude continue once; the next call has `stop_hook_active: true`.
+- Exec-form hooks (`command` + `args`) lose the backslashes of `${CLAUDE_PLUGIN_ROOT}` on Windows (`C:Usersdev.claude…`), so the script is not found.
+- HTTP hooks fire, but `$CLAUDE_PLUGIN_OPTION_HEPH_TOKEN` in `headers` with `allowedEnvVars` resolves to empty: no token reaches the server.
+- On Windows, Claude Code often runs shell commands with the PowerShell tool, which a `Bash` matcher misses.
+- Without `version`, an update moved the installed copy from `7398bbf0acb6` to `844da1503a38`.
+- Observed hook inputs: Stop has `stop_hook_active`, `last_assistant_message`, `background_tasks`; PostToolUse for Bash has `tool_response` with `stdout`, `stderr`, `interrupted`; SessionEnd `reason` was `prompt_input_exit`.
+  Alternatives rejected:
+- Environment variables (spec §9): the token would sit in plain text in `settings.json` or a shell profile.
+- Native HTTP hooks for tool and session-end events: they cannot send the token, and the agent port always checks it (D6, D24).
+- Exec-form hooks: broken paths on Windows.
+- A pinned `version` stamped at release: updates would need a version bump commit on every release.

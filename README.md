@@ -1,6 +1,6 @@
 # Hephaestus (heph)
 
-> **Work in progress.** The backend, the MCP server and the web UI work; the Claude Code plugin (phase 5) is being built. GitHub integration and the new-project skill come next.
+> **Work in progress.** The backend, the MCP server, the web UI, the Claude Code plugin, the GitHub integration and the new-project skill work; the owner's checks of phases 5–7 on a real setup are pending.
 
 Hephaestus is a self-hosted, AI-first tracker for personal software and DIY projects.
 Its core job: let you resume any project after weeks without reconstructing context.
@@ -57,6 +57,10 @@ claude plugin install heph@heph --scope user
 Then run `/plugin configure heph@heph` in a Claude Code session and enter the agent URL and the API token (Settings > Connect Claude Code shows both). The hooks need `bash`, `git` and `curl` (Git Bash on Windows). Destructive changes Claude asks for (deleting phases or tasks, restructuring the roadmap, marking a project completed or abandoned) are stored as proposals for you to approve, unless you confirmed them in the chat. After `heph rotate-token`, update the token with `/plugin configure heph@heph`.
 
 Without the plugin you can still add the MCP server by hand (`claude mcp add --scope user --transport http heph http://<server>:8081/mcp --header "Authorization: Bearer <api-token>"`), but not both: Claude Code skips the plugin's server when the same one is configured by hand.
+
+### Connect GitHub (optional)
+
+Heph reads your repositories to put commits and releases in the diary and to show the pushed `DECISIONS.md` (D61–D63). Create a fine-grained personal access token with read access to **Contents** and **Metadata** of the repositories you link, paste it in Settings > GitHub and press **Verify**. Without a token Heph makes no GitHub calls. Linking a repo imports its last year of commits (one diary entry per day) and releases, then only new ones, every `githubPollMinutes` (default 15).
 
 ### Cloudflare Tunnel
 

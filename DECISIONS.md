@@ -545,3 +545,42 @@ Alternatives rejected:
 - Deriving the agent URL from the browser's host and the container port: wrong whenever Docker maps another host port (the owner's server does).
 - A UI setting for the agent URL: one more setting for what is deployment configuration.
 - Building the queue now: no progress data for its bars, and not needed by the phase 5 acceptance criteria.
+
+## D61 — GitHub integration: port, adapter, polling and errors (2026-11-26)
+
+Decision: The domain defines a `GitHubPort` (`packages/core/src/github.ts`); the server implements it over the REST API (`apps/server/src/github/http.ts`, API version 2022-11-28) with Node's `fetch`: bearer token, ETag conditional requests (one client per token keeps its cache), `Link` pagination, file contents with the raw media type and the git blob SHA computed locally (it equals GitHub's contents `sha`). `GitHubSyncService` runs one sync at a time and re-reads each repo row in its final transaction. The server's 60 s tick polls repos whose `lastPolledAt` is older than `githubPollMinutes`; `POST /api/projects/:ref/github/sync` (Sync now), `POST /api/github/verify` and `GET /api/github/status`. Failures never escape the poller: 401 sets a global "token invalid" state and stops the run; rate limits (403 with no quota, 429, `retry-after`) stop calls until the reset time; 404 or 403 without quota loss is a per-repo "not found or no access"; network and 5xx errors are per-repo and retried at the next interval. Logs carry counts and error codes only. `HEPH_GITHUB_API_URL` points tests and e2e at a local fake; `npm run smoke:github` checks the adapter against the real API on the public repo `octocat/Hello-World` without a token.
+Why: Spec §10 and D17. The domain stays free of HTTP (owner's rule: pure core, one adapter per provider). Spike run by Claude on 2026-11-26 against the real API (no token): contents `sha` equals the git blob SHA, `If-None-Match` gives 304 (still counted without a token), `Link` pagination, missing file 404; verification rounds A6 and B6 drove the serialization, fresh-row and error rules.
+Alternatives rejected:
+
+- Octokit: a large dependency for six endpoints.
+- GraphQL: one more query language for data the REST endpoints return directly.
+- Webhooks: the server is LAN-only (D17).
+
+## D62 — What GitHub puts in the diary (2026-11-26)
+
+Decision: Only the repo's default branch is followed. Linking a repo imports the last 365 days once: commits grouped per local day of the server time zone (`TZ`) as one `commits` event per day (`occurredAt` = newest commit of the day; data: repo, branch, day, count, up to 50 commits) and the releases published in that year (drafts skipped, pre-releases marked); afterwards only commits after the last seen one (walking back to it, so merged commits are included; after a force push, only commits newer than its time) and new releases. A relinked repo continues from what the diary already has. `showCommits` off writes no commit events. No GitHub token means no polling and no calls; the UI says so. The diary stays append-only (D11, D31): each sync adds its own `commits` event for a day, and the web UI shows the consecutive events of one repo and day as one box. Up to 2 000 commits are imported per link (older ones in that year are skipped).
+Why: Owner decisions of 2026-11-26 (import the last year grouped per day; default branch only; no token, no polling; same-day syncs merged in the UI, not in the database).
+Alternatives rejected:
+
+- Import only from the link onwards: the owner wants the year of history.
+- All branches: more calls and noise in the diary.
+- Polling public repos without a token: 60 requests per hour shared by every repo.
+- Updating the day's event in place: breaks the append-only diary.
+
+## D63 — Docs from GitHub and from the Stop hook: the most recent change wins (2026-11-26)
+
+Decision: Both sources key the cached docs by git blob SHA. A poll reads the docs file only when GitHub's SHA differs from the last one read from GitHub (`docsGithubSha`) and then also stores the last 5 commits touching the file. GitHub's copy replaces the cache unless the cache is a Stop-hook copy saved after GitHub's last change to the file; the hook replaces the cache whenever the local file differs from it (D58). Changing the docs path forgets both. A non-UTF-8 file is a repo error, not a crash.
+Why: §7 shows pushed and unpushed edits; neither source should overwrite a newer copy from the other.
+Alternatives rejected:
+
+- GitHub always wins: an unpushed decision would disappear at every poll.
+- The hook always wins: a change pushed from another machine would never show.
+
+## D64 — New-project skill in the plugin (2026-11-26)
+
+Decision: `plugin/skills/new-project/` (`/heph:new-project`, or triggered by "start a new project…") follows §9: Claude asks only what is missing, checks current Node/Python versions before passing them, and runs `scripts/bootstrap.sh` (bash + git; `gh` optional). The script refuses a non-empty folder, writes the stack `.gitignore` (Node/TypeScript, Python, PlatformIO, generic), `.editorconfig`, `.gitattributes`, README, `DECISIONS.md` (D1 = bootstrap), a minimal `CLAUDE.md` and, for public repos only, the MIT `LICENSE` with the holder from `git config user.name`; commits; copies design docs in a second commit; and, with `gh` installed and signed in, creates the repo, sets an SSH remote and pushes, otherwise says why it skipped. It prints `HEPH_*` result lines. Claude then proposes macro-phases and registers the project with `create_project` (DIY: registration only, internal docs). Skill files are excluded from Biome formatting (it broke the YAML front matter).
+Why: §9 and the owner's new-project rules; owner decisions of 2026-11-26 on the stacks. A deterministic script makes the files the same every time and is testable with a fake `gh`.
+Alternatives rejected:
+
+- Letting Claude write every file freehand: different results each time, untestable.
+- A separate CLI or package: one more thing to install; the plugin is already installed.

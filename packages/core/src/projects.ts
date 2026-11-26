@@ -510,7 +510,11 @@ export class ProjectsService {
       projectId: row.id,
       source: row.docsSource,
       internal: row.internalDocs,
-      repos: this.repoRows(row.id).map((r) => ({ ...toRepoView(r), content: r.docsContent })),
+      repos: this.repoRows(row.id).map((r) => ({
+        ...toRepoView(r),
+        content: r.docsContent,
+        commits: r.docsCommits ?? [],
+      })),
     };
   }
 
@@ -659,5 +663,8 @@ function toRepoView(r: RepoRow) {
     showCommits: r.showCommits,
     docsUpdatedAt: iso(r.docsUpdatedAt),
     docsOrigin: r.docsOrigin,
+    defaultBranch: r.defaultBranch,
+    lastPolledAt: iso(r.lastPolledAt),
+    lastSyncError: r.lastSyncError,
   };
 }

@@ -88,7 +88,34 @@ export interface RepoView {
   showCommits: boolean;
   docsUpdatedAt: IsoTime | null;
   docsOrigin: 'github' | 'hook' | null;
+  /** GitHub sync (phase 6): null until the first poll. */
+  defaultBranch: string | null;
+  lastPolledAt: IsoTime | null;
+  /** 'not_found' (repo missing or no access), 'unavailable', 'docs_not_utf8'; null when fine. */
+  lastSyncError: string | null;
 }
+
+/** A commit that touched a repo's docs file, newest first (Documentation tab). */
+export interface DocsCommitView {
+  sha: string;
+  message: string;
+  author: string | null;
+  date: IsoTime;
+  url: string;
+}
+
+/** GitHub sync state for Settings and the dashboard (D61). */
+export interface GitHubStatusView {
+  tokenSet: boolean;
+  pollMinutes: number;
+  lastSyncAt: IsoTime | null;
+  error: 'token_invalid' | 'rate_limited' | null;
+  resetAt: IsoTime | null;
+}
+
+export type GitHubVerifyView =
+  | { ok: true; login: string; repoCount: number }
+  | { ok: false; error: 'no_token' | 'unauthorized' | 'rate_limited' | 'unavailable' };
 
 export interface NextTaskRef {
   id: number;
@@ -229,6 +256,8 @@ export type Gated<T> = { applied: true; result: T } | { applied: false; proposal
 export interface RepoDocsView extends RepoView {
   /** Cached content, null until the repo docs were synced. */
   content: string | null;
+  /** Last commits that touched the docs file (from GitHub), newest first. */
+  commits: DocsCommitView[];
 }
 
 /** The Documentation tab: internal docs, or one entry per linked repo (D30). */

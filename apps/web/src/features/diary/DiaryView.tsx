@@ -19,6 +19,7 @@ import { Viewer } from '../../components/viewer.js';
 import { type MessageKey, useI18n, useT } from '../../i18n/index.js';
 import { errorKey } from '../../lib/errors.js';
 import { PHONE, useMedia } from '../../lib/media.js';
+import { GitHubEventBody } from '../github/GitHub.js';
 import { type DiaryDay, type DiaryItem, groupDiary, sourceCounts } from './group.js';
 
 const PAGE = 50;
@@ -422,6 +423,17 @@ function EntryView({
       </span>
     </div>
   );
+  // GitHub commits and releases are boxes with their commit list (design 12, 04).
+  if (entry.eventKind === 'commits' || entry.eventKind === 'release') {
+    return (
+      <li className="entry box">
+        <div className="box-body">
+          {head}
+          <GitHubEventBody entry={entry} />
+        </div>
+      </li>
+    );
+  }
   if (
     entry.type === 'event' &&
     !failed &&

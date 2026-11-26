@@ -1549,3 +1549,33 @@ fieldset.m-chips {
     min-width: var(--control-touch-min);
   }
 }
+
+/* GitHub (phase 6) */
+.hint.ok {
+  color: var(--success-fg);
+}
+.gh-title {
+  margin: 0 0 var(--space-1);
+}
+.gh-commits {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: var(--text-md);
+}
+.gh-commits li {
+  padding: 2px 0;
+  overflow-wrap: anywhere;
+}
+.gh-commits code {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
+.doc-commits {
+  margin: var(--space-2) 0;
+  font-size: var(--text-md);
+}
+.doc-commits summary {
+  cursor: pointer;
+  min-height: var(--control-sm);
+}

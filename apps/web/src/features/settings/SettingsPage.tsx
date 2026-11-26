@@ -8,6 +8,7 @@ import { useNotices } from '../../app/notices.js';
 import { Alert, Box, Button, Field, Skeleton } from '../../components/ui.js';
 import { type MessageKey, useT } from '../../i18n/index.js';
 import { errorKey } from '../../lib/errors.js';
+import { GitHubSettings } from '../github/GitHub.js';
 import { ConnectBox } from './ConnectBox.js';
 import { TestPatterns } from './TestPatterns.js';
 
@@ -206,9 +207,7 @@ function SettingsForm({ settings }: { settings: Settings }) {
       <ConnectBox />
       <section id="s-github">
         <Box title={t('settings.github')}>
-          <p className="meta">
-            {t(settings.githubToken ? 'settings.githubSet' : 'settings.githubNotSet')}
-          </p>
+          <GitHubSettings tokenSet={Boolean(settings.githubToken)} />
           <Field label={t('settings.githubToken')} htmlFor="set-gh" hint={t('settings.githubHint')}>
             <input
               id="set-gh"

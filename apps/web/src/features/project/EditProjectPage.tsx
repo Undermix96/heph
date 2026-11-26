@@ -8,6 +8,7 @@ import { useNotices } from '../../app/notices.js';
 import { Alert, Box, Button, Dialog, Field, Skeleton } from '../../components/ui.js';
 import { type MessageKey, useT } from '../../i18n/index.js';
 import { errorKey } from '../../lib/errors.js';
+import { repoErrorKey } from '../github/GitHub.js';
 import { StatusMenu } from './ProjectPage.js';
 
 /** Edit project (mockup 21): details, repos, status, export, danger zone. */
@@ -219,6 +220,9 @@ function ReposBox({ p }: { p: ProjectDetail }) {
       {p.repoDetails.map((r) => (
         <div key={r.id} className="row">
           <strong>{r.fullName}</strong>
+          {repoErrorKey(r.lastSyncError) && (
+            <span className="hint error">{t(repoErrorKey(r.lastSyncError) as MessageKey)}</span>
+          )}
           <label className="sr-only" htmlFor={`rd-${r.id}`}>
             {t('newProject.docsPath')}
           </label>

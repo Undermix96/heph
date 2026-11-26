@@ -25,6 +25,16 @@ const ok = () => [
   ),
   http.get('/api/proposals', () => HttpResponse.json([])),
   http.get('/api/tags', () => HttpResponse.json([])),
+  // Phase 6: the dashboard also reads the GitHub sync status.
+  http.get('/api/github/status', () =>
+    HttpResponse.json({
+      tokenSet: false,
+      pollMinutes: 15,
+      lastSyncAt: null,
+      error: null,
+      resetAt: null,
+    }),
+  ),
 ];
 const server = setupServer(...ok());
 beforeAll(() => server.listen({ onUnhandledFrame: 'error' }));

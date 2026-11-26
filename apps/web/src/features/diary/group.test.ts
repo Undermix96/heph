@@ -64,3 +64,36 @@ describe('groupDiary', () => {
     expect(days.map((d) => d.items.map((i) => i.kind))).toEqual([['entry'], ['entry']]);
   });
 });
+
+describe('GitHub commit events of one repo and day (D62)', () => {
+  const commits = (at: string, repo: string, day: string, shas: string[]) =>
+    entry(at, {
+      type: 'event',
+      eventKind: 'commits',
+      source: 'github',
+      data: { repo, day, count: shas.length, commits: shas.map((sha) => ({ sha, message: sha })) },
+    });
+
+  it('consecutive syncs of the same day become one box, newest commits first', () => {
+    const days = groupDiary([
+      commits('2026-11-26T16:00:00.000Z', 'ex/meteo', '2026-11-26', ['c3']),
+      commits('2026-11-26T09:00:00.000Z', 'ex/meteo', '2026-11-26', ['c2', 'c1']),
+    ]);
+    expect(days[0]?.items).toHaveLength(1);
+    const it0 = days[0]?.items[0];
+    expect(it0?.kind === 'entry' && it0.entry.data).toMatchObject({
+      count: 3,
+      commits: [{ sha: 'c3' }, { sha: 'c2' }, { sha: 'c1' }],
+    });
+  });
+
+  it('other repos, other days and entries in between stay separate', () => {
+    const days = groupDiary([
+      commits('2026-11-26T16:00:00.000Z', 'ex/meteo', '2026-11-26', ['a']),
+      commits('2026-11-26T15:00:00.000Z', 'ex/firmware', '2026-11-26', ['b']),
+      entry('2026-11-26T14:00:00.000Z'),
+      commits('2026-11-26T13:00:00.000Z', 'ex/firmware', '2026-11-26', ['c']),
+    ]);
+    expect(days[0]?.items).toHaveLength(4);
+  });
+});

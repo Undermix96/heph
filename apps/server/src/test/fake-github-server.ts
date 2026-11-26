@@ -151,3 +151,62 @@ export async function startFakeGitHub(port = 0, host = '127.0.0.1') {
       }),
   };
 }
+
+/** Invented repo served to the e2e server (`node apps/server/src/test/fake-github-server.ts <port>`). */
+export function seedE2E(state: FakeGitHubState): void {
+  // Whole UTC days before today at a UTC hour: commits of one day stay on one local day
+  // in Europe/Rome whatever time the e2e run starts.
+  const today = new Date();
+  const day = (daysAgo: number, hour: number) =>
+    new Date(
+      Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate() - daysAgo, hour - 6),
+    ).toISOString();
+  const commits: FakeCommit[] = [
+    {
+      sha: '9c01e7b'.padEnd(40, '1'),
+      message: 'fix(sleep): keep RTC memory across wake',
+      author: 'Invented Dev',
+      date: day(1, 21),
+      files: ['docs/DECISIONI.md'],
+    },
+    {
+      sha: '41aa0d2'.padEnd(40, '2'),
+      message: 'feat(mqtt): retain last reading',
+      author: 'Invented Dev',
+      date: day(1, 18),
+    },
+    {
+      sha: '0b77c13'.padEnd(40, '3'),
+      message: 'Docs: D1 deep sleep',
+      author: 'Invented Dev',
+      date: day(40, 10),
+      files: ['docs/DECISIONI.md'],
+    },
+  ];
+  state.repos.set('example-e2e/stazione-meteo', {
+    defaultBranch: 'main',
+    commits: { main: commits },
+    releases: [
+      {
+        id: 101,
+        tag_name: 'v0.2.0',
+        name: 'Primo inverno',
+        draft: false,
+        prerelease: false,
+        published_at: day(10, 9),
+      },
+    ],
+    files: {
+      'docs/DECISIONI.md':
+        '# Decisioni (dati inventati)\n\n## D1 — Sonno profondo\n\nLa stazione dorme tra due letture.\n',
+    },
+  });
+}
+
+if (process.argv[1]?.endsWith('fake-github-server.ts')) {
+  const port = Number(process.argv[2] ?? 18382);
+  const gh = await startFakeGitHub(port, '127.0.0.1');
+  seedE2E(gh.state);
+  // Reachable as long as Playwright keeps the process alive.
+  console.log(`Fake GitHub on ${gh.url} (token ${gh.state.token})`);
+}

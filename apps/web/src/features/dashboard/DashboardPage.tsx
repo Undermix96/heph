@@ -34,6 +34,7 @@ import { type MessageKey, useI18n, useT } from '../../i18n/index.js';
 import { errorKey } from '../../lib/errors.js';
 import { PHONE, useMedia } from '../../lib/media.js';
 import { DiaryView } from '../diary/DiaryView.js';
+import { GitHubAlert } from '../github/GitHub.js';
 import { ProposalsView } from '../proposals/ProposalsView.js';
 import {
   applyFilters,
@@ -99,6 +100,7 @@ export function DashboardPage({ tab }: { tab: 'projects' | 'tests' | 'diary' | '
           <BookIcon size={16} /> {t('dash.tab.diary')}
         </Link>
       </nav>
+      <GitHubAlert />
       {projects.isPending ? (
         <Skeleton lines={6} />
       ) : projects.isError ? (

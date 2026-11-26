@@ -4,6 +4,8 @@ import type {
   DiaryEntryView,
   DiaryType,
   FileView,
+  GitHubStatusView,
+  GitHubVerifyView,
   MaterialInput,
   MaterialView,
   PhaseView,
@@ -147,6 +149,14 @@ export const api = {
   // settings
   settings: () => request<Settings>('GET', '/settings'),
   updateSettings: (patch: Partial<Settings>) => request<Settings>('PATCH', '/settings', patch),
+  // GitHub (phase 6, D61)
+  githubStatus: () => request<GitHubStatusView>('GET', '/github/status'),
+  githubVerify: () => request<GitHubVerifyView>('POST', '/github/verify'),
+  githubSync: (ref: string | number) =>
+    request<{ skipped: 'no_token' | 'rate_limited' | null }>(
+      'POST',
+      `/projects/${ref}/github/sync`,
+    ),
 
   // projects
   projects: (includeClosed = true) =>

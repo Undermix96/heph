@@ -56,6 +56,12 @@ export function groupDiary(entries: DiaryEntryView[]): DiaryDay[] {
       days.push(bucket);
     }
     const last = bucket.items.at(-1);
+    // D62: each GitHub sync adds its own `commits` event (the diary is append-only);
+    // consecutive ones of the same repo and day are shown as one box.
+    if (last?.kind === 'entry' && sameCommitDay(last.entry, e)) {
+      last.entry = mergeCommits(last.entry, e);
+      continue;
+    }
     const sid = e.sessionId;
     if (sid && last?.kind === 'session' && last.sessionId === sid) {
       last.entries.push(e);
@@ -85,4 +91,29 @@ export function sourceCounts(entries: DiaryEntryView[]): Record<string, number> 
   const out: Record<string, number> = {};
   for (const e of entries) out[e.source] = (out[e.source] ?? 0) + 1;
   return out;
+}
+
+function commitDay(e: DiaryEntryView): string | null {
+  if (e.eventKind !== 'commits' || !e.data) return null;
+  return `${String(e.data.repo ?? '')}|${String(e.data.day ?? '')}`;
+}
+
+/** Two `commits` events of the same repo and local day (D62). */
+function sameCommitDay(a: DiaryEntryView, b: DiaryEntryView): boolean {
+  const k = commitDay(a);
+  return k !== null && k === commitDay(b);
+}
+
+/** `newer` and `older` as one event: commits newest first, counts added. */
+function mergeCommits(newer: DiaryEntryView, older: DiaryEntryView): DiaryEntryView {
+  const list = (e: DiaryEntryView) => (Array.isArray(e.data?.commits) ? e.data.commits : []);
+  const count = (e: DiaryEntryView) => Number(e.data?.count ?? list(e).length);
+  return {
+    ...newer,
+    data: {
+      ...newer.data,
+      count: count(newer) + count(older),
+      commits: [...list(newer), ...list(older)],
+    },
+  };
 }

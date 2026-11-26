@@ -9,6 +9,9 @@ import { defineConfig, devices } from '@playwright/test';
 export const E2E = {
   uiPort: 18380,
   agentPort: 18381,
+  /** Local fake of the GitHub API (phase 6), invented data. */
+  githubPort: 18382,
+  githubToken: 'invented-gh-token',
   dataDir: path.resolve('.e2e-data'),
   stateFile: path.resolve('.e2e-data/state.json'),
   tokenFile: path.resolve('.e2e-data/token.txt'),
@@ -40,17 +43,27 @@ export default defineConfig({
       testMatch: /(a11y|screens|phone)\.spec\.ts/,
     },
   ],
-  webServer: {
-    command: 'node apps/server/dist/main.mjs',
-    url: `http://localhost:${E2E.uiPort}/health`,
-    reuseExistingServer: false,
-    timeout: 60_000,
-    env: {
-      HEPH_DATA_DIR: E2E.dataDir,
-      HEPH_WEB_DIR: 'apps/web/dist',
-      HEPH_UI_PORT: String(E2E.uiPort),
-      HEPH_AGENT_PORT: String(E2E.agentPort),
-      HEPH_LOG_LEVEL: 'warn',
+  webServer: [
+    {
+      // Node runs the TypeScript file directly (type stripping, Node 26).
+      command: `node apps/server/src/test/fake-github-server.ts ${E2E.githubPort}`,
+      url: `http://127.0.0.1:${E2E.githubPort}/user`,
+      reuseExistingServer: false,
+      timeout: 30_000,
     },
-  },
+    {
+      command: 'node apps/server/dist/main.mjs',
+      url: `http://localhost:${E2E.uiPort}/health`,
+      reuseExistingServer: false,
+      timeout: 60_000,
+      env: {
+        HEPH_DATA_DIR: E2E.dataDir,
+        HEPH_WEB_DIR: 'apps/web/dist',
+        HEPH_UI_PORT: String(E2E.uiPort),
+        HEPH_AGENT_PORT: String(E2E.agentPort),
+        HEPH_LOG_LEVEL: 'warn',
+        HEPH_GITHUB_API_URL: `http://127.0.0.1:${E2E.githubPort}`,
+      },
+    },
+  ],
 });

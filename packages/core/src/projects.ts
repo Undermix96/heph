@@ -466,6 +466,8 @@ export class ProjectsService {
                 docsHash: null,
                 docsUpdatedAt: null,
                 docsOrigin: null,
+                docsGithubSha: null,
+                docsCommits: null,
               }
             : {}),
           ...(data.showCommits !== undefined ? { showCommits: data.showCommits } : {}),

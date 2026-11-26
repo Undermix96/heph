@@ -36,6 +36,15 @@ import {
  * Do not break: the stored format must stay fixed-width (always milliseconds and `Z`),
  * because comparisons and ORDER BY on these columns are text comparisons.
  */
+/** A commit that touched a repo's docs file (stored on project_repos.docs_commits). */
+export interface DocsCommit {
+  sha: string;
+  message: string;
+  author: string | null;
+  date: string;
+  url: string;
+}
+
 export const isoTime = customType<{ data: number; driverData: string }>({
   dataType: () => 'text',
   toDriver: (ms) => isoForStorage(ms),
@@ -189,6 +198,18 @@ export const projectRepos = sqliteTable(
     lastPolledAt: isoTime('last_polled_at'),
     lastSeenCommitSha: text('last_seen_commit_sha'),
     lastReleaseId: text('last_release_id'),
+    /** GitHub sync (phase 6, D61-D63). */
+    defaultBranch: text('default_branch'),
+    /** Commit time of lastSeenCommitSha: fallback when that commit vanished (force push). */
+    lastSeenCommitAt: isoTime('last_seen_commit_at'),
+    /** Set once the one-year import ran (D62). */
+    backfilledAt: isoTime('backfilled_at'),
+    /** Blob SHA of the docs file last read from GitHub: a local hook copy wins until it changes (D63). */
+    docsGithubSha: text('docs_github_sha'),
+    /** Last commits touching the docs file, newest first (Documentation tab). */
+    docsCommits: text('docs_commits', { mode: 'json' }).$type<DocsCommit[]>(),
+    /** Last sync error of this repo: 'not_found' | 'unavailable' | 'docs_not_utf8'; null when fine. */
+    lastSyncError: text('last_sync_error'),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
   },

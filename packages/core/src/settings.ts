@@ -9,6 +9,7 @@ import type { Ctx } from './context.js';
 import { settings } from './db/schema.js';
 import type { Domain } from './domain.js';
 import { DomainError } from './errors.js';
+import type { GitHubStatus } from './github-sync.js';
 import { parse } from './util.js';
 
 const SETTING_KEYS = Object.keys(DEFAULT_SETTINGS) as (keyof Settings)[];
@@ -16,6 +17,7 @@ const SETTING_KEYS = Object.keys(DEFAULT_SETTINGS) as (keyof Settings)[];
 /** Internal keys stored in the same table but never returned by `get()`. */
 const API_TOKEN_KEY = '_api_token';
 const LAST_AGENT_CALL_KEY = '_last_agent_call_at';
+const GITHUB_STATUS_KEY = '_github_status';
 /** Token-authenticated calls are recorded at most this often. */
 const AGENT_CALL_THROTTLE_MS = 10_000;
 
@@ -80,6 +82,15 @@ export class SettingsService {
     return this.read<number>(LAST_AGENT_CALL_KEY);
   }
 
+  /** Global GitHub sync state (D61); null before the first sync. */
+  githubStatus(): GitHubStatus | null {
+    return this.read<GitHubStatus>(GITHUB_STATUS_KEY);
+  }
+
+  setGithubStatus(status: GitHubStatus): void {
+    this.write(GITHUB_STATUS_KEY, status, this.d.now());
+  }
+
   getApiToken(): string | null {
     return this.read<string>(API_TOKEN_KEY);
   }
@@ -94,6 +105,11 @@ export class SettingsService {
   }
 
   private write(key: string, value: unknown, now: number): void {
+    if (value === null) {
+      // null = back to the default (e.g. removing the GitHub token); the column is NOT NULL.
+      this.d.db.delete(settings).where(eq(settings.key, key)).run();
+      return;
+    }
     this.d.db
       .insert(settings)
       .values({ key, value, updatedAt: now })

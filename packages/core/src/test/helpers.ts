@@ -20,7 +20,13 @@ export function makeDomain(start = Date.UTC(2026, 10, 24, 12)): TestDomain {
       this.now += ms;
     },
   };
-  const d = new Domain({ db: openDb({ file: ':memory:' }), filesDir, now: () => clock.now });
+  // Fixed time zone: per-day grouping (D62) must not depend on the machine running the tests.
+  const d = new Domain({
+    db: openDb({ file: ':memory:' }),
+    filesDir,
+    now: () => clock.now,
+    timeZone: 'Europe/Rome',
+  });
   return {
     d,
     clock,

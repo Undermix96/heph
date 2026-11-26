@@ -77,7 +77,8 @@ export function diaryDue(s: StopSnapshot, t: NudgeThresholds): boolean {
   const enough =
     s.turnsSinceDiary >= t.diaryNudgeTurns || s.minutesSinceDiary >= t.diaryNudgeMinutes;
   if (s.head === null && s.worktree === null) return enough; // not a git repo
-  const committed = s.head !== null && s.baselineHead !== null && s.head !== s.baselineHead;
+  // The first commit of a repo that had none (baseline HEAD null) also counts as a commit.
+  const committed = s.head !== null && s.head !== s.baselineHead;
   const changed = committed || (s.worktree !== null && s.worktree !== s.baselineWorktree);
   return changed && (committed || enough);
 }

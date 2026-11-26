@@ -1,5 +1,5 @@
 import { XIcon } from '@primer/octicons-react';
-import { useId, useRef, useState } from 'react';
+import { useId, useLayoutEffect, useRef, useState } from 'react';
 import { Button } from '../../components/ui.js';
 import { useT } from '../../i18n/index.js';
 
@@ -24,15 +24,20 @@ export function TestPatterns({
   const [draft, setDraft] = useState('');
   const input = useRef<HTMLInputElement>(null);
   const list = useRef<HTMLUListElement>(null);
+  /** Index whose remove button gets focus after the next render (keyboard users). */
+  const focusAfter = useRef<number | null>(null);
+  useLayoutEffect(() => {
+    if (focusAfter.current === null) return;
+    const buttons = list.current?.querySelectorAll('button');
+    const next = buttons?.[Math.min(focusAfter.current, buttons.length - 1)];
+    focusAfter.current = null;
+    (next ?? input.current)?.focus();
+  });
   /** Removes a pattern and keeps keyboard focus: next remove button, else the input. */
   const remove = (index: number) => {
     setError(null);
+    focusAfter.current = index;
     onChange(value.filter((_, i) => i !== index));
-    requestAnimationFrame(() => {
-      const buttons = list.current?.querySelectorAll('button');
-      const next = buttons?.[Math.min(index, buttons.length - 1)];
-      (next ?? input.current)?.focus();
-    });
   };
   const [error, setError] = useState<'connect.patternDuplicate' | 'connect.patternFull' | null>(
     null,

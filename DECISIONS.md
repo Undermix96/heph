@@ -516,3 +516,32 @@ Why: User decision of 2026-11-26 (token not in a plain-text file), then measured
 - Native HTTP hooks for tool and session-end events: they cannot send the token, and the agent port always checks it (D6, D24).
 - Exec-form hooks: broken paths on Windows.
 - A pinned `version` stamped at release: updates would need a version bump commit on every release.
+
+## D58 — Hook contract v1 and live sessions (2026-11-26)
+
+Decision: The plugin script (`plugin/scripts/heph-hook.sh`) is a thin forwarder: it POSTs the hook's stdin JSON unchanged to `/hooks/v1/<event>` on the agent port with the API token and git facts as headers (`X-Heph-Remote`, `X-Heph-Head`, `X-Heph-Worktree` = hash of `git status --porcelain`), and prints the response body as the hook output; it never parses JSON beyond reading the session id. SessionStart answers plain text (header + briefing + rules + session id line, at most 9 500 characters: the briefing is compacted, then cut, never the rules); Stop answers 204 or a `{"decision":"block"}` JSON; tool and end hooks answer 204. `GET`/`PUT /hooks/v1/docs` keep the repo's docs file in sync by git blob SHA-1 (`git hash-object --no-filters`), storing the bytes as on disk with origin `hook`. Every hook call upserts the session (created if SessionStart was missed, reopened if it had ended or expired) and links it to the project of its GitHub repo; linking a repo moves its open sessions to that project. A test command (settings `testCommandPatterns`, plain text at the start of a command in a chain, after env assignments, `npx` or PowerShell `&`) marks the session testing until the PostToolUse of the same tool call; overlapping runs are tracked by tool call id; Stop ends any run. MCP writes with a `session_id` heartbeat an open session. Every bearer-token call records the last agent call (throttled to 10 s) for the Connect page.
+Why: Spec §5, §6, §9; D57 measured what Claude Code sends. All logic on the server is testable in-process and changes without reinstalling the plugin; the script stays within `git` + `curl`. Group A verification (2026-11-26) found that a cut briefing could drop the rules and the session id, and that moved repos and missed SessionStarts were mishandled; fixed in 1e093d5.
+Alternatives rejected:
+
+- Logic in the script (JSON parsing with sed, decisions client-side): untestable on Windows, needs `jq`.
+- One endpoint for all events: the URL documents the event and keeps responses simple.
+- Ignoring hooks of unknown sessions: a Heph restart during a session would hide it until the next SessionStart.
+
+## D59 — Auto-diary nudge: changes + threshold (2026-11-26)
+
+Decision: At each Stop, Heph asks Claude (block decision) to write a diary note with log_progress when: the Stop is not already a continuation (`stop_hook_active`), the session is linked to a project with Claude write enabled, work changed since the baseline (HEAD moved or `git status` hash changed; baseline = git state at the last diary note of the session, or at session start or the first hook with git facts), and (HEAD moved, or `diaryNudgeTurns` turns, default 5, or `diaryNudgeMinutes`, default 30, since the last note). After a nudge, the next one waits `diaryNudgeTurns` turns; continuation turns are not counted. Outside git only the thresholds count. Notes (not automatic events) from the session reset the counters. Defaults are provisional (§13) and editable in Settings.
+Why: User decision of 2026-11-26 among "changes + threshold", "commits only" and "every N turns"; it records uncommitted work without nudging on every turn, and never loops.
+Alternatives rejected:
+
+- Commits only: uncommitted work would never be recorded.
+- Every N turns: nudges even when nothing changed.
+
+## D60 — Connect Claude Code page and phase 5 scope (2026-11-26)
+
+Decision: Settings > Connect Claude Code shows the steps with copy buttons: add the marketplace, install the plugin, `/plugin configure heph@heph` with the agent URL and the token (show / copy / regenerate), remove a manually added `heph` MCP server, link each repository to its project. The agent URL comes from `HEPH_PUBLIC_AGENT_URL` (now in `compose.yaml` and `.env.example`; also used for upload links); unset, the page shows a TBD hint, because the server cannot know the host port Docker publishes. A status pill shows the last Claude call ("connected" within one hour). The design's step "Heph project slug in the repo's CLAUDE.md" is replaced by linking the repo to its project, since the spec links projects to repos in Heph (§5, §9; spec wins, D23). The live "Claude queue" of mockup 01 is postponed to phase 8 (task #48), so the dashboard placeholder stays. Supersedes the phase 5 parts of D49.
+Why: User decisions on the phase 5 plan, 2026-11-26; §4 asks for exact, prefilled commands.
+Alternatives rejected:
+
+- Deriving the agent URL from the browser's host and the container port: wrong whenever Docker maps another host port (the owner's server does).
+- A UI setting for the agent URL: one more setting for what is deployment configuration.
+- Building the queue now: no progress data for its bars, and not needed by the phase 5 acceptance criteria.

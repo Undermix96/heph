@@ -1,6 +1,6 @@
 
 # PlatformIO / C++
 .pio/
-.vscode/
+.vscode/*
 !.vscode/extensions.json
 compile_commands.json

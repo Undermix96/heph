@@ -28,22 +28,33 @@ die() {
 
 dir="" name="" visibility="" stack="" description="" slug="" repo_name="" holder=""
 design_dir="" node_version="" python_version="" github=true
+# Value of an option; a missing value is an argument error (exit 2).
+val() {
+  [ $# -ge 2 ] && [ "${2#--}" = "$2" ] || die "$1 needs a value"
+  printf '%s' "$2"
+}
 while [ $# -gt 0 ]; do
   case "$1" in
-    --dir) dir="${2-}"; shift 2 ;;
-    --name) name="${2-}"; shift 2 ;;
-    --visibility) visibility="${2-}"; shift 2 ;;
-    --stack) stack="${2-}"; shift 2 ;;
-    --description) description="${2-}"; shift 2 ;;
-    --slug) slug="${2-}"; shift 2 ;;
-    --repo-name) repo_name="${2-}"; shift 2 ;;
-    --holder) holder="${2-}"; shift 2 ;;
-    --design-dir) design_dir="${2-}"; shift 2 ;;
-    --node-version) node_version="${2-}"; shift 2 ;;
-    --python-version) python_version="${2-}"; shift 2 ;;
-    --no-github) github=false; shift ;;
+    --no-github) github=false; shift; continue ;;
+    --dir | --name | --visibility | --stack | --description | --slug | --repo-name | --holder | \
+      --design-dir | --node-version | --python-version)
+      v="$(val "$@")" || exit 2 ;;
     *) die "unknown option: $1" ;;
   esac
+  case "$1" in
+    --dir) dir="$v" ;;
+    --name) name="$v" ;;
+    --visibility) visibility="$v" ;;
+    --stack) stack="$v" ;;
+    --description) description="$v" ;;
+    --slug) slug="$v" ;;
+    --repo-name) repo_name="$v" ;;
+    --holder) holder="$v" ;;
+    --design-dir) design_dir="$v" ;;
+    --node-version) node_version="$v" ;;
+    --python-version) python_version="$v" ;;
+  esac
+  shift 2
 done
 
 [ -n "$dir" ] || die "--dir is required"
@@ -51,14 +62,32 @@ done
 case "$visibility" in public | private) ;; *) die "--visibility must be public or private" ;; esac
 case "$stack" in node | python | platformio | generic) ;; *) die "--stack must be node, python, platformio or generic" ;; esac
 command -v git >/dev/null 2>&1 || die "git is not installed" 1
-if [ -n "$design_dir" ] && [ ! -d "$design_dir" ]; then die "--design-dir is not a folder: $design_dir"; fi
+if [ -n "$design_dir" ]; then
+  [ -d "$design_dir" ] || die "--design-dir is not a folder: $design_dir"
+  # Absolute now: the script changes folder before copying (verification D7).
+  design_dir="$(cd "$design_dir" && pwd)"
+fi
+# Check everything that could fail before the folder is touched, so a rerun is possible.
+git var GIT_AUTHOR_IDENT >/dev/null 2>&1 ||
+  die "git has no user.name / user.email: set them (git config --global user.name ...) and run again" 1
 
-# Slug: lower case letters, digits and dashes (like Heph's slugs).
+# Slug like Heph's slugify (packages/core/src/util.ts): accents dropped, lower case,
+# letters and digits joined by single dashes, at most 60 characters, never only digits.
+# No iconv: its transliteration differs between Git Bash and Linux (verification D7).
+# Accented Latin letters → base letter, one substitution each (sed in the C locale sees
+# bytes, so a bracket like [àé] would split them).
+ACCENTS='s/à/a/g; s/á/a/g; s/â/a/g; s/ã/a/g; s/ä/a/g; s/å/a/g; s/ā/a/g; s/ă/a/g; s/ą/a/g; s/À/a/g; s/Á/a/g; s/Â/a/g; s/Ã/a/g; s/Ä/a/g; s/Å/a/g; s/Ā/a/g; s/Ă/a/g; s/Ą/a/g; s/ç/c/g; s/ć/c/g; s/ĉ/c/g; s/ċ/c/g; s/č/c/g; s/Ç/c/g; s/Ć/c/g; s/Ĉ/c/g; s/Ċ/c/g; s/Č/c/g; s/ď/d/g; s/Ď/d/g; s/è/e/g; s/é/e/g; s/ê/e/g; s/ë/e/g; s/ē/e/g; s/ĕ/e/g; s/ė/e/g; s/ę/e/g; s/ě/e/g; s/È/e/g; s/É/e/g; s/Ê/e/g; s/Ë/e/g; s/Ē/e/g; s/Ĕ/e/g; s/Ė/e/g; s/Ę/e/g; s/Ě/e/g; s/ĝ/g/g; s/ğ/g/g; s/ġ/g/g; s/ģ/g/g; s/Ĝ/g/g; s/Ğ/g/g; s/Ġ/g/g; s/Ģ/g/g; s/ì/i/g; s/í/i/g; s/î/i/g; s/ï/i/g; s/ĩ/i/g; s/ī/i/g; s/ĭ/i/g; s/į/i/g; s/Ì/i/g; s/Í/i/g; s/Î/i/g; s/Ï/i/g; s/Ĩ/i/g; s/Ī/i/g; s/Ĭ/i/g; s/Į/i/g; s/İ/i/g; s/ñ/n/g; s/ń/n/g; s/ņ/n/g; s/ň/n/g; s/Ñ/n/g; s/Ń/n/g; s/Ņ/n/g; s/Ň/n/g; s/ò/o/g; s/ó/o/g; s/ô/o/g; s/õ/o/g; s/ö/o/g; s/ō/o/g; s/ŏ/o/g; s/ő/o/g; s/Ò/o/g; s/Ó/o/g; s/Ô/o/g; s/Õ/o/g; s/Ö/o/g; s/Ō/o/g; s/Ŏ/o/g; s/Ő/o/g; s/ŕ/r/g; s/ŗ/r/g; s/ř/r/g; s/Ŕ/r/g; s/Ŗ/r/g; s/Ř/r/g; s/ś/s/g; s/ŝ/s/g; s/ş/s/g; s/š/s/g; s/Ś/s/g; s/Ŝ/s/g; s/Ş/s/g; s/Š/s/g; s/ţ/t/g; s/ť/t/g; s/Ţ/t/g; s/Ť/t/g; s/ù/u/g; s/ú/u/g; s/û/u/g; s/ü/u/g; s/ũ/u/g; s/ū/u/g; s/ŭ/u/g; s/ů/u/g; s/ű/u/g; s/ų/u/g; s/Ù/u/g; s/Ú/u/g; s/Û/u/g; s/Ü/u/g; s/Ũ/u/g; s/Ū/u/g; s/Ŭ/u/g; s/Ů/u/g; s/Ű/u/g; s/Ų/u/g; s/ý/y/g; s/ÿ/y/g; s/ŷ/y/g; s/Ý/y/g; s/Ÿ/y/g; s/Ŷ/y/g; s/ź/z/g; s/ż/z/g; s/ž/z/g; s/Ź/z/g; s/Ż/z/g; s/Ž/z/g'
 to_slug() {
-  local ascii
-  ascii="$(printf '%s' "$1" | iconv -f utf-8 -t ascii//TRANSLIT 2>/dev/null)" || ascii="$1"
-  printf '%s' "$ascii" | tr '[:upper:]' '[:lower:]' |
-    sed -e 's/[^a-z0-9]\{1,\}/-/g' -e 's/^-//' -e 's/-$//' | cut -c1-60 || true
+  local out
+  out="$(printf '%s' "$1" | LC_ALL=C sed -e "$ACCENTS" |
+    LC_ALL=C tr '[:upper:]' '[:lower:]' |
+    LC_ALL=C sed -e 's/[^a-z0-9]\{1,\}/-/g' -e 's/^-//' | cut -c1-60 | sed -e 's/-*$//')" || true
+  case "$out" in
+    '') ;;
+    *[!0-9]*) ;;
+    *) out="p-$out" ;;
+  esac
+  printf '%s' "$out"
 }
 [ -n "$slug" ] || slug="$(to_slug "$name")"
 [ -n "$slug" ] || slug="project"
@@ -122,6 +151,8 @@ git commit -q -m "Initial commit" || die "git commit failed (is git user.name/us
 if [ -n "$design_dir" ]; then
   mkdir -p docs/design
   cp -R "$design_dir"/. docs/design/
+  # A design folder that is itself a repo: keep the files, not its .git (verification D7).
+  find docs/design -name .git -prune -exec rm -rf {} +
   git add -A
   git commit -q -m "Docs: add design documents" || true
 fi

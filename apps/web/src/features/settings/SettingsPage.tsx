@@ -8,8 +8,10 @@ import { useNotices } from '../../app/notices.js';
 import { Alert, Box, Button, Dialog, Field, Skeleton } from '../../components/ui.js';
 import { type MessageKey, useT } from '../../i18n/index.js';
 import { errorKey } from '../../lib/errors.js';
+import { ConnectBox } from './ConnectBox.js';
+import { TestPatterns } from './TestPatterns.js';
 
-/** Settings (mockup 31). Test-command recognition waits for the plugin (phase 5, D49). */
+/** Settings (mockup 31): account, language, Connect Claude Code (D60), thresholds, tests. */
 export function SettingsPage() {
   const t = useT();
   const q = useQuery({ queryKey: keys.settings, queryFn: api.settings, refetchInterval: false });
@@ -22,13 +24,22 @@ export function SettingsPage() {
     <main className="page narrow">
       <h1 className="page-title">{t('nav.settings')}</h1>
       <nav className="settings-nav" aria-label={t('nav.settings')}>
-        {(['account', 'language', 'claude', 'github', 'activity', 'files', 'other'] as const).map(
-          (s) => (
-            <a key={s} href={`#s-${s}`}>
-              {t(`settings.${s}` as MessageKey)}
-            </a>
-          ),
-        )}
+        {(
+          [
+            'account',
+            'language',
+            'claude',
+            'github',
+            'activity',
+            'tests',
+            'files',
+            'other',
+          ] as const
+        ).map((s) => (
+          <a key={s} href={`#s-${s}`}>
+            {t(`settings.${s}` as MessageKey)}
+          </a>
+        ))}
       </nav>
       {q.isPending ? (
         <Skeleton lines={8} />
@@ -42,11 +53,8 @@ export function SettingsPage() {
       ) : (
         <div className="stack">
           <PasswordBox />
+          <ConnectBox />
           <SettingsForm settings={q.data} />
-          <ApiTokenBox />
-          <Box title={t('settings.tests')}>
-            <p className="muted">{t('settings.testsSoon')}</p>
-          </Box>
         </div>
       )}
     </main>
@@ -123,6 +131,8 @@ type NumKey =
   | 'recentlyActiveDays'
   | 'inactiveDays'
   | 'sessionExpiryMinutes'
+  | 'diaryNudgeTurns'
+  | 'diaryNudgeMinutes'
   | 'screenshotRetentionPerTarget'
   | 'maxUploadMb'
   | 'githubPollMinutes';
@@ -215,6 +225,17 @@ function SettingsForm({ settings }: { settings: Settings }) {
           {num('recentlyActiveDays', 'settings.recentDays')}
           {num('inactiveDays', 'settings.inactiveDays')}
           {num('sessionExpiryMinutes', 'settings.sessionExpiry')}
+          {num('diaryNudgeTurns', 'settings.diaryTurns', 'settings.diaryHint')}
+          {num('diaryNudgeMinutes', 'settings.diaryMinutes')}
+        </Box>
+      </section>
+      <section id="s-tests">
+        <Box title={t('settings.tests')}>
+          <p className="muted">{t('connect.patternsIntro')}</p>
+          <TestPatterns
+            value={s.testCommandPatterns}
+            onChange={(testCommandPatterns) => setS({ ...s, testCommandPatterns })}
+          />
         </Box>
       </section>
       <section id="s-files">
@@ -251,76 +272,5 @@ function SettingsForm({ settings }: { settings: Settings }) {
         </Button>
       </div>
     </form>
-  );
-}
-
-/** "Connect Claude Code": the token stays readable here (D45). */
-function ApiTokenBox() {
-  const t = useT();
-  const notices = useNotices();
-  const [token, setToken] = useState<string | null>(null);
-  const [confirm, setConfirm] = useState(false);
-  const show = useApiMutation(() => api.apiToken(), { onSuccess: (r) => setToken(r.apiToken) });
-  const rotate = useApiMutation(() => api.rotateApiToken(), {
-    onSuccess: (r) => {
-      setToken(r.apiToken);
-      setConfirm(false);
-      notices.info('settings.tokenRotated');
-    },
-  });
-  const copy = async () => {
-    let value = token;
-    try {
-      value ??= (await api.apiToken()).apiToken;
-    } catch (err) {
-      notices.error(err);
-      return;
-    }
-    try {
-      await navigator.clipboard.writeText(value);
-      notices.info('settings.copied');
-    } catch {
-      setToken(value);
-      notices.info('settings.copyManual');
-    }
-  };
-  return (
-    <section id="s-claude">
-      <Box title={t('settings.claude')}>
-        <p className="muted">{t('settings.claudeHint')}</p>
-        <div className="token">{token ?? '••••••••••••••••••••'}</div>
-        <div className="row">
-          <Button size="sm" onClick={() => (token ? setToken(null) : show.mutate(undefined))}>
-            {t(token ? 'settings.hide' : 'settings.show')}
-          </Button>
-          <Button size="sm" onClick={() => void copy()}>
-            {t('settings.copy')}
-          </Button>
-          <Button size="sm" variant="danger" onClick={() => setConfirm(true)}>
-            {t('settings.rotate')}
-          </Button>
-        </div>
-        {confirm && (
-          <Dialog
-            title={t('settings.rotateTitle')}
-            onClose={() => setConfirm(false)}
-            actions={
-              <>
-                <Button onClick={() => setConfirm(false)}>{t('common.cancel')}</Button>
-                <Button
-                  variant="danger"
-                  disabled={rotate.isPending}
-                  onClick={() => rotate.mutate(undefined)}
-                >
-                  {t('settings.rotate')}
-                </Button>
-              </>
-            }
-          >
-            <p>{t('settings.rotateText')}</p>
-          </Dialog>
-        )}
-      </Box>
-    </section>
   );
 }

@@ -94,6 +94,7 @@ export function summary(over: Partial<ProjectSummary> = {}): ProjectSummary {
     badge: { kind: 'recently_active' },
     attentionGroup: 4,
     pendingProposals: 0,
+    liveSessionIds: [],
     repos: [],
     createdAt: T0,
     updatedAt: T0,

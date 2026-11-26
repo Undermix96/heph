@@ -276,6 +276,7 @@ export const en: Record<MessageKey, string> = {
   'diary.newNote': 'Write a note',
   'diary.publish': 'Publish',
   'diary.session': 'Claude session',
+  'diary.sessionLive': 'running',
   'diary.sessionSummary':
     '✓ {tasks} tasks · ▶ {tests} tests · ▣ {files} files · ◆ {status} status · {notes} notes',
   'diary.showEvents': 'Show the {n} events',
@@ -394,8 +395,6 @@ export const en: Record<MessageKey, string> = {
   'settings.files': 'Files',
   'settings.other': 'Other',
   'settings.tests': 'Test recognition',
-  'settings.testsSoon':
-    'The command patterns that mean “Claude is running tests” come with the Claude Code plugin (phase 5).',
   'settings.currentPassword': 'Current password',
   'settings.newPassword': 'New password',
   'settings.passwordHint': 'At least 8 characters.',
@@ -424,7 +423,7 @@ export const en: Record<MessageKey, string> = {
   'settings.badCurrency': 'The currency is a three-letter code.',
   'settings.saved': 'Saved.',
   'settings.claudeHint':
-    "The API token connects Claude Code to Heph's MCP server. Treat it like a password.",
+    'Claude Code uses this token to write the diary, close tasks, upload screenshots and change status; big changes arrive as proposals. Treat it like a password.',
   'settings.show': 'Show',
   'settings.hide': 'Hide',
   'settings.copy': 'Copy',
@@ -435,6 +434,37 @@ export const en: Record<MessageKey, string> = {
   'settings.rotateText':
     'The current token stops working at once: you will need to update it in Claude Code.',
   'settings.tokenRotated': 'New token created. Update it in Claude Code.',
+  'settings.diaryTurns': 'Ask Claude for a diary note after (turns)',
+  'settings.diaryMinutes': '…or after (minutes)',
+  'settings.diaryHint':
+    'Only when files changed or a commit was made since the last note; a commit asks at once.',
+  'connect.never': 'no call from Claude yet',
+  'connect.connected': 'connected · last call',
+  'connect.lastCall': 'last call',
+  'connect.step.marketplace': 'Add the Heph plugin marketplace',
+  'connect.step.install': 'Install the plugin for your user',
+  'connect.step.configure': 'In a Claude Code session, configure the plugin',
+  'connect.urlLabel': 'Heph agent URL:',
+  'connect.urlTbd':
+    'TBD: set HEPH_PUBLIC_AGENT_URL in the server’s .env (the agent port as your computers reach it, e.g. http://192.168.1.10:8081) to show it here.',
+  'connect.tokenLabel': 'Heph API token (kept in the system credential store):',
+  'connect.step.removeManual': 'If you added Heph’s MCP server by hand, remove it',
+  'connect.removeManualHint':
+    'Otherwise Claude Code skips the plugin’s server and the tools appear twice.',
+  'connect.step.link': 'Link each repository to its project',
+  'connect.linkHint':
+    'In the project, edit it and add the repository; or start Claude Code in a repository that is not linked yet: Claude offers to register it.',
+  'connect.copied': 'Copied.',
+  'connect.copyManual': 'Copy failed: select the text and copy it by hand.',
+  'connect.patternsIntro':
+    'When Claude runs a command that starts with one of these, the project shows “Claude running tests”.',
+  'connect.patternsEmpty': 'No patterns: test runs are not recognised.',
+  'connect.newPattern': 'New pattern',
+  'connect.patternPlaceholder': 'e.g. make check',
+  'connect.addPattern': 'Add',
+  'connect.removePattern': 'Remove {pattern}',
+  'connect.patternDuplicate': 'This pattern is already in the list.',
+  'connect.patternFull': 'At most 100 patterns.',
   'edit.title': 'Edit “{name}”',
   'edit.slug': 'Slug',
   'edit.slugHint': 'Used in addresses and by Claude; lowercase letters, digits and dashes.',

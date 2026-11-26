@@ -280,6 +280,7 @@ export const it = {
   'diary.newNote': 'Scrivi una nota',
   'diary.publish': 'Pubblica',
   'diary.session': 'Sessione di Claude',
+  'diary.sessionLive': 'in corso',
   'diary.sessionSummary':
     '✓ {tasks} task · ▶ {tests} test · ▣ {files} file · ◆ {status} stati · {notes} note',
   'diary.showEvents': 'Mostra i {n} eventi',
@@ -400,8 +401,6 @@ export const it = {
   'settings.files': 'File',
   'settings.other': 'Altro',
   'settings.tests': 'Riconoscimento dei test',
-  'settings.testsSoon':
-    'Gli schemi di comando che indicano «Claude esegue i test» arrivano con il plugin di Claude Code (fase 5).',
   'settings.currentPassword': 'Password attuale',
   'settings.newPassword': 'Nuova password',
   'settings.passwordHint': 'Almeno 8 caratteri.',
@@ -432,7 +431,7 @@ export const it = {
   'settings.badCurrency': 'La valuta è un codice di tre lettere.',
   'settings.saved': 'Salvato.',
   'settings.claudeHint':
-    'Il token API collega Claude Code al server MCP di Heph. Trattalo come una password.',
+    'Claude Code usa questo token per scrivere nel diario, chiudere task, caricare screenshot e cambiare stato; le modifiche grandi arrivano come proposte. Trattalo come una password.',
   'settings.show': 'Mostra',
   'settings.hide': 'Nascondi',
   'settings.copy': 'Copia',
@@ -443,6 +442,37 @@ export const it = {
   'settings.rotateText':
     'Il token attuale smette subito di funzionare: dovrai aggiornarlo in Claude Code.',
   'settings.tokenRotated': 'Nuovo token creato. Aggiornalo in Claude Code.',
+  'settings.diaryTurns': 'Chiedi a Claude una voce di diario dopo (turni)',
+  'settings.diaryMinutes': '…oppure dopo (minuti)',
+  'settings.diaryHint':
+    'Solo se dall’ultima voce sono cambiati file o c’è un commit; un commit fa chiedere subito.',
+  'connect.never': 'ancora nessuna chiamata da Claude',
+  'connect.connected': 'collegato · ultima chiamata',
+  'connect.lastCall': 'ultima chiamata',
+  'connect.step.marketplace': 'Aggiungi il marketplace del plugin di Heph',
+  'connect.step.install': 'Installa il plugin per il tuo utente',
+  'connect.step.configure': 'In una sessione di Claude Code, configura il plugin',
+  'connect.urlLabel': 'URL agent di Heph:',
+  'connect.urlTbd':
+    'TBD: imposta HEPH_PUBLIC_AGENT_URL nel file .env del server (la porta agent come la raggiungono i tuoi computer, es. http://192.168.1.10:8081) per vederlo qui.',
+  'connect.tokenLabel': 'Token API di Heph (salvato nel portachiavi del sistema):',
+  'connect.step.removeManual': 'Se avevi aggiunto a mano il server MCP di Heph, rimuovilo',
+  'connect.removeManualHint':
+    'Altrimenti Claude Code salta il server del plugin e i tool compaiono due volte.',
+  'connect.step.link': 'Collega ogni repository al suo progetto',
+  'connect.linkHint':
+    'Nel progetto, modificalo e aggiungi il repository; oppure avvia Claude Code in un repository non ancora collegato: Claude propone di registrarlo.',
+  'connect.copied': 'Copiato.',
+  'connect.copyManual': 'Copia non riuscita: seleziona il testo e copialo a mano.',
+  'connect.patternsIntro':
+    'Quando Claude lancia un comando che inizia con uno di questi, il progetto mostra «Claude esegue i test».',
+  'connect.patternsEmpty': 'Nessuno schema: i test non vengono riconosciuti.',
+  'connect.newPattern': 'Nuovo schema',
+  'connect.patternPlaceholder': 'es. make check',
+  'connect.addPattern': 'Aggiungi',
+  'connect.removePattern': 'Rimuovi {pattern}',
+  'connect.patternDuplicate': 'Questo schema è già nell’elenco.',
+  'connect.patternFull': 'Al massimo 100 schemi.',
   'edit.title': 'Modifica «{name}»',
   'edit.slug': 'Slug',
   'edit.slugHint': 'Usato negli indirizzi e da Claude; lettere minuscole, numeri e trattini.',

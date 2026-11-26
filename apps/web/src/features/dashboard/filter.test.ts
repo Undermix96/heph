@@ -23,6 +23,7 @@ function project(over: Partial<ProjectSummary>): ProjectSummary {
     badge: { kind: 'idle' },
     attentionGroup: 4,
     pendingProposals: 0,
+    liveSessionIds: [],
     repos: [],
     createdAt: '2026-11-01T00:00:00.000Z',
     updatedAt: '2026-11-20T00:00:00.000Z',

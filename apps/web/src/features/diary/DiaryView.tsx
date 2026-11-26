@@ -371,7 +371,9 @@ function NoteComposer({
   );
 }
 
-type NameOf = (e: DiaryEntryView) => { name: string; slug: string } | undefined;
+type NameOf = (
+  e: DiaryEntryView,
+) => { name: string; slug: string; liveSessionIds?: string[] } | undefined;
 
 function TimelineItem({
   item,
@@ -460,6 +462,8 @@ function SessionView({
   const first = item.entries[0] as DiaryEntryView;
   const summary =
     item.entries.find((e) => e.type === 'session') ?? item.entries.find((e) => e.type === 'note');
+  // Design DESIGN.md §diary: a live session shows "running" (D58).
+  const live = projectName(first)?.liveSessionIds?.includes(item.sessionId) ?? false;
   return (
     <li className="entry box box-ai">
       <div className="box-head">
@@ -470,6 +474,12 @@ function SessionView({
           <span className="meta">
             {date(item.start)} – {date(item.end)}
           </span>
+          {live && (
+            <span className="status status-ai">
+              <span className="dot dot-live" aria-hidden="true" />
+              {t('diary.sessionLive')}
+            </span>
+          )}
         </div>
       </div>
       <div className="box-body">

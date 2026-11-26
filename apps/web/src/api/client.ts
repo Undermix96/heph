@@ -136,6 +136,12 @@ export const api = {
     ),
   apiToken: () => request<{ apiToken: string }>('GET', '/settings/api-token'),
   rotateApiToken: () => request<{ apiToken: string }>('POST', '/settings/api-token/rotate'),
+  /** Connect Claude Code page: public agent URL and the last Claude call (D60). */
+  connect: () =>
+    request<{ agentUrl: string | null; lastAgentCallAt: string | null }>(
+      'GET',
+      '/settings/connect',
+    ),
   search: (q: string) => request<SearchHit[]>('GET', `/search?q=${encodeURIComponent(q)}`),
 
   // settings

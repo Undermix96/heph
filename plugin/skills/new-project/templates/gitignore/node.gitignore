@@ -1,0 +1,9 @@
+
+# Node / TypeScript
+node_modules/
+dist/
+build/
+coverage/
+.cache/
+*.tsbuildinfo
+npm-debug.log*

@@ -1,6 +1,6 @@
 {
   "name": "heph",
-  "description": "Hephaestus (heph) for Claude Code: project briefing at session start, live sessions, test detection, auto-diary and DECISIONS.md sync.",
+  "description": "Hephaestus (heph) for Claude Code: project briefing at session start, live sessions, test detection, auto-diary, DECISIONS.md sync and a new-project skill.",
   "author": { "name": "Undermix96" },
   "homepage": "https://github.com/Undermix96/heph",
   "repository": "https://github.com/Undermix96/heph",

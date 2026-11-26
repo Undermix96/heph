@@ -68,7 +68,8 @@ if [ -n "$design_dir" ]; then
   design_dir="$(cd "$design_dir" && pwd)"
 fi
 # Check everything that could fail before the folder is touched, so a rerun is possible.
-git var GIT_AUTHOR_IDENT >/dev/null 2>&1 ||
+# Outside any repo, so a repo-local identity of the caller's folder does not count (R2).
+(cd / && env -u GIT_DIR -u GIT_WORK_TREE git var GIT_AUTHOR_IDENT) >/dev/null 2>&1 ||
   die "git has no user.name / user.email: set them (git config --global user.name ...) and run again" 1
 
 # Slug like Heph's slugify (packages/core/src/util.ts): accents dropped, lower case,
@@ -79,7 +80,8 @@ git var GIT_AUTHOR_IDENT >/dev/null 2>&1 ||
 ACCENTS='s/à/a/g; s/á/a/g; s/â/a/g; s/ã/a/g; s/ä/a/g; s/å/a/g; s/ā/a/g; s/ă/a/g; s/ą/a/g; s/À/a/g; s/Á/a/g; s/Â/a/g; s/Ã/a/g; s/Ä/a/g; s/Å/a/g; s/Ā/a/g; s/Ă/a/g; s/Ą/a/g; s/ç/c/g; s/ć/c/g; s/ĉ/c/g; s/ċ/c/g; s/č/c/g; s/Ç/c/g; s/Ć/c/g; s/Ĉ/c/g; s/Ċ/c/g; s/Č/c/g; s/ď/d/g; s/Ď/d/g; s/è/e/g; s/é/e/g; s/ê/e/g; s/ë/e/g; s/ē/e/g; s/ĕ/e/g; s/ė/e/g; s/ę/e/g; s/ě/e/g; s/È/e/g; s/É/e/g; s/Ê/e/g; s/Ë/e/g; s/Ē/e/g; s/Ĕ/e/g; s/Ė/e/g; s/Ę/e/g; s/Ě/e/g; s/ĝ/g/g; s/ğ/g/g; s/ġ/g/g; s/ģ/g/g; s/Ĝ/g/g; s/Ğ/g/g; s/Ġ/g/g; s/Ģ/g/g; s/ì/i/g; s/í/i/g; s/î/i/g; s/ï/i/g; s/ĩ/i/g; s/ī/i/g; s/ĭ/i/g; s/į/i/g; s/Ì/i/g; s/Í/i/g; s/Î/i/g; s/Ï/i/g; s/Ĩ/i/g; s/Ī/i/g; s/Ĭ/i/g; s/Į/i/g; s/İ/i/g; s/ñ/n/g; s/ń/n/g; s/ņ/n/g; s/ň/n/g; s/Ñ/n/g; s/Ń/n/g; s/Ņ/n/g; s/Ň/n/g; s/ò/o/g; s/ó/o/g; s/ô/o/g; s/õ/o/g; s/ö/o/g; s/ō/o/g; s/ŏ/o/g; s/ő/o/g; s/Ò/o/g; s/Ó/o/g; s/Ô/o/g; s/Õ/o/g; s/Ö/o/g; s/Ō/o/g; s/Ŏ/o/g; s/Ő/o/g; s/ŕ/r/g; s/ŗ/r/g; s/ř/r/g; s/Ŕ/r/g; s/Ŗ/r/g; s/Ř/r/g; s/ś/s/g; s/ŝ/s/g; s/ş/s/g; s/š/s/g; s/Ś/s/g; s/Ŝ/s/g; s/Ş/s/g; s/Š/s/g; s/ţ/t/g; s/ť/t/g; s/Ţ/t/g; s/Ť/t/g; s/ù/u/g; s/ú/u/g; s/û/u/g; s/ü/u/g; s/ũ/u/g; s/ū/u/g; s/ŭ/u/g; s/ů/u/g; s/ű/u/g; s/ų/u/g; s/Ù/u/g; s/Ú/u/g; s/Û/u/g; s/Ü/u/g; s/Ũ/u/g; s/Ū/u/g; s/Ŭ/u/g; s/Ů/u/g; s/Ű/u/g; s/Ų/u/g; s/ý/y/g; s/ÿ/y/g; s/ŷ/y/g; s/Ý/y/g; s/Ÿ/y/g; s/Ŷ/y/g; s/ź/z/g; s/ż/z/g; s/ž/z/g; s/Ź/z/g; s/Ż/z/g; s/Ž/z/g'
 to_slug() {
   local out
-  out="$(printf '%s' "$1" | LC_ALL=C sed -e "$ACCENTS" |
+  # Combining accents (decomposed names, U+0300-U+036F) are dropped first, like NFKD.
+  out="$(printf '%s' "$1" | LC_ALL=C sed -e 's/\xcc[\x80-\xbf]//g; s/\xcd[\x80-\xaf]//g' -e "$ACCENTS" |
     LC_ALL=C tr '[:upper:]' '[:lower:]' |
     LC_ALL=C sed -e 's/[^a-z0-9]\{1,\}/-/g' -e 's/^-//' | cut -c1-60 | sed -e 's/-*$//')" || true
   case "$out" in

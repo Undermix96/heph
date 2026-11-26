@@ -127,11 +127,13 @@ case "$event" in
 
   pre-tool-use | post-tool-use)
     remote="$(git_remote)"
-    post "$event" @- 3 -H "X-Heph-Remote: $remote" >/dev/null
+    # 2 s: a healthy Heph on the LAN answers in milliseconds; a hung one must not slow every
+    # shell command down to the 5 s hook timeout (verification B5).
+    post "$event" @- 2 -H "X-Heph-Remote: $remote" >/dev/null
     ;;
 
   session-end)
-    post session-end @- 3 >/dev/null
+    post session-end @- 2 >/dev/null
     ;;
 
   *)

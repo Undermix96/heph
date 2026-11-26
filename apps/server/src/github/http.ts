@@ -131,7 +131,11 @@ export class HttpGitHub implements GitHubPort {
   private async json(url: string): Promise<{ body: unknown; link: string | null }> {
     const cached = this.etags.get(url);
     const res = await this.request(url, 'application/vnd.github+json', cached?.etag);
-    if (res.status === 304 && cached) return { body: cached.body, link: cached.link };
+    if (res.status === 304 && cached) {
+      this.etags.delete(url);
+      this.etags.set(url, cached);
+      return { body: cached.body, link: cached.link };
+    }
     if (res.status === 409) throw new EmptyRepo();
     if (res.status === 404) throw new GitHubError('not_found', `GitHub: ${url} not found`);
     const body = (await res.json()) as unknown;

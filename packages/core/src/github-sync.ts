@@ -324,7 +324,7 @@ export class GitHubSyncService {
   private priorImport(
     projectId: number,
     fullName: string,
-  ): { sha: string; at: number; tags: Set<string> } | null {
+  ): { sha: string | null; at: number | null; tags: Set<string> } | null {
     const repoIs = sql`lower(json_extract(${diaryEntries.data}, '$.repo')) = ${fullName.toLowerCase()}`;
     const last = this.d.db
       .select({ data: diaryEntries.data })
@@ -345,7 +345,7 @@ export class GitHubSyncService {
         .map((r) => String(r.data?.tag ?? '')),
     );
     const c = (last?.data?.commits as { sha?: string; date?: string }[] | undefined)?.[0];
-    if (!c?.sha || !c.date) return tags.size ? { sha: '', at: 0, tags } : null;
+    if (!c?.sha || !c.date) return tags.size ? { sha: null, at: null, tags } : null;
     return { sha: c.sha, at: Date.parse(c.date), tags };
   }
 

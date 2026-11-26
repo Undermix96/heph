@@ -96,14 +96,16 @@ export class HooksService {
       throw new DomainError('validation', 'The docs file is not valid UTF-8');
     }
     const hash = gitBlobSha(content);
-    if (hash === repo.docsHash) return false;
+    // Same bytes as the copy last read from GitHub: it is the GitHub copy (D63, verification R2).
+    const origin = hash === repo.docsGithubSha ? 'github' : 'hook';
+    if (hash === repo.docsHash && origin === repo.docsOrigin) return false;
     const now = this.d.now();
     this.d.db
       .update(projectRepos)
       .set({
         docsContent: text,
         docsHash: hash,
-        docsOrigin: 'hook',
+        docsOrigin: origin,
         docsUpdatedAt: now,
         updatedAt: now,
       })

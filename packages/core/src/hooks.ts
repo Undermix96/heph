@@ -35,7 +35,7 @@ export class HooksService {
       const header =
         '# Heph session start\n\nThis session is tracked in Heph (Hephaestus). ' +
         'The briefing below replaces a get_briefing call at the start.\n\n';
-      return header + this.d.briefing.forHook(row.projectId, sessionId);
+      return this.d.briefing.forHook(row.projectId, sessionId, header);
     }
     const settings = this.d.settings.get();
     const out = [
@@ -58,9 +58,7 @@ export class HooksService {
   stop(sessionId: string, stopHookActive: boolean, facts: HookFacts): StopBlock | null {
     const r = this.d.sessions.stop(sessionId, stopHookActive, facts);
     if (!r.nudge || r.projectId === null) return null;
-    const project = this.d.projects.row(r.projectId);
-    if (!project.claudeWriteEnabled) return null; // Claude could not write the note
-    const slug = project.slug;
+    const slug = this.d.projects.row(r.projectId).slug;
     const language = LANGUAGE_NAME[this.d.settings.get().contentLanguage];
     return {
       decision: 'block',

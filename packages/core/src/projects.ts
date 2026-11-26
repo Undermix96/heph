@@ -186,6 +186,7 @@ export class ProjectsService {
         badge: st.badge,
         attentionGroup: st.attentionGroup,
         pendingProposals: pendingBy.get(r.id) ?? 0,
+        liveSessionIds: live.map((s) => s.sessionId),
         repos: reposBy.get(r.id) ?? [],
         createdAt: iso(r.createdAt),
         updatedAt: iso(r.updatedAt),

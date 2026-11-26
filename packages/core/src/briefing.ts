@@ -71,7 +71,7 @@ export class BriefingService {
     );
   }
 
-  build(t: BriefingTarget, limits: BriefingLimits = FULL): string {
+  build(t: BriefingTarget, limits: BriefingLimits = FULL, withRules = true): string {
     const p = this.d.projects.get(this.resolve(t));
     const now = this.d.now();
     const settings = this.d.settings.get();
@@ -196,26 +196,33 @@ export class BriefingService {
       out.push('', `Links: ${p.links.map((l) => `[${l.label}](${l.url})`).join(' · ')}`);
     if (p.repos.length) out.push(`Repos: ${p.repos.join(', ')}`);
 
-    out.push('', ...rulesSection(settings.contentLanguage, docsRule(p), t.sessionId));
+    if (withRules)
+      out.push('', ...rulesSection(settings.contentLanguage, docsRule(p), t.sessionId));
     return out.join('\n');
   }
 
   /**
-   * The briefing for the SessionStart hook (§9, D58): the full briefing when it
-   * fits the hook limit, otherwise ever more compact ones, with a pointer to
-   * get_briefing for the rest.
+   * The SessionStart hook context (§9, D58): `header`, the briefing and the
+   * rules, at most HOOK_CONTEXT_MAX_CHARS. When the full briefing does not fit,
+   * ever more compact ones are tried, then the briefing is cut; the header and
+   * the rules (with the session id line) are never cut.
    */
-  forHook(projectId: number, sessionId: string): string {
-    const full = this.build({ project: projectId, sessionId });
-    if (full.length <= HOOK_CONTEXT_MAX_CHARS) return full;
+  forHook(projectId: number, sessionId: string, header: string): string {
+    const p = this.d.projects.get(projectId);
+    const settings = this.d.settings.get();
+    const rules = `\n\n${rulesSection(settings.contentLanguage, docsRule(p), sessionId).join('\n')}`;
+    const budget = HOOK_CONTEXT_MAX_CHARS - header.length - rules.length;
+    const target = { project: projectId, sessionId };
+    const full = this.build(target, FULL, false);
+    if (full.length <= budget) return header + full + rules;
     const note =
       '\n\n_Compact briefing (the full one is too long for the session start): call get_briefing for all of it._';
+    let body = full;
     for (const limits of COMPACT) {
-      const text = this.build({ project: projectId, sessionId }, limits) + note;
-      if (text.length <= HOOK_CONTEXT_MAX_CHARS) return text;
+      body = this.build(target, limits, false);
+      if (body.length + note.length <= budget) return header + body + note + rules;
     }
-    const text = this.build({ project: projectId, sessionId }, COMPACT.at(-1) as BriefingLimits);
-    return `${text.slice(0, HOOK_CONTEXT_MAX_CHARS - note.length - 1)}…${note}`;
+    return `${header}${cutAt(body, Math.max(0, budget - note.length - 1))}…${note}${rules}`;
   }
 
   private roadmapSection(p: ProjectDetail, out: string[], maxTasks: number): void {
@@ -289,4 +296,11 @@ export function rulesSection(
       'Pass confirmed: true only if the user explicitly confirmed that change in this conversation.',
     '- Upload screenshots/files with request_upload and curl; never pass file content in tool arguments.',
   ];
+}
+
+/** `text` cut to at most `max` UTF-16 units without splitting a surrogate pair. */
+function cutAt(text: string, max: number): string {
+  if (text.length <= max) return text;
+  const code = text.charCodeAt(max - 1);
+  return text.slice(0, code >= 0xd800 && code <= 0xdbff ? max - 1 : max);
 }

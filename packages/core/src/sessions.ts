@@ -1,7 +1,7 @@
 import { type LiveSessionView, RepoFullName } from '@heph/schema';
 import { and, eq, gt, inArray, isNull, lte } from 'drizzle-orm';
 import { diaryDue, isTestCommand } from './autodiary.js';
-import { claudeSessions, projectRepos } from './db/schema.js';
+import { claudeSessions, projectRepos, projects } from './db/schema.js';
 import type { Domain } from './domain.js';
 import { iso } from './util.js';
 
@@ -87,26 +87,38 @@ export class SessionsService {
     });
   }
 
-  /** PreToolUse on a shell tool: a test command marks the session as testing. */
+  /**
+   * PreToolUse on a shell tool: a test command marks the session as testing.
+   * Several runs can overlap (background or parallel tool calls): their tool
+   * call ids are kept, space-separated, in `testingToolUseId`.
+   */
   toolStart(sessionId: string, toolUseId: string | null, command: string, facts: HookFacts): void {
     this.d.tx(() => {
       const row = this.upsert(sessionId, facts);
       if (!isTestCommand(command, this.d.settings.get().testCommandPatterns)) return;
+      const ids = runIds(row);
+      if (toolUseId && !ids.includes(toolUseId)) ids.push(toolUseId);
       this.update(row, {
         isTesting: true,
         testingSince: row.isTesting ? row.testingSince : this.d.now(),
-        testingToolUseId: toolUseId,
+        testingToolUseId: ids.length ? ids.join(' ') : null,
       });
     });
   }
 
-  /** PostToolUse on a shell tool: the test run that started with this tool call is over. */
+  /** PostToolUse on a shell tool: testing ends when the last run that started it is over. */
   toolEnd(sessionId: string, toolUseId: string | null, facts: HookFacts): void {
     this.d.tx(() => {
       const row = this.upsert(sessionId, facts);
-      if (row.isTesting && toolUseId !== null && row.testingToolUseId === toolUseId) {
-        this.update(row, { isTesting: false, testingSince: null, testingToolUseId: null });
-      }
+      const ids = runIds(row);
+      if (!row.isTesting || toolUseId === null || !ids.includes(toolUseId)) return;
+      const rest = ids.filter((id) => id !== toolUseId);
+      this.update(
+        row,
+        rest.length
+          ? { testingToolUseId: rest.join(' ') }
+          : { isTesting: false, testingSince: null, testingToolUseId: null },
+      );
     });
   }
 
@@ -125,6 +137,12 @@ export class SessionsService {
       let baselineHead = row.lastHeadSha;
       let baselineWorktree = row.lastWorktreeHash;
       let turnsSinceDiary = row.turnsSinceDiary + counted;
+      // A session first seen by a hook without git facts (SessionStart missed)
+      // takes its baseline from the first git state it reports.
+      if (baselineHead === null && baselineWorktree === null) {
+        baselineHead = facts.head ?? null;
+        baselineWorktree = facts.worktree ?? null;
+      }
       if (noteSinceLastStop) {
         baselineHead = facts.head ?? null;
         baselineWorktree = facts.worktree ?? null;
@@ -135,7 +153,8 @@ export class SessionsService {
       const nudge = diaryDue(
         {
           stopHookActive,
-          linked: row.projectId !== null,
+          // Read-only projects (Claude write off) are never nudged: Claude could not write.
+          linked: row.projectId !== null && this.writable(row.projectId),
           head: facts.head ?? null,
           worktree: facts.worktree ?? null,
           baselineHead,
@@ -194,18 +213,16 @@ export class SessionsService {
       .run();
   }
 
-  /** A repo was linked: open sessions on it that had no project now belong to it. */
+  /**
+   * A repo was linked: open sessions on it now belong to that project, also
+   * when they were on another one (the repo was moved; a repo belongs to at
+   * most one project).
+   */
   attachRepo(fullName: string, projectId: number): void {
     this.d.db
       .update(claudeSessions)
       .set({ projectId, updatedAt: this.d.now() })
-      .where(
-        and(
-          eq(claudeSessions.repo, fullName.toLowerCase()),
-          isNull(claudeSessions.projectId),
-          isNull(claudeSessions.endedAt),
-        ),
-      )
+      .where(and(eq(claudeSessions.repo, fullName.toLowerCase()), isNull(claudeSessions.endedAt)))
       .run();
   }
 
@@ -263,7 +280,7 @@ export class SessionsService {
       endReason: null,
       ...(repo !== null && repo !== existing.repo ? { repo } : {}),
       ...(facts.cwd ? { cwd: facts.cwd } : {}),
-      ...(existing.projectId === null && projectId !== null ? { projectId } : {}),
+      ...(projectId !== null && projectId !== existing.projectId ? { projectId } : {}),
     });
   }
 
@@ -274,6 +291,16 @@ export class SessionsService {
       .where(eq(claudeSessions.id, row.id))
       .returning()
       .get() as SessionRow;
+  }
+
+  private writable(projectId: number): boolean {
+    return (
+      this.d.db
+        .select({ w: projects.claudeWriteEnabled })
+        .from(projects)
+        .where(eq(projects.id, projectId))
+        .get()?.w ?? false
+    );
   }
 
   private projectOfRepo(fullName: string): number | null {
@@ -292,4 +319,9 @@ export function repoOf(remote: string | null | undefined): string | null {
   if (!remote?.trim()) return null;
   const r = RepoFullName.safeParse(remote);
   return r.success ? r.data.toLowerCase() : null;
+}
+
+/** Tool call ids of the test runs in progress. */
+function runIds(row: SessionRow): string[] {
+  return row.testingToolUseId ? row.testingToolUseId.split(' ').filter(Boolean) : [];
 }

@@ -376,7 +376,7 @@ export const claudeSessions = sqliteTable(
     lastHeadSha: text('last_head_sha'),
     lastWorktreeHash: text('last_worktree_hash'),
     decisionsHash: text('decisions_hash'),
-    /** Bash/PowerShell tool call that started the current test run (PostToolUse ends it). */
+    /** Space-separated ids of the Bash/PowerShell tool calls running tests (PostToolUse removes each). */
     testingToolUseId: text('testing_tool_use_id'),
     /** Last Stop hook seen; a diary note clears it, so the next Stop moves the baseline. */
     lastStopAt: isoTime('last_stop_at'),

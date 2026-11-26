@@ -92,7 +92,8 @@ describe('SessionStart', () => {
     const full = d.briefing.build({ project: p.id, sessionId: 's1' });
     expect(full.length).toBeGreaterThan(HOOK_CONTEXT_MAX_CHARS);
     const text = d.hooks.sessionStart('s1', git());
-    expect(text.length).toBeLessThanOrEqual(HOOK_CONTEXT_MAX_CHARS + 200);
+    expect(text.length).toBeLessThanOrEqual(HOOK_CONTEXT_MAX_CHARS);
+    expect(text).toContain('## Rules');
     expect(text).toContain('call get_briefing');
     expect(text).toContain('## Next task');
   });

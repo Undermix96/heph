@@ -128,6 +128,8 @@ export interface ProjectSummary {
   badge: Badge;
   attentionGroup: AttentionGroup;
   pendingProposals: number;
+  /** Claude Code sessions live on this project now (diary "running" label, D58). */
+  liveSessionIds: string[];
   repos: string[];
   createdAt: IsoTime;
   updatedAt: IsoTime;

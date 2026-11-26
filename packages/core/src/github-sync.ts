@@ -1,6 +1,6 @@
-import { asc, eq } from 'drizzle-orm';
+import { and, asc, desc, eq, sql } from 'drizzle-orm';
 import type { Ctx } from './context.js';
-import { type DocsCommit, projectRepos, projects } from './db/schema.js';
+import { type DocsCommit, diaryEntries, projectRepos, projects } from './db/schema.js';
 import type { Domain } from './domain.js';
 import {
   commitsByDay,
@@ -84,14 +84,36 @@ export class GitHubSyncService {
     return this.run(port, rows);
   }
 
-  private async run(port: GitHubPort, rows: RepoRow[]): Promise<SyncRun> {
+  /** Runs never overlap: a Sync now during a poll waits, so nothing is imported twice. */
+  private lock: Promise<unknown> = Promise.resolve();
+
+  private run(port: GitHubPort, rows: RepoRow[]): Promise<SyncRun> {
+    const next = this.lock.then(() => this.runNow(port, rows));
+    this.lock = next.catch(() => undefined);
+    return next;
+  }
+
+  private async runNow(port: GitHubPort, rows: RepoRow[]): Promise<SyncRun> {
     if (!this.d.settings.get().githubToken) return { skipped: 'no_token', repos: [] };
     const st = this.status();
     if (st.error === 'rate_limited' && st.resetAt && Date.parse(st.resetAt) > this.d.now()) {
       return { skipped: 'rate_limited', repos: [] };
     }
     const results: RepoSyncResult[] = [];
-    for (const row of rows) {
+    for (const listed of rows) {
+      // Re-read: the row may have changed while an earlier run waited for GitHub.
+      const row = this.repoRow(listed.id);
+      if (!row) continue;
+      if (
+        rows.length > 1 &&
+        listed.lastPolledAt !== row.lastPolledAt &&
+        row.lastPolledAt !== null
+      ) {
+        // Polled meanwhile by a run that held the lock: not due anymore.
+        if (this.d.now() - row.lastPolledAt < this.d.settings.get().githubPollMinutes * 60_000) {
+          continue;
+        }
+      }
       try {
         results.push(await this.syncRepo(row, port));
       } catch (err) {
@@ -133,21 +155,25 @@ export class GitHubSyncService {
     // Commits (D62): a year on the first sync, then everything after the last seen commit.
     // A branch change (new default branch) restarts from the last seen time.
     const sameBranch = row.defaultBranch === null || row.defaultBranch === branch;
+    // A repo linked again after an unlink: continue from what the diary already has.
+    const prior = first ? this.priorImport(row.projectId, fullName) : null;
+    const seenSha = first ? (prior?.sha ?? null) : row.lastSeenCommitSha;
+    const seenAt = first ? (prior?.at ?? null) : row.lastSeenCommitAt;
+    const stopAt = sameBranch || first ? seenSha : null;
     const page = await port.commits(fullName, {
       branch,
-      since: iso(first ? now - BACKFILL_MS : (row.lastSeenCommitAt ?? now - BACKFILL_MS)),
-      stopAt: first || !sameBranch ? null : row.lastSeenCommitSha,
+      // With a known stop commit, walk back to it (merged commits can be older than it);
+      // the year bound only caps the walk (D62, verification A6).
+      since: iso(stopAt || seenAt === null ? now - BACKFILL_MS : seenAt),
+      stopAt,
       max: MAX_COMMITS,
     });
     let commits = page.commits;
-    if (!first && !page.reachedStop && row.lastSeenCommitAt !== null) {
+    if (seenAt !== null && !page.reachedStop) {
       // The last seen commit is gone (force push or branch change): keep only newer ones.
-      const seenAt = row.lastSeenCommitAt;
       commits = commits.filter((c) => Date.parse(c.date) > seenAt);
     }
-    if (!first && row.lastSeenCommitSha) {
-      commits = commits.filter((c) => c.sha !== row.lastSeenCommitSha);
-    }
+    if (seenSha) commits = commits.filter((c) => c.sha !== seenSha);
 
     // Releases: the last year on the first sync, then the ones newer than the last seen.
     const all = (await port.releases(fullName, MAX_RELEASES)).filter(
@@ -155,7 +181,10 @@ export class GitHubSyncService {
     );
     let releases: GhRelease[];
     if (first) {
-      releases = all.filter((r) => Date.parse(r.publishedAt as string) >= now - BACKFILL_MS);
+      const known = prior?.tags ?? new Set<string>();
+      releases = all.filter(
+        (r) => Date.parse(r.publishedAt as string) >= now - BACKFILL_MS && !known.has(r.tag),
+      );
     } else {
       const at = all.findIndex((r) => r.id === row.lastReleaseId);
       releases =
@@ -175,7 +204,7 @@ export class GitHubSyncService {
       sha: string;
       hash: string;
       commits: DocsCommit[];
-      keepLocal: boolean;
+      pushedAt: number | null;
     } | null = null;
     let docsError: string | null = null;
     if (project?.docsSource === 'repo') {
@@ -186,18 +215,12 @@ export class GitHubSyncService {
           const touched = await port.pathCommits(fullName, row.docsPath, DOCS_COMMITS);
           // D63, most recent change wins: a local copy from the Stop hook saved after
           // GitHub's last change to the file stays; only the GitHub bookkeeping moves.
-          const pushedAt = touched[0] ? Date.parse(touched[0].date) : null;
-          const keepLocal =
-            row.docsOrigin === 'hook' &&
-            row.docsUpdatedAt !== null &&
-            pushedAt !== null &&
-            pushedAt < row.docsUpdatedAt;
           docs = {
             content,
             sha: file.sha,
             hash: gitBlobSha(file.bytes),
             commits: touched,
-            keepLocal,
+            pushedAt: touched[0] ? Date.parse(touched[0].date) : null,
           };
         } catch (err) {
           if (err instanceof GitHubError) throw err;
@@ -208,8 +231,23 @@ export class GitHubSyncService {
 
     const newest = page.commits[0];
     let commitEvents = 0;
+    let docsWritten = false;
     this.d.tx(() => {
-      if (row.showCommits) {
+      // Re-read inside the transaction: the UI or a Stop hook may have changed the repo
+      // while this sync waited for GitHub (verification A6).
+      const fresh = this.repoRow(row.id);
+      if (!fresh || fresh.projectId !== row.projectId) return; // unlinked meanwhile
+      if (fresh.docsPath !== row.docsPath) docs = null; // the path changed: that copy is stale
+      // D63, most recent change wins: a local copy from the Stop hook saved after
+      // GitHub's last change to the file stays; only the GitHub bookkeeping moves.
+      const keepLocal =
+        docs !== null &&
+        fresh.docsOrigin === 'hook' &&
+        fresh.docsUpdatedAt !== null &&
+        docs.pushedAt !== null &&
+        docs.pushedAt < fresh.docsUpdatedAt;
+      docsWritten = docs !== null && !keepLocal;
+      if (fresh.showCommits) {
         for (const g of commitsByDay(commits, this.d.timeZone)) {
           this.d.diary.event(
             row.projectId,
@@ -249,7 +287,7 @@ export class GitHubSyncService {
           : {}),
         ...(all[0] ? { lastReleaseId: all[0].id } : {}),
         ...(docs ? { docsGithubSha: docs.sha, docsCommits: docs.commits } : {}),
-        ...(docs && !docs.keepLocal
+        ...(docs && docsWritten
           ? {
               docsContent: docs.content,
               docsHash: docs.hash,
@@ -263,9 +301,46 @@ export class GitHubSyncService {
       repo: fullName,
       commitEvents,
       releaseEvents: releases.length,
-      docsUpdated: docs !== null && !docs.keepLocal,
+      docsUpdated: docsWritten,
       error: docsError,
     };
+  }
+
+  private repoRow(id: number): RepoRow | undefined {
+    return this.d.db.select().from(projectRepos).where(eq(projectRepos.id, id)).get();
+  }
+
+  /**
+   * What an earlier link of the same repo already put in this project's diary:
+   * the newest imported commit and the release tags, so a relink does not
+   * import the year again (verification A6).
+   */
+  private priorImport(
+    projectId: number,
+    fullName: string,
+  ): { sha: string; at: number; tags: Set<string> } | null {
+    const repoIs = sql`lower(json_extract(${diaryEntries.data}, '$.repo')) = ${fullName.toLowerCase()}`;
+    const last = this.d.db
+      .select({ data: diaryEntries.data })
+      .from(diaryEntries)
+      .where(
+        and(eq(diaryEntries.projectId, projectId), eq(diaryEntries.eventKind, 'commits'), repoIs),
+      )
+      .orderBy(desc(diaryEntries.occurredAt), desc(diaryEntries.id))
+      .get();
+    const tags = new Set(
+      this.d.db
+        .select({ data: diaryEntries.data })
+        .from(diaryEntries)
+        .where(
+          and(eq(diaryEntries.projectId, projectId), eq(diaryEntries.eventKind, 'release'), repoIs),
+        )
+        .all()
+        .map((r) => String(r.data?.tag ?? '')),
+    );
+    const c = (last?.data?.commits as { sha?: string; date?: string }[] | undefined)?.[0];
+    if (!c?.sha || !c.date) return tags.size ? { sha: '', at: 0, tags } : null;
+    return { sha: c.sha, at: Date.parse(c.date), tags };
   }
 
   private markRepo(id: number, set: Partial<typeof projectRepos.$inferInsert>): void {

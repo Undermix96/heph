@@ -97,7 +97,8 @@ export function commitsByDay(
   timeZone: string,
 ): { day: string; commits: GhCommit[] }[] {
   const by = new Map<string, GhCommit[]>();
-  for (const c of [...commits].sort((a, b) => b.date.localeCompare(a.date))) {
+  // By instant, not by string: precision and offsets vary (verification A6).
+  for (const c of [...commits].sort((a, b) => Date.parse(b.date) - Date.parse(a.date))) {
     const day = localDay(c.date, timeZone);
     by.set(day, [...(by.get(day) ?? []), c]);
   }

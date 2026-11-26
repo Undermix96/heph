@@ -9,7 +9,8 @@
       "!apps/web/src/styles/tokens.css",
       "!**/drizzle/meta",
       "!data",
-      "!.e2e-data"
+      "!.e2e-data",
+      "!plugin/skills/*/SKILL.md"
     ]
   },
   "formatter": {

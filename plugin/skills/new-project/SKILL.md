@@ -1,5 +1,4 @@
 ---
-
 name: new-project
 description: Start a new project tracked in Heph (Hephaestus). Use when the user wants to start, create or bootstrap a new software or DIY project ("start a new project…", "nuovo progetto…"). Creates the folder and git repo with README, LICENSE, DECISIONS.md and CLAUDE.md, optionally the GitHub repo, then registers the project in Heph with proposed macro-phases. For DIY projects without code it only registers the project in Heph.
 ---

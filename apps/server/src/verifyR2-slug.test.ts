@@ -58,35 +58,40 @@ function scriptSlugs(names: string[]): string[] {
   }
 }
 
-describe.skipIf(BASH === null)('verifyR2: bootstrap slug equals slugify()', () => {
-  it('realistic Italian and English names', () => {
-    const names = [
-      'Perché no',
-      'Più luce in cantina',
-      'Così è (se vi pare)',
-      "L'orto dell'Ermes",
-      'L’orto di Nonna', // typographic apostrophe
-      'Stazione Meteo v2.0',
-      'Città 2026 — prototipo',
-      'My Smart-Home Hub!',
-      '  --Spot Welder--  ',
-      'ÀÉÌÒÙ maiuscole accentate',
-      'Ünïcödé Ñandú Ça va',
-      'Grüße aus Köln',
-      '2026',
-      '007',
-      '12 34',
-      '---',
-      `${'Città '.repeat(12)}fine`,
-      `${'a'.repeat(58)}é b`,
-    ];
-    const got = scriptSlugs(names);
-    expect(names.map((n, i) => [n, got[i]])).toEqual(names.map((n) => [n, slugify(n)]));
-  });
+// Each name starts bash and sed: seconds in total on Windows and on a loaded CI runner.
+describe.skipIf(BASH === null)(
+  'verifyR2: bootstrap slug equals slugify()',
+  { timeout: 60_000 },
+  () => {
+    it('realistic Italian and English names', () => {
+      const names = [
+        'Perché no',
+        'Più luce in cantina',
+        'Così è (se vi pare)',
+        "L'orto dell'Ermes",
+        'L’orto di Nonna', // typographic apostrophe
+        'Stazione Meteo v2.0',
+        'Città 2026 — prototipo',
+        'My Smart-Home Hub!',
+        '  --Spot Welder--  ',
+        'ÀÉÌÒÙ maiuscole accentate',
+        'Ünïcödé Ñandú Ça va',
+        'Grüße aus Köln',
+        '2026',
+        '007',
+        '12 34',
+        '---',
+        `${'Città '.repeat(12)}fine`,
+        `${'a'.repeat(58)}é b`,
+      ];
+      const got = scriptSlugs(names);
+      expect(names.map((n, i) => [n, got[i]])).toEqual(names.map((n) => [n, slugify(n)]));
+    });
 
-  it('an accented name typed in decomposed form (NFD, e.g. pasted from macOS)', () => {
-    const names = ['Caffe\u0300 Lume\u0301', 'Re\u0301sume\u0301 builder'];
-    const got = scriptSlugs(names);
-    expect(names.map((n, i) => [n, got[i]])).toEqual(names.map((n) => [n, slugify(n)]));
-  });
-});
+    it('an accented name typed in decomposed form (NFD, e.g. pasted from macOS)', () => {
+      const names = ['Caffe\u0300 Lume\u0301', 'Re\u0301sume\u0301 builder'];
+      const got = scriptSlugs(names);
+      expect(names.map((n, i) => [n, got[i]])).toEqual(names.map((n) => [n, slugify(n)]));
+    });
+  },
+);

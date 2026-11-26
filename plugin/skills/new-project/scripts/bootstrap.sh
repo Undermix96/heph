@@ -13,7 +13,8 @@
 # Prints `key=value` result lines at the end (HEPH_DIR, HEPH_REPO, HEPH_GITHUB,
 # HEPH_PUSHED) for the skill to read. Exit codes: 0 done (GitHub may be
 # skipped, see HEPH_GITHUB), 2 bad arguments or non-empty folder, 1 git failed.
-# Test hook: HEPH_BOOTSTRAP_REMOTE_BASE replaces "git@github.com:" in the remote.
+# Test hooks: HEPH_BOOTSTRAP_REMOTE_BASE replaces "git@github.com:" in the remote;
+# HEPH_BOOTSTRAP_GH replaces the gh command.
 
 set -euo pipefail
 shopt -u patsub_replacement 2>/dev/null || true # "&" stays literal in ${v//x/y}
@@ -160,16 +161,18 @@ if [ -n "$design_dir" ]; then
 fi
 
 # GitHub (optional): only with gh installed and signed in.
+# Test hook: HEPH_BOOTSTRAP_GH names the gh command (a missing one simulates "not installed").
+gh="${HEPH_BOOTSTRAP_GH:-gh}"
 github_status="skipped: --no-github"
 repo=""
 pushed=false
 if $github; then
-  if ! command -v gh >/dev/null 2>&1; then
+  if ! command -v "$gh" >/dev/null 2>&1; then
     github_status="skipped: gh is not installed"
-  elif ! gh auth status >/dev/null 2>&1; then
+  elif ! "$gh" auth status >/dev/null 2>&1; then
     github_status="skipped: gh is not signed in (run gh auth login)"
-  elif gh repo create "$repo_name" "--$visibility" --source . >/dev/null 2>&1; then
-    repo="$(gh repo view "$repo_name" --json nameWithOwner -q .nameWithOwner 2>/dev/null || true)"
+  elif "$gh" repo create "$repo_name" "--$visibility" --source . >/dev/null 2>&1; then
+    repo="$("$gh" repo view "$repo_name" --json nameWithOwner -q .nameWithOwner 2>/dev/null || true)"
     if [ -n "$repo" ]; then
       # SSH remote (owner's rule), never HTTPS.
       git remote remove origin >/dev/null 2>&1 || true

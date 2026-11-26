@@ -81,11 +81,9 @@ function run(
         timeout: 60_000,
         env: {
           ...process.env,
-          // A PATH where `gh` is the fake, or missing.
-          PATH:
-            o.gh === false
-              ? withoutGh(process.env.PATH ?? '', sep)
-              : `${bin}${sep}${process.env.PATH}`,
+          // `gh` is the fake on PATH, or a command that does not exist (not installed).
+          PATH: `${bin}${sep}${process.env.PATH}`,
+          ...(o.gh === false ? { HEPH_BOOTSTRAP_GH: 'gh-not-installed-heph-test' } : {}),
           FAKE_GH_REMOTES: remotes,
           HEPH_BOOTSTRAP_REMOTE_BASE: `${remotes.replaceAll('\\', '/')}/`,
           GIT_AUTHOR_NAME: 'Invented Owner',
@@ -112,14 +110,6 @@ function run(
       },
     );
   });
-}
-
-/** PATH without any folder that has a `gh` (the real one on this machine, if installed). */
-function withoutGh(p: string, sep: string): string {
-  return p
-    .split(sep)
-    .filter((d) => !['gh', 'gh.exe'].some((f) => fs.existsSync(path.join(d, f))))
-    .join(sep);
 }
 
 const git = (dir: string, ...args: string[]) =>

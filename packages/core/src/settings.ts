@@ -55,6 +55,9 @@ export class SettingsService {
         if (value === undefined) continue;
         this.write(key, value, now);
       }
+      // A new GitHub token: the old token's errors and limits no longer apply. Removing the
+      // token keeps the last status readable (no calls are made without a token anyway).
+      if (patch.githubToken) this.write(GITHUB_STATUS_KEY, null, now);
       this.d.audit.record(ctx, {
         projectId: null,
         entity: 'settings',

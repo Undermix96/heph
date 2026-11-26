@@ -87,13 +87,20 @@ describe('GitHub commit events of one repo and day (D62)', () => {
     });
   });
 
-  it('other repos, other days and entries in between stay separate', () => {
+  it('one box per repo and day even with other entries in between; other repos stay apart', () => {
     const days = groupDiary([
       commits('2026-11-26T16:00:00.000Z', 'ex/meteo', '2026-11-26', ['a']),
       commits('2026-11-26T15:00:00.000Z', 'ex/firmware', '2026-11-26', ['b']),
       entry('2026-11-26T14:00:00.000Z'),
       commits('2026-11-26T13:00:00.000Z', 'ex/firmware', '2026-11-26', ['c']),
+      commits('2026-11-25T13:00:00.000Z', 'ex/firmware', '2026-11-25', ['d']),
     ]);
-    expect(days[0]?.items).toHaveLength(4);
+    expect(days[0]?.items).toHaveLength(3);
+    const firmware = days[0]?.items[1];
+    expect(firmware?.kind === 'entry' && firmware.entry.data).toMatchObject({
+      count: 2,
+      commits: [{ sha: 'b' }, { sha: 'c' }],
+    });
+    expect(days[1]?.items).toHaveLength(1);
   });
 });

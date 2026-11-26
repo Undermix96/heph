@@ -121,7 +121,12 @@ export function GitHubEventBody({ entry }: { entry: DiaryEntryView }) {
   return (
     <>
       <p className="gh-title">
-        <strong>{t('github.commitsOn', { n: count, branch: String(d.branch ?? '') })}</strong>
+        <strong>
+          {t(count === 1 ? 'github.commitOn' : 'github.commitsOn', {
+            n: count,
+            branch: String(d.branch ?? ''),
+          })}
+        </strong>
         {d.repo ? <span className="meta"> · {String(d.repo)}</span> : null}
       </p>
       <ul className="gh-commits">

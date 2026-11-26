@@ -11,6 +11,8 @@ import {
 /** GitHub REST API version this adapter is written for (checked 2026-11-26, D61). */
 export const GITHUB_API_VERSION = '2022-11-28';
 const PER_PAGE = 100;
+/** ETag cache entries kept per client, least recently used dropped first (verification B6). */
+const MAX_CACHED = 200;
 
 export interface HttpGitHubOptions {
   /** null only for the opt-in smoke test on public repos (no polling without a token, D62). */
@@ -135,7 +137,16 @@ export class HttpGitHub implements GitHubPort {
     const body = (await res.json()) as unknown;
     const link = res.headers.get('link');
     const etag = res.headers.get('etag');
-    if (etag) this.etags.set(url, { etag, body, link });
+    if (etag) {
+      this.etags.delete(url);
+      this.etags.set(url, { etag, body, link });
+      // Map keeps insertion order: the first key is the least recently stored.
+      while (this.etags.size > MAX_CACHED) {
+        const oldest = this.etags.keys().next().value;
+        if (oldest === undefined) break;
+        this.etags.delete(oldest);
+      }
+    }
     return { body, link };
   }
 
@@ -161,13 +172,27 @@ export class HttpGitHub implements GitHubPort {
     const now = this.o.now?.() ?? Date.now();
     const remaining = res.headers.get('x-ratelimit-remaining');
     const retryAfter = res.headers.get('retry-after');
-    if (res.status === 429 || (res.status === 403 && (remaining === '0' || retryAfter))) {
+    // Secondary rate limits can come as a 403 with quota left and only a message (GitHub docs).
+    const secondary =
+      res.status === 403 &&
+      /rate limit/i.test(
+        await res
+          .clone()
+          .text()
+          .catch(() => ''),
+      );
+    if (
+      res.status === 429 ||
+      (res.status === 403 && (remaining === '0' || retryAfter !== null || secondary))
+    ) {
       const reset = Number(res.headers.get('x-ratelimit-reset'));
-      const resetAt = retryAfter
-        ? now + Number(retryAfter) * 1000
-        : Number.isFinite(reset) && reset > 0
-          ? reset * 1000
-          : now + 15 * 60_000;
+      const after = Number(retryAfter);
+      const resetAt =
+        retryAfter !== null && Number.isFinite(after) && after >= 0
+          ? now + after * 1000
+          : Number.isFinite(reset) && reset > 0
+            ? reset * 1000
+            : now + (secondary ? 60_000 : 15 * 60_000);
       throw new GitHubError('rate_limited', 'GitHub rate limit reached', resetAt);
     }
     if (res.status === 401) throw new GitHubError('unauthorized', 'GitHub refused the token');

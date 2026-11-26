@@ -57,9 +57,13 @@ export function groupDiary(entries: DiaryEntryView[]): DiaryDay[] {
     }
     const last = bucket.items.at(-1);
     // D62: each GitHub sync adds its own `commits` event (the diary is append-only);
-    // consecutive ones of the same repo and day are shown as one box.
-    if (last?.kind === 'entry' && sameCommitDay(last.entry, e)) {
-      last.entry = mergeCommits(last.entry, e);
+    // all those of one repo and day are shown as one box, where the newest is.
+    const same = bucket.items.find(
+      (it): it is Extract<DiaryItem, { kind: 'entry' }> =>
+        it.kind === 'entry' && sameCommitDay(it.entry, e),
+    );
+    if (same) {
+      same.entry = mergeCommits(same.entry, e);
       continue;
     }
     const sid = e.sessionId;

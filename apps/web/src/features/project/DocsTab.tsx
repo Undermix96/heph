@@ -99,7 +99,11 @@ function RepoDocs({ projectRef, docs }: { projectRef: string; docs: ProjectDocsV
   const sync = useApiMutation(() => api.githubSync(projectRef), {
     invalidate: () => [['docs', projectRef], ['project', projectRef], ['diary'], ['github']],
     onSuccess: (r) => {
-      if (r.skipped === 'rate_limited') notices.info('github.rateLimited');
+      // Fixed texts per outcome (D44); repo errors also show inline after the refetch.
+      if (r.status?.error === 'token_invalid') notices.info('github.tokenInvalid');
+      else if (r.skipped === 'rate_limited' || r.status?.error === 'rate_limited')
+        notices.info('github.verify.rate_limited');
+      else if (r.repos?.some((x) => x.error)) notices.info('github.syncedWithErrors');
       else if (r.skipped !== 'no_token') notices.info('github.synced');
     },
   });
@@ -127,7 +131,8 @@ function RepoDocs({ projectRef, docs }: { projectRef: string; docs: ProjectDocsV
       )}
       {docs.repos.map((r) => {
         const err = repoErrorKey(r.lastSyncError);
-        const blob = `https://github.com/${r.fullName}/blob/${r.defaultBranch ?? 'HEAD'}/${r.docsPath}`;
+        const path = r.docsPath.split('/').map(encodeURIComponent).join('/');
+        const blob = `https://github.com/${r.fullName}/blob/${encodeURIComponent(r.defaultBranch ?? 'HEAD')}/${path}`;
         return (
           <Box
             key={r.id}

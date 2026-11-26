@@ -327,6 +327,8 @@ export const en: Record<MessageKey, string> = {
   'github.verify.unavailable': 'GitHub could not be reached: try again later.',
   'github.synced': 'Synced with GitHub.',
   'github.openOnGitHub': 'Open on GitHub',
+  'github.commitOn': '1 commit on {branch}',
+  'github.syncedWithErrors': 'Synced, with errors on some repositories: see below.',
   'github.commitsOn': '{n} commits on {branch}',
   'github.moreCommits': '…and {n} more',
   'github.repo.notFound':

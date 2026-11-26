@@ -130,6 +130,7 @@ export class GitHubSyncService {
           return { skipped: null, repos: results };
         }
         const code = err instanceof GitHubError ? err.code : 'unavailable';
+        if (!(err instanceof GitHubError) && !(err instanceof Error)) throw err;
         this.markRepo(row.id, { lastSyncError: code, lastPolledAt: this.d.now() });
         results.push({
           repo: row.fullName,
@@ -140,7 +141,9 @@ export class GitHubSyncService {
         });
       }
     }
-    this.setStatus({ lastSyncAt: iso(this.d.now()), error: null, resetAt: null });
+    // Only a run that reached GitHub clears a global error (verification B6).
+    if (results.length > 0)
+      this.setStatus({ lastSyncAt: iso(this.d.now()), error: null, resetAt: null });
     return { skipped: null, repos: results };
   }
 
@@ -164,7 +167,8 @@ export class GitHubSyncService {
       branch,
       // With a known stop commit, walk back to it (merged commits can be older than it);
       // the year bound only caps the walk (D62, verification A6).
-      since: iso(stopAt || seenAt === null ? now - BACKFILL_MS : seenAt),
+      // Floored to the day: the URL stays the same between polls, so ETags can give 304s.
+      since: iso(stopAt || seenAt === null ? dayFloor(now - BACKFILL_MS) : seenAt),
       stopAt,
       max: MAX_COMMITS,
     });
@@ -240,8 +244,10 @@ export class GitHubSyncService {
       if (fresh.docsPath !== row.docsPath) docs = null; // the path changed: that copy is stale
       // D63, most recent change wins: a local copy from the Stop hook saved after
       // GitHub's last change to the file stays; only the GitHub bookkeeping moves.
+      // Same bytes as GitHub (pushed after the hook upload): it is the GitHub copy now.
       const keepLocal =
         docs !== null &&
+        docs.hash !== fresh.docsHash &&
         fresh.docsOrigin === 'hook' &&
         fresh.docsUpdatedAt !== null &&
         docs.pushedAt !== null &&
@@ -366,4 +372,9 @@ function commitBody(commits: GhCommit[], branch: string): string {
   const n = commits.length;
   const latest = commits[0]?.message ?? '';
   return `${n} ${n === 1 ? 'commit' : 'commits'} on ${branch}${latest ? `: ${latest}` : ''}`;
+}
+
+/** Start of the UTC day of `ms`. */
+function dayFloor(ms: number): number {
+  return ms - (ms % DAY_MS);
 }

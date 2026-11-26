@@ -153,10 +153,11 @@ export const api = {
   githubStatus: () => request<GitHubStatusView>('GET', '/github/status'),
   githubVerify: () => request<GitHubVerifyView>('POST', '/github/verify'),
   githubSync: (ref: string | number) =>
-    request<{ skipped: 'no_token' | 'rate_limited' | null }>(
-      'POST',
-      `/projects/${ref}/github/sync`,
-    ),
+    request<{
+      skipped: 'no_token' | 'rate_limited' | null;
+      repos?: { repo: string; error: string | null }[];
+      status?: GitHubStatusView;
+    }>('POST', `/projects/${ref}/github/sync`),
 
   // projects
   projects: (includeClosed = true) =>

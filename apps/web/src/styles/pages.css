@@ -1564,7 +1564,7 @@ fieldset.m-chips {
   font-size: var(--text-md);
 }
 .gh-commits li {
-  padding: 2px 0;
+  padding: var(--space-1) 0;
   overflow-wrap: anywhere;
 }
 .gh-commits code {
@@ -1578,4 +1578,12 @@ fieldset.m-chips {
 .doc-commits summary {
   cursor: pointer;
   min-height: var(--control-sm);
+}
+@media (max-width: 599px) {
+  /* D56: the "last change" toggle of the Documentation tab is a touch target. */
+  .doc-commits summary {
+    min-height: var(--control-touch-min);
+    display: flex;
+    align-items: center;
+  }
 }

@@ -334,6 +334,8 @@ export const it = {
   'github.verify.unavailable': 'GitHub non è raggiungibile: riprova più tardi.',
   'github.synced': 'Sincronizzato con GitHub.',
   'github.openOnGitHub': 'Apri su GitHub',
+  'github.commitOn': '1 commit su {branch}',
+  'github.syncedWithErrors': 'Sincronizzato, con errori su alcuni repository: vedi sotto.',
   'github.commitsOn': '{n} commit su {branch}',
   'github.moreCommits': '…e altri {n}',
   'github.repo.notFound':

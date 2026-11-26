@@ -258,6 +258,10 @@ export const Settings = z.object({
   /** Live Claude sessions expire after this many minutes without events. */
   sessionExpiryMinutes: z.number().int().min(1).max(1440),
   testCommandPatterns: z.array(z.string().min(1).max(200)).max(100),
+  /** Auto-diary (D59): ask for a diary note after this many turns with changes and no note. */
+  diaryNudgeTurns: z.number().int().min(1).max(1000),
+  /** Auto-diary (D59): ...or after this many minutes with changes and no note. */
+  diaryNudgeMinutes: z.number().int().min(1).max(1440),
   /** Unpinned Claude Code uploads kept per target; older ones are deleted. */
   screenshotRetentionPerTarget: z.number().int().min(1).max(10_000),
   maxUploadMb: z.number().int().min(1).max(10_240),
@@ -296,6 +300,8 @@ export const DEFAULT_SETTINGS: Settings = {
     'go test',
     'cargo test',
   ],
+  diaryNudgeTurns: 5,
+  diaryNudgeMinutes: 30,
   screenshotRetentionPerTarget: 20,
   maxUploadMb: 100,
   githubToken: null,

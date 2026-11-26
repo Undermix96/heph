@@ -1,4 +1,5 @@
 export { API_TOKEN_PREFIX, type AuthUser, type LoginResult, SESSION_TTL_MS } from './auth.js';
+export { isTestCommand } from './autodiary.js';
 export type { BriefingTarget } from './briefing.js';
 export * from './context.js';
 export { type Db, DEFAULT_MIGRATIONS_DIR, openDb, schema } from './db/index.js';
@@ -8,9 +9,11 @@ export type { ExportFile, ProjectExport } from './export.js';
 export { safeName } from './export.js';
 export { type IngestInput, UPLOAD_TOKEN_TTL_MS } from './files.js';
 export * from './format.js';
+export { type DocsTarget, gitBlobSha, type StopBlock } from './hooks.js';
 export type { ProjectRef } from './projects.js';
 export { outline, type RestructurePayload } from './restructure.js';
 export { computeNextTask, confirmedFlag, syncedPhaseStatus } from './roadmap.js';
 export { toFtsQuery } from './search.js';
+export { type HookFacts, repoOf } from './sessions.js';
 export { activityStateOf, attentionGroupOf, badgeOf } from './status.js';
 export { iso, toMs } from './util.js';

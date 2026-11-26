@@ -1,12 +1,34 @@
-import type { LiveSessionView } from '@heph/schema';
+import { type LiveSessionView, RepoFullName } from '@heph/schema';
 import { and, eq, gt, inArray, isNull, lte } from 'drizzle-orm';
-import { claudeSessions } from './db/schema.js';
+import { diaryDue, isTestCommand } from './autodiary.js';
+import { claudeSessions, projectRepos } from './db/schema.js';
 import type { Domain } from './domain.js';
 import { iso } from './util.js';
 
+type SessionRow = typeof claudeSessions.$inferSelect;
+
+/** What a hook script reports from the machine Claude Code runs on (§9). */
+export interface HookFacts {
+  /** `git remote get-url origin`, as printed; null outside a repo or without a remote. */
+  remote?: string | null;
+  cwd?: string | null;
+  /** `git rev-parse HEAD`; null outside a git work tree or before the first commit. */
+  head?: string | null;
+  /** Hash of `git status --porcelain`: changes when the work tree changes. */
+  worktree?: string | null;
+}
+
+export interface StopResult {
+  /** Claude should be asked to write a diary note (D59). */
+  nudge: boolean;
+  projectId: number | null;
+}
+
 /**
- * Live Claude Code sessions. Phase 2 only reads them (activity state) and
- * expires stale ones; the hooks that open and update them arrive in phase 5.
+ * Live Claude Code sessions (§5, §9). The plugin hooks open, update and close
+ * them (D58); stale ones expire server-side after `sessionExpiryMinutes`.
+ * Every hook call upserts the session, so a session whose SessionStart was
+ * missed (Heph down at the time) still appears once Heph is reachable.
  */
 export class SessionsService {
   constructor(private readonly d: Domain) {}
@@ -44,14 +66,147 @@ export class SessionsService {
     return out;
   }
 
-  /** Project a Claude Code session is linked to (set by the SessionStart hook, phase 5). */
+  /** Project a Claude Code session is linked to (set by the hooks). */
   projectFor(sessionId: string): number | null {
-    const row = this.d.db
-      .select({ projectId: claudeSessions.projectId })
+    return this.row(sessionId)?.projectId ?? null;
+  }
+
+  row(sessionId: string): SessionRow | undefined {
+    return this.d.db
+      .select()
       .from(claudeSessions)
       .where(eq(claudeSessions.sessionId, sessionId))
       .get();
-    return row?.projectId ?? null;
+  }
+
+  /** SessionStart: opens (or reopens) the session and links it to the repo's project. */
+  start(sessionId: string, facts: HookFacts): SessionRow {
+    return this.d.tx(() => {
+      const row = this.upsert(sessionId, facts);
+      return this.update(row, { isTesting: false, testingSince: null, testingToolUseId: null });
+    });
+  }
+
+  /** PreToolUse on a shell tool: a test command marks the session as testing. */
+  toolStart(sessionId: string, toolUseId: string | null, command: string, facts: HookFacts): void {
+    this.d.tx(() => {
+      const row = this.upsert(sessionId, facts);
+      if (!isTestCommand(command, this.d.settings.get().testCommandPatterns)) return;
+      this.update(row, {
+        isTesting: true,
+        testingSince: row.isTesting ? row.testingSince : this.d.now(),
+        testingToolUseId: toolUseId,
+      });
+    });
+  }
+
+  /** PostToolUse on a shell tool: the test run that started with this tool call is over. */
+  toolEnd(sessionId: string, toolUseId: string | null, facts: HookFacts): void {
+    this.d.tx(() => {
+      const row = this.upsert(sessionId, facts);
+      if (row.isTesting && toolUseId !== null && row.testingToolUseId === toolUseId) {
+        this.update(row, { isTesting: false, testingSince: null, testingToolUseId: null });
+      }
+    });
+  }
+
+  /**
+   * Stop (end of a turn): heartbeat, end any test run, count the turn and
+   * decide whether a diary note is due (D59). A note written since the last
+   * Stop moves the "work changed" baseline to the current git state.
+   */
+  stop(sessionId: string, stopHookActive: boolean, facts: HookFacts): StopResult {
+    return this.d.tx(() => {
+      const row = this.upsert(sessionId, facts);
+      const now = this.d.now();
+      // noteWritten() clears lastStopAt, so "a note since the last Stop" needs no clock comparison.
+      const noteSinceLastStop = row.lastDiaryAt !== null && row.lastStopAt === null;
+      const counted = stopHookActive ? 0 : 1;
+      let baselineHead = row.lastHeadSha;
+      let baselineWorktree = row.lastWorktreeHash;
+      let turnsSinceDiary = row.turnsSinceDiary + counted;
+      if (noteSinceLastStop) {
+        baselineHead = facts.head ?? null;
+        baselineWorktree = facts.worktree ?? null;
+        turnsSinceDiary = 0;
+      }
+      let turnsSinceNudge = row.turnsSinceNudge === null ? null : row.turnsSinceNudge + counted;
+      const settings = this.d.settings.get();
+      const nudge = diaryDue(
+        {
+          stopHookActive,
+          linked: row.projectId !== null,
+          head: facts.head ?? null,
+          worktree: facts.worktree ?? null,
+          baselineHead,
+          baselineWorktree,
+          turnsSinceDiary,
+          turnsSinceNudge,
+          minutesSinceDiary: (now - (row.lastDiaryAt ?? row.startedAt)) / 60_000,
+        },
+        settings,
+      );
+      if (nudge) turnsSinceNudge = 0;
+      this.update(row, {
+        isTesting: false,
+        testingSince: null,
+        testingToolUseId: null,
+        lastHeadSha: baselineHead,
+        lastWorktreeHash: baselineWorktree,
+        turnsSinceDiary,
+        turnsSinceNudge,
+        lastStopAt: now,
+      });
+      if (row.projectId !== null) this.d.projects.touch(row.projectId, now);
+      return { nudge, projectId: row.projectId };
+    });
+  }
+
+  /** SessionEnd: closes the session. Unknown sessions are ignored. */
+  end(sessionId: string, reason: string | null): void {
+    const row = this.row(sessionId);
+    if (!row || row.endedAt !== null) return;
+    this.update(row, {
+      endedAt: this.d.now(),
+      endReason: (reason ?? 'other').slice(0, 100),
+      isTesting: false,
+      testingSince: null,
+      testingToolUseId: null,
+    });
+  }
+
+  /** An MCP write within a session counts as a heartbeat of an open session. */
+  heartbeat(sessionId: string): void {
+    const now = this.d.now();
+    this.d.db
+      .update(claudeSessions)
+      .set({ lastHeartbeatAt: now, updatedAt: now })
+      .where(and(eq(claudeSessions.sessionId, sessionId), isNull(claudeSessions.endedAt)))
+      .run();
+  }
+
+  /** A diary note was written in this session: the auto-diary counters restart at the next Stop. */
+  noteWritten(sessionId: string, at: number): void {
+    this.d.db
+      .update(claudeSessions)
+      .set({ lastDiaryAt: at, lastStopAt: null, updatedAt: this.d.now() })
+      .where(eq(claudeSessions.sessionId, sessionId))
+      .run();
+  }
+
+  /** A repo was linked: open sessions on it that had no project now belong to it. */
+  attachRepo(fullName: string, projectId: number): void {
+    this.d.db
+      .update(claudeSessions)
+      .set({ projectId, updatedAt: this.d.now() })
+      .where(
+        and(
+          eq(claudeSessions.repo, fullName.toLowerCase()),
+          isNull(claudeSessions.projectId),
+          isNull(claudeSessions.endedAt),
+        ),
+      )
+      .run();
   }
 
   /** Closes sessions without events for longer than the expiry window. Returns how many. */
@@ -60,8 +215,81 @@ export class SessionsService {
     const cutoff = now - this.d.settings.get().sessionExpiryMinutes * 60_000;
     return this.d.db
       .update(claudeSessions)
-      .set({ endedAt: now, endReason: 'expired', isTesting: false, updatedAt: now })
+      .set({
+        endedAt: now,
+        endReason: 'expired',
+        isTesting: false,
+        testingSince: null,
+        testingToolUseId: null,
+        updatedAt: now,
+      })
       .where(and(isNull(claudeSessions.endedAt), lte(claudeSessions.lastHeartbeatAt, cutoff)))
       .run().changes;
   }
+
+  // ------------------------------------------------------------ internals
+
+  /**
+   * Creates the session, or records a heartbeat and reopens it if it had
+   * ended (a session idle past the expiry window that comes back). Links it
+   * to a project when its repo is linked and it has none yet.
+   */
+  private upsert(sessionId: string, facts: HookFacts): SessionRow {
+    const now = this.d.now();
+    const repo = repoOf(facts.remote);
+    const projectId = repo ? this.projectOfRepo(repo) : null;
+    const existing = this.row(sessionId);
+    if (!existing) {
+      return this.d.db
+        .insert(claudeSessions)
+        .values({
+          sessionId,
+          projectId,
+          repo,
+          cwd: facts.cwd ?? null,
+          startedAt: now,
+          lastHeartbeatAt: now,
+          lastHeadSha: facts.head ?? null,
+          lastWorktreeHash: facts.worktree ?? null,
+          createdAt: now,
+          updatedAt: now,
+        })
+        .returning()
+        .get();
+    }
+    return this.update(existing, {
+      lastHeartbeatAt: now,
+      endedAt: null,
+      endReason: null,
+      ...(repo !== null && repo !== existing.repo ? { repo } : {}),
+      ...(facts.cwd ? { cwd: facts.cwd } : {}),
+      ...(existing.projectId === null && projectId !== null ? { projectId } : {}),
+    });
+  }
+
+  private update(row: SessionRow, set: Partial<typeof claudeSessions.$inferInsert>): SessionRow {
+    return this.d.db
+      .update(claudeSessions)
+      .set({ ...set, updatedAt: this.d.now() })
+      .where(eq(claudeSessions.id, row.id))
+      .returning()
+      .get() as SessionRow;
+  }
+
+  private projectOfRepo(fullName: string): number | null {
+    return (
+      this.d.db
+        .select({ projectId: projectRepos.projectId })
+        .from(projectRepos)
+        .where(eq(projectRepos.fullName, fullName))
+        .get()?.projectId ?? null
+    );
+  }
+}
+
+/** Lower-cased `owner/name` of a GitHub remote, or null for anything else. */
+export function repoOf(remote: string | null | undefined): string | null {
+  if (!remote?.trim()) return null;
+  const r = RepoFullName.safeParse(remote);
+  return r.success ? r.data.toLowerCase() : null;
 }

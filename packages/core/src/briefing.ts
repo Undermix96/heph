@@ -19,6 +19,26 @@ const DECIDED_PROPOSAL_DAYS = 7;
 const MAX_TASKS_SHOWN = 40;
 
 /**
+ * Claude Code caps hook output at 10 000 characters (D57); the SessionStart
+ * context stays below this so it is injected whole.
+ */
+export const HOOK_CONTEXT_MAX_CHARS = 9_500;
+
+/** How much of the roadmap and diary a briefing shows. */
+export interface BriefingLimits {
+  diaryEntries: number;
+  maxTasks: number;
+}
+
+const FULL: BriefingLimits = { diaryEntries: DIARY_ENTRIES, maxTasks: MAX_TASKS_SHOWN };
+/** Ever smaller briefings tried, in order, to fit the hook context. */
+const COMPACT: BriefingLimits[] = [
+  { diaryEntries: 5, maxTasks: 20 },
+  { diaryEntries: 3, maxTasks: 10 },
+  { diaryEntries: 1, maxTasks: 5 },
+];
+
+/**
  * Builds the project briefing: a compact Markdown summary that lets an agent
  * (or the user) resume work without reconstructing context (spec §8).
  */
@@ -51,7 +71,7 @@ export class BriefingService {
     );
   }
 
-  build(t: BriefingTarget): string {
+  build(t: BriefingTarget, limits: BriefingLimits = FULL): string {
     const p = this.d.projects.get(this.resolve(t));
     const now = this.d.now();
     const settings = this.d.settings.get();
@@ -108,10 +128,11 @@ export class BriefingService {
     }
 
     // Roadmap
-    this.roadmapSection(p, out);
+    this.roadmapSection(p, out, limits.maxTasks);
 
     // Diary
-    const entries = this.d.diary.list(p.id, { limit: DIARY_ENTRIES });
+    const entries =
+      limits.diaryEntries > 0 ? this.d.diary.list(p.id, { limit: limits.diaryEntries }) : [];
     out.push('', `## Recent diary (last ${entries.length})`, '');
     if (entries.length === 0) out.push('No entries yet.');
     for (const e of entries) out.push(diaryLine(e));
@@ -175,37 +196,29 @@ export class BriefingService {
       out.push('', `Links: ${p.links.map((l) => `[${l.label}](${l.url})`).join(' · ')}`);
     if (p.repos.length) out.push(`Repos: ${p.repos.join(', ')}`);
 
-    // Rules
-    out.push('', '## Rules', '');
-    out.push('- Documentation, code comments and commit messages: always in English.');
-    out.push(
-      `- Diary entries (log_progress): write them in ${LANGUAGE_NAME[settings.contentLanguage]}.`,
-    );
-    out.push(
-      '- Track work state in Heph, not in repo files: log_progress after meaningful work (what was done, where you stopped, next step); ' +
-        'complete_task when a task is done; set_status awaiting_manual_test with what to test when the user must test something.',
-    );
-    out.push(
-      p.docsSource === 'internal'
-        ? '- Record architectural and technical decisions (the "why") with update_docs.'
-        : `- Record architectural and technical decisions (the "why") in ${p.repoDetails[0]?.docsPath ?? 'DECISIONS.md'} in the repo, in English.`,
-    );
-    out.push(
-      t.sessionId
-        ? `- Pass session_id "${t.sessionId}" to every write tool.`
-        : '- Pass your Claude Code session id as session_id to write tools when you know it.',
-    );
-    out.push(
-      '- Deleting phases/tasks, restructuring the roadmap and setting completed/abandoned become proposals for the user. ' +
-        'Pass confirmed: true only if the user explicitly confirmed that change in this conversation.',
-    );
-    out.push(
-      '- Upload screenshots/files with request_upload and curl; never pass file content in tool arguments.',
-    );
+    out.push('', ...rulesSection(settings.contentLanguage, docsRule(p), t.sessionId));
     return out.join('\n');
   }
 
-  private roadmapSection(p: ProjectDetail, out: string[]): void {
+  /**
+   * The briefing for the SessionStart hook (§9, D58): the full briefing when it
+   * fits the hook limit, otherwise ever more compact ones, with a pointer to
+   * get_briefing for the rest.
+   */
+  forHook(projectId: number, sessionId: string): string {
+    const full = this.build({ project: projectId, sessionId });
+    if (full.length <= HOOK_CONTEXT_MAX_CHARS) return full;
+    const note =
+      '\n\n_Compact briefing (the full one is too long for the session start): call get_briefing for all of it._';
+    for (const limits of COMPACT) {
+      const text = this.build({ project: projectId, sessionId }, limits) + note;
+      if (text.length <= HOOK_CONTEXT_MAX_CHARS) return text;
+    }
+    const text = this.build({ project: projectId, sessionId }, COMPACT.at(-1) as BriefingLimits);
+    return `${text.slice(0, HOOK_CONTEXT_MAX_CHARS - note.length - 1)}…${note}`;
+  }
+
+  private roadmapSection(p: ProjectDetail, out: string[], maxTasks: number): void {
     out.push('', '## Roadmap', '');
     if (p.phases.length === 0) {
       out.push('No phases yet: propose macro-phases to the user, then add_phase / add_task.');
@@ -218,7 +231,7 @@ export class BriefingService {
       if (ph === current) {
         out.push(`**${head}** (current)`);
         for (const t of ph.tasks) {
-          if (shown++ >= MAX_TASKS_SHOWN) continue;
+          if (shown++ >= maxTasks) continue;
           const next = t.id === p.nextTask?.id ? ' ← next' : '';
           out.push(`   - [${t.done ? 'x' : ' '}] #${t.id} ${t.title}${next}`);
         }
@@ -227,13 +240,13 @@ export class BriefingService {
       } else {
         out.push(head);
         for (const t of ph.tasks.filter((x) => !x.done)) {
-          if (shown++ >= MAX_TASKS_SHOWN) continue;
+          if (shown++ >= maxTasks) continue;
           out.push(`   - [ ] #${t.id} ${t.title}${t.id === p.nextTask?.id ? ' ← next' : ''}`);
         }
       }
     });
-    if (shown > MAX_TASKS_SHOWN)
-      out.push(`   … ${shown - MAX_TASKS_SHOWN} more tasks (get_project for the full roadmap)`);
+    if (shown > maxTasks)
+      out.push(`   … ${shown - maxTasks} more tasks (get_project for the full roadmap)`);
   }
 }
 
@@ -243,4 +256,37 @@ function quote(text: string): string {
     .split('\n')
     .map((l) => `> ${l}`)
     .join('\n');
+}
+
+function docsRule(p: ProjectDetail): string {
+  return p.docsSource === 'internal'
+    ? 'with update_docs'
+    : `in ${p.repoDetails[0]?.docsPath ?? 'DECISIONS.md'} in the repo, in English`;
+}
+
+/**
+ * The rules Claude follows in every project (§9, D19). Shared by the briefing
+ * and the SessionStart hook context, including sessions in unlinked repos.
+ * `docs` completes "Record ... decisions": where the decisions go.
+ */
+export function rulesSection(
+  contentLanguage: keyof typeof LANGUAGE_NAME,
+  docs: string,
+  sessionId?: string,
+): string[] {
+  return [
+    '## Rules',
+    '',
+    '- Documentation, code comments and commit messages: always in English.',
+    `- Diary entries (log_progress): write them in ${LANGUAGE_NAME[contentLanguage]}.`,
+    '- Track work state in Heph, not in repo files: log_progress after meaningful work (what was done, where you stopped, next step); ' +
+      'complete_task when a task is done; set_status awaiting_manual_test with what to test when the user must test something.',
+    `- Record architectural and technical decisions (the "why") ${docs}.`,
+    sessionId
+      ? `- Pass session_id "${sessionId}" to every write tool.`
+      : '- Pass your Claude Code session id as session_id to write tools when you know it.',
+    '- Deleting phases/tasks, restructuring the roadmap and setting completed/abandoned become proposals for the user. ' +
+      'Pass confirmed: true only if the user explicitly confirmed that change in this conversation.',
+    '- Upload screenshots/files with request_upload and curl; never pass file content in tool arguments.',
+  ];
 }

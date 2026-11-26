@@ -15,6 +15,13 @@
       "when": 1795540129455,
       "tag": "0001_search_fts",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1795698364717,
+      "tag": "0002_claude_session_hooks",
+      "breakpoints": true
     }
   ]
 }

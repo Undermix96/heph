@@ -568,6 +568,7 @@ export class ProjectsService {
         updatedAt: now,
       })
       .run();
+    this.d.sessions.attachRepo(fullName, projectId);
   }
 
   private setTags(projectId: number, names: string[]): void {

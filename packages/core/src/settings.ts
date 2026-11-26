@@ -15,6 +15,9 @@ const SETTING_KEYS = Object.keys(DEFAULT_SETTINGS) as (keyof Settings)[];
 
 /** Internal keys stored in the same table but never returned by `get()`. */
 const API_TOKEN_KEY = '_api_token';
+const LAST_AGENT_CALL_KEY = '_last_agent_call_at';
+/** Token-authenticated calls are recorded at most this often. */
+const AGENT_CALL_THROTTLE_MS = 10_000;
 
 export class SettingsService {
   constructor(private readonly d: Domain) {}
@@ -59,6 +62,22 @@ export class SettingsService {
       });
     });
     return this.get();
+  }
+
+  private lastAgentCallCache: number | null = null;
+
+  /** Records that an API-token caller (Claude Code) reached the server; throttled. */
+  recordAgentCall(): void {
+    const now = this.d.now();
+    const last = this.lastAgentCallCache ?? this.lastAgentCallAt();
+    if (last !== null && now - last < AGENT_CALL_THROTTLE_MS && now >= last) return;
+    this.lastAgentCallCache = now;
+    this.write(LAST_AGENT_CALL_KEY, now, now);
+  }
+
+  /** Unix ms of the last API-token call, or null if there was none. */
+  lastAgentCallAt(): number | null {
+    return this.read<number>(LAST_AGENT_CALL_KEY);
   }
 
   getApiToken(): string | null {

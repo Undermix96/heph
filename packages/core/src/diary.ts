@@ -70,6 +70,10 @@ export class DiaryService {
         .returning()
         .get();
       if (input.fileIds?.length) this.attachFiles(projectId, row.id, input.fileIds);
+      // Auto-diary (D59): a note from a session restarts its nudge counters.
+      if (ctx.source === 'claude_code' && ctx.sessionId && input.type !== 'event') {
+        this.d.sessions.noteWritten(ctx.sessionId, now);
+      }
       if (ctx.source !== 'system') this.d.projects.touch(projectId, occurredAt);
       return row;
     });

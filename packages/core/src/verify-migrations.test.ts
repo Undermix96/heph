@@ -18,23 +18,26 @@ afterEach(() => {
 });
 
 describe('verify: migrations', () => {
-  it('drizzle/ has exactly the init and FTS migrations, matching the journal', () => {
+  // D40 regenerated 0000/0001; later migrations are append-only (0002: phase 5 hooks).
+  it('drizzle/ migrations start with init and FTS, are numbered in order and match the journal', () => {
     const sql = fs
       .readdirSync(drizzleDir)
       .filter((f) => f.endsWith('.sql'))
       .sort();
-    expect(sql).toEqual(['0000_init.sql', '0001_search_fts.sql']);
+    expect(sql.slice(0, 3)).toEqual([
+      '0000_init.sql',
+      '0001_search_fts.sql',
+      '0002_claude_session_hooks.sql',
+    ]);
+    for (const [i, f] of sql.entries()) expect(f.startsWith(String(i).padStart(4, '0'))).toBe(true);
     const journal = JSON.parse(
       fs.readFileSync(path.join(drizzleDir, 'meta/_journal.json'), 'utf8'),
     );
-    expect(journal.entries.map((e: { tag: string }) => e.tag)).toEqual([
-      '0000_init',
-      '0001_search_fts',
-    ]);
+    expect(journal.entries.map((e: { tag: string }) => `${e.tag}.sql`)).toEqual(sql);
     const snaps = fs
       .readdirSync(path.join(drizzleDir, 'meta'))
       .filter((f) => f.endsWith('_snapshot.json'));
-    expect(snaps.sort()).toEqual(['0000_snapshot.json', '0001_snapshot.json']);
+    expect(snaps.length).toBe(sql.length);
   });
 
   it('a fresh file database migrates cleanly and re-opening is a no-op', () => {
@@ -47,14 +50,14 @@ describe('verify: migrations', () => {
         close(): void;
       };
       const applied = c1.prepare('select * from __drizzle_migrations').all();
-      expect(applied.length).toBe(2);
+      expect(applied.length).toBe(migrationCount());
       c1.close();
       const db2 = openDb({ file });
       const c2 = db2.$client as unknown as {
         prepare(q: string): { all(): unknown[] };
         close(): void;
       };
-      expect(c2.prepare('select * from __drizzle_migrations').all().length).toBe(2);
+      expect(c2.prepare('select * from __drizzle_migrations').all().length).toBe(migrationCount());
       expect(
         c2.prepare("select name from sqlite_master where name='search_fts'").all().length,
       ).toBe(1);
@@ -86,3 +89,7 @@ describe('verify: migrations', () => {
     }
   });
 });
+
+function migrationCount(): number {
+  return fs.readdirSync(drizzleDir).filter((f) => f.endsWith('.sql')).length;
+}

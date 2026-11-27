@@ -1,5 +1,6 @@
 import type {
   AddTaskInput,
+  ChangeView,
   CreateProjectInput,
   DiaryEntryView,
   DiaryType,
@@ -26,6 +27,8 @@ export class ApiError extends Error {
     readonly status: number,
     readonly code: string,
     message: string,
+    /** Structured `error.details` from the server (e.g. a revert's `blockedBy`, D74). */
+    readonly details?: unknown,
   ) {
     super(message);
   }
@@ -68,6 +71,7 @@ async function request<T>(method: string, path: string, body?: unknown): Promise
       res.status,
       data?.error?.code ?? 'http',
       data?.error?.message ?? res.statusText,
+      data?.error?.details,
     );
   }
   return data as T;
@@ -88,6 +92,7 @@ async function upload<T>(path: string, form: FormData): Promise<T> {
       res.status,
       data?.error?.code ?? 'http',
       data?.error?.message ?? res.statusText,
+      data?.error?.details,
     );
   }
   return data as T;
@@ -263,4 +268,15 @@ export const api = {
   rejectProposal: (id: number, note?: string) =>
     request<ProposalView>('POST', `/proposals/${id}/reject`, { note }),
   proposals: (state = 'pending') => request<ProposalView[]>('GET', `/proposals?state=${state}`),
+
+  // changes (D74)
+  changes: (ref: string | number, q: { before?: number; limit?: number; revertible?: boolean }) => {
+    const qs = new URLSearchParams();
+    qs.set('limit', String(q.limit ?? 50));
+    if (q.before !== undefined) qs.set('before', String(q.before));
+    if (q.revertible) qs.set('revertible', 'true');
+    return request<ChangeView[]>('GET', `/projects/${ref}/changes?${qs}`);
+  },
+  change: (id: number) => request<ChangeView>('GET', `/changes/${id}`),
+  revertChange: (id: number) => request<ChangeView>('POST', `/changes/${id}/revert`),
 };

@@ -1,6 +1,7 @@
 /** Markdown renderers for MCP tool results (compact, agent-facing, ids as `#42`). */
 import { badgeLabel, diaryLine, isoTimestamp, oneLine, pct, relTime } from '@heph/core';
 import type {
+  ChangeView,
   DiaryEntryView,
   FileView,
   MaterialView,
@@ -131,6 +132,25 @@ export function proposalLine(x: ProposalView): string {
   const note = x.decisionNote ? ` · user note: ${oneLine(x.decisionNote, 300)}` : '';
   const reason = x.reason ? ` · reason: ${oneLine(x.reason, 200)}` : '';
   return `- #${x.id} ${x.kind} · ${x.state}${decided} · project #${x.projectId}${reason}${note}`;
+}
+
+export function changeList(changes: ChangeView[], limit: number): string {
+  if (changes.length === 0) return 'No changes.';
+  const out = changes.map((c) => {
+    const state = c.revertedAt
+      ? `reverted ${isoTimestamp(c.revertedAt)}`
+      : c.revertible
+        ? 'revertible'
+        : 'not revertible';
+    const who =
+      c.source === 'claude_code' && c.sessionId
+        ? `claude_code (session ${c.sessionId.slice(0, 8)})`
+        : c.source;
+    return `- #${c.id} ${isoTimestamp(c.createdAt)} · ${who} · ${oneLine(c.summary, 300)} · ${state}`;
+  });
+  const last = changes.at(-1);
+  if (last && changes.length === limit) out.push('', `More: call again with before=${last.id}.`);
+  return out.join('\n');
 }
 
 export function diaryList(entries: DiaryEntryView[], limit: number): string {

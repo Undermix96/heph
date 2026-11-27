@@ -216,6 +216,8 @@ export type DiaryQuery = z.infer<typeof DiaryQuery>;
 export const ChangesQuery = z.object({
   before: z.coerce.number().int().positive().optional(),
   limit: z.coerce.number().int().min(1).max(200).default(50),
+  /** Only changes of a revertible kind (reverted ones included). */
+  revertible: QueryBool.optional(),
 });
 export type ChangesQuery = z.infer<typeof ChangesQuery>;
 

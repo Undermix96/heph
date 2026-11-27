@@ -12,6 +12,7 @@ export type Changes =
   | { kind: 'delete_phase'; title: string; taskCount: number; lines: ChangeLine[] }
   | { kind: 'set_status'; from: string | null; to: string; note: string }
   | { kind: 'restructure_roadmap'; lines: ChangeLine[] }
+  | { kind: 'revert_change'; changeId: number; summary: string }
   | { kind: 'unknown' };
 
 export function changesOf(p: ProposalView): Changes {
@@ -40,6 +41,12 @@ export function changesOf(p: ProposalView): Changes {
       return {
         kind: 'restructure_roadmap',
         lines: diffLines(strings(x.before), strings(x.after)),
+      };
+    case 'revert_change':
+      return {
+        kind: 'revert_change',
+        changeId: Number(x.changeId),
+        summary: String(x.summary ?? ''),
       };
     default:
       return { kind: 'unknown' };

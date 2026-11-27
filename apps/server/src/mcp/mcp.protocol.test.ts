@@ -13,6 +13,7 @@ const READ_TOOLS = [
   'get_file',
   'get_docs',
   'list_proposals',
+  'list_changes',
 ];
 const WRITE_TOOLS = [
   'create_project',
@@ -36,6 +37,7 @@ const WRITE_TOOLS = [
   'add_material',
   'update_material',
   'request_upload',
+  'propose_revert',
 ];
 const DESTRUCTIVE = ['delete_phase', 'delete_task', 'restructure_roadmap', 'set_status'];
 
@@ -56,7 +58,7 @@ describe('MCP protocol: tools, prompts, instructions', () => {
     const { tools } = await m.client.listTools();
     const names = tools.map((x) => x.name);
     expect(names).toEqual(expect.arrayContaining([...READ_TOOLS, ...WRITE_TOOLS]));
-    // The server currently registers exactly these 30 tools.
+    // The server currently registers exactly these 32 tools.
     expect(new Set(names).size).toBe(names.length);
     expect(names.length).toBeGreaterThanOrEqual(READ_TOOLS.length + WRITE_TOOLS.length);
     for (const tool of tools) {

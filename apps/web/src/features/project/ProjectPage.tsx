@@ -19,6 +19,7 @@ import {
 import { type MessageKey, useT } from '../../i18n/index.js';
 import { errorKey } from '../../lib/errors.js';
 import { PHONE, useMedia } from '../../lib/media.js';
+import { ChangesTab } from '../changes/ChangesTab.js';
 import { DiaryView } from '../diary/DiaryView.js';
 import { FormDialog, RoadmapBoard } from '../roadmap/RoadmapBoard.js';
 import { DocsTab } from './DocsTab.js';
@@ -26,7 +27,7 @@ import { FilesTab } from './FilesTab.js';
 import { MaterialsTab } from './MaterialsTab.js';
 import { Overview } from './Overview.js';
 
-const TABS = ['overview', 'roadmap', 'diary', 'docs', 'materials', 'files'] as const;
+const TABS = ['overview', 'roadmap', 'diary', 'docs', 'materials', 'files', 'changes'] as const;
 type Tab = (typeof TABS)[number];
 
 /** Project page (mockups 10, 11, 53): one sidebar, header, tabs. */
@@ -90,6 +91,7 @@ export function ProjectPage() {
             {tab === 'docs' && <DocsTab projectRef={project.data.slug} />}
             {tab === 'materials' && <MaterialsTab projectRef={project.data.slug} />}
             {tab === 'files' && <FilesTab projectRef={project.data.slug} />}
+            {tab === 'changes' && <ChangesTab projectRef={project.data.slug} />}
           </>
         )}
       </main>

@@ -249,6 +249,21 @@
   font-weight: var(--weight-semibold);
 }
 
+/* changes tab (D74) */
+.changes-table .nowrap {
+  white-space: nowrap;
+}
+.changes-table .reverted {
+  color: var(--fg-muted);
+  text-decoration: line-through;
+}
+.changes-table .row-highlight td {
+  background: var(--attention-subtle);
+  box-shadow:
+    inset 0 1px 0 var(--attention-border),
+    inset 0 -1px 0 var(--attention-border);
+}
+
 /* project page */
 .project-list input {
   width: 100%;

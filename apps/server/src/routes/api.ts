@@ -274,6 +274,15 @@ export function apiRoutes(domain: Domain, github?: GitHubClients) {
     return c.body(null, 204);
   });
 
+  // ------------------------------------------------------------ changes (D74)
+
+  r.get('/projects/:ref/changes', (c) => c.json(domain.revert.list(ref(c), queryObject(c))));
+  r.get('/changes/:id', (c) => c.json(domain.revert.get(idParam(c))));
+  // Only the user reverts; Claude proposes through MCP (D75).
+  r.post('/changes/:id/revert', requireUi, (c) =>
+    c.json(domain.revert.revert(idParam(c), c.get('ctx'))),
+  );
+
   // ------------------------------------------------------------ proposals
 
   r.get('/proposals', (c) => c.json(domain.proposals.list(null, stateParam(c))));

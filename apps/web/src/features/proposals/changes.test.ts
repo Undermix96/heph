@@ -58,3 +58,22 @@ describe('proposal changes', () => {
     });
   });
 });
+
+describe('changesOf: revert_change (D75)', () => {
+  it('reads the change id and summary', () => {
+    const r = changesOf({
+      id: 1,
+      projectId: 1,
+      kind: 'revert_change',
+      payload: { changeId: 42, summary: 'Completed task "X"' },
+      reason: '',
+      createdBy: 'claude_code',
+      sessionId: null,
+      state: 'pending',
+      decisionNote: null,
+      decidedAt: null,
+      createdAt: '2026-11-27T10:00:00.000Z',
+    });
+    expect(r).toEqual({ kind: 'revert_change', changeId: 42, summary: 'Completed task "X"' });
+  });
+});

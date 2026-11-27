@@ -67,6 +67,8 @@ export function useApiMutation<A, R>(
     /** Optimistic update; returns a rollback. */
     optimistic?: (args: A) => (() => void) | undefined;
     onSuccess?: (result: R, args: A) => void;
+    /** The caller shows errors itself (no generic notice). */
+    quietErrors?: boolean;
   } = {},
 ) {
   const qc = useQueryClient();
@@ -76,7 +78,7 @@ export function useApiMutation<A, R>(
     onMutate: (args: A) => ({ rollback: opts.optimistic?.(args) }),
     onError: (err, _args, ctx) => {
       ctx?.rollback?.();
-      notices.error(err);
+      if (!opts.quietErrors) notices.error(err);
     },
     onSuccess: (r, args) => opts.onSuccess?.(r, args),
     onSettled: (_r, _e, args) => {

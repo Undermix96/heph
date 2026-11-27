@@ -179,6 +179,7 @@ Read:
 - `search(query)` → FTS over projects, tasks, diary, docs.
 - `get_file(file_id)` → returns images as image content so Claude can view them.
 - `get_docs(project)`.
+- `list_changes(project, limit?, before?)` → recorded changes, newest first, with whether each can be reverted (D74).
 
 Write (free):
 
@@ -196,6 +197,7 @@ Write (free):
 Write (confirmation / proposal):
 
 - `set_status` to `completed` / `abandoned`, `delete_phase`, `delete_task`, `restructure_roadmap(...)` → create a Proposal unless the call includes an explicit user-confirmed flag; UI shows pending proposals.
+- `propose_revert(project, change_id, reason?)` → always a Proposal, even when the user confirmed in chat; only the user reverts, by approving it in the UI (D75).
 
 Optional MCP prompts (show as `/` commands in Claude Code): e.g. "overview of all projects". Not used for bootstrap.
 
@@ -247,6 +249,7 @@ Same domain operations as MCP, consumed by the UI. Plus:
 - `/upload/:one_time_token` for agent uploads.
 - `/setup` (only before first user exists).
 - Export: whole project as a single markdown file (+ files as zip).
+- Changes (D74): `GET /projects/:ref/changes` (`before`, `limit`, `revertible`), `GET /changes/:id`, `POST /changes/:id/revert` (UI session only); the project page has a "Changes" tab.
 
 ---
 

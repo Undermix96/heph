@@ -18,6 +18,7 @@ import {
 } from '../../components/ui.js';
 import { type MessageKey, useT } from '../../i18n/index.js';
 import { errorKey } from '../../lib/errors.js';
+import { changeText } from '../changes/describe.js';
 import { changesOf } from './changes.js';
 
 /**
@@ -122,6 +123,8 @@ function ProposalBox({
           })}
           {c.note && <span className="pre"> — {c.note}</span>}
         </p>
+      ) : c.kind === 'revert_change' ? (
+        <RevertTarget changeId={c.changeId} summary={c.summary} />
       ) : c.kind === 'unknown' ? (
         <p className="muted">{t('proposals.unknown')}</p>
       ) : (
@@ -179,5 +182,19 @@ function ProposalBox({
         </p>
       )}
     </Box>
+  );
+}
+
+/** What a revert proposal undoes (D75): the change, translated when it can be read. */
+function RevertTarget({ changeId, summary }: { changeId: number; summary: string }) {
+  const t = useT();
+  const q = useQuery({ queryKey: ['change', changeId], queryFn: () => api.change(changeId) });
+  return (
+    <p>
+      {t('proposals.revertOf', {
+        id: changeId,
+        what: q.data ? changeText(q.data, t) : summary,
+      })}
+    </p>
   );
 }

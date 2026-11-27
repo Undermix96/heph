@@ -425,6 +425,32 @@ export function createHephMcpServer(domain: Domain, opts: McpServerOptions): Mcp
   );
 
   tool(
+    'list_changes',
+    {
+      title: 'List recorded changes',
+      description:
+        'Changes made to a project (roadmap, status, next step, materials…), newest first, with who made them ' +
+        'and whether each can be reverted. A roadmap restructure is one change. Use the ids with propose_revert. ' +
+        'Page back with the before value printed at the end.',
+      input: z.object({
+        project: projectArg,
+        limit: z.number().int().min(1).max(200).optional(),
+        before: z
+          .number()
+          .int()
+          .positive()
+          .optional()
+          .describe('id of the last change already read'),
+      }),
+      annotations: ro,
+    },
+    (a) => {
+      const limit = a.limit ?? 30;
+      return fmt.changeList(domain.revert.list(a.project, { limit, before: a.before }), limit);
+    },
+  );
+
+  tool(
     'list_proposals',
     {
       title: 'List proposals',
@@ -902,6 +928,31 @@ export function createHephMcpServer(domain: Domain, opts: McpServerOptions): Mcp
       return proposal
         ? gatedText({ applied: false, proposal }, () => '')
         : `Task #${a.task_id} deleted.`;
+    },
+  );
+
+  tool(
+    'propose_revert',
+    {
+      title: 'Propose undoing a change',
+      description:
+        'Proposes reverting a recorded change (ids from list_changes). Always creates a proposal: ' +
+        'only the user can revert, by approving it in the Heph UI, even if they confirmed in chat. ' +
+        'Refused now if the change cannot be reverted or a later change must be reverted first.',
+      input: z.object({
+        project: projectArg,
+        change_id: idArg('Change'),
+        reason: reasonArg,
+        session_id: sessionArg,
+      }),
+      annotations: additive,
+    },
+    (a) => {
+      const p = domain.revert.propose(a.project, a.change_id, a.reason ?? '', ctx(a));
+      return (
+        `Created proposal #${p.id} (revert_change): ${String(p.payload.summary)}. ` +
+        'Nothing is reverted until the user approves it in the Heph UI; tell them.'
+      );
     },
   );
 

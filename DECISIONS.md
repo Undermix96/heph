@@ -699,3 +699,12 @@ Alternatives rejected:
 
 - Every ended session: the box fills with sessions that did nothing.
 - Desktop only: the phone dashboard would lose the information.
+
+## D77 — Revert conflicts cover side effects (2026-11-27)
+
+Decision: Refines the conflict rule of D74. Besides the item itself, a change touches its side effects: the task order of the phases it changes, the phase order, the stored phase status when the change moved it, the next-step override when it cleared or set it (`set_next_task` also touches the tasks it points from and to), and the materials a phase deletion detached. A recorded phase status is put back only while it still agrees with the phase's tasks; otherwise the phase is re-synced.
+Why: Independent verification A9 (2026-11-27) found that reverting a restructure deleted tasks added later to a phase it created, and that out-of-order reverts could leave a done phase with open tasks, a wrong order or a lost next step.
+Alternatives rejected:
+
+- Allowing out-of-order reverts and repairing afterwards: cannot restore the order or status exactly.
+- Newest-first only for the whole project: blocks unrelated reverts.

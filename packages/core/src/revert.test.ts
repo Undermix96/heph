@@ -271,15 +271,44 @@ describe('revert: conflicts', () => {
     expect(s.d.roadmap.getTask(s.bom)).toMatchObject({ done: false, notes: '' });
   });
 
-  it('a change to another task does not block', () => {
+  it('a change to a task of another phase does not block', () => {
     const s = setup();
     s.d.roadmap.completeTask(s.bom, UI);
     const done = lastChange(s.d, s.p.id);
-    s.d.roadmap.completeTask(s.schematic, UI);
+    s.d.roadmap.completeTask(s.kase, UI);
     s.d.roadmap.updateTask(s.wiring, { title: 'Wires' }, UI);
     s.d.revert.revert(done.id, UI);
     expect(s.d.roadmap.getTask(s.bom).done).toBe(false);
-    expect(s.d.roadmap.getTask(s.schematic).done).toBe(true);
+    expect(s.d.roadmap.getTask(s.kase).done).toBe(true);
+  });
+
+  it('an edit of a sibling task does not block; a sibling completion that moved the phase does', () => {
+    const s = setup();
+    s.d.roadmap.completeTask(s.bom, UI);
+    const done = lastChange(s.d, s.p.id);
+    s.d.roadmap.updateTask(s.schematic, { notes: 'x' }, UI);
+    s.d.roadmap.completeTask(s.schematic, UI); // Design: in_progress -> done
+    const sib = lastChange(s.d, s.p.id);
+    expect(
+      expectDomainError(() => s.d.revert.revert(done.id, UI), 'conflict').details,
+    ).toMatchObject({ blockedBy: sib.id });
+    s.d.revert.revert(sib.id, UI);
+    s.d.revert.revert(done.id, UI);
+    expect(s.d.roadmap.getPhase(s.design).status).toBe('todo');
+  });
+
+  it('a task added later to a phase created by a restructure blocks the restructure (A9)', () => {
+    const s = setup();
+    s.d.restructure.restructure(
+      s.p.id,
+      { operations: [{ op: 'add_phase', ref: 't', title: 'Test' }] },
+      UI,
+    );
+    const head = lastChange(s.d, s.p.id);
+    const test = s.d.roadmap.phasesOf(s.p.id).find((p) => p.title === 'Test')!;
+    s.d.roadmap.addTask(test.id, { title: 'Bench' }, UI);
+    expectDomainError(() => s.d.revert.revert(head.id, UI), 'conflict');
+    expect(s.d.roadmap.phasesOf(s.p.id).find((p) => p.title === 'Test')!.tasks).toHaveLength(1);
   });
 
   it('a later deletion of the phase blocks reverting a task change in it', () => {

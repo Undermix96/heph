@@ -11,7 +11,7 @@ import { changeLog, files, materials, phases, projects, tasks } from './db/schem
 import type { Domain } from './domain.js';
 import { DomainError, notFound } from './errors.js';
 import type { ProjectRef } from './projects.js';
-import type { DeletedLinks, PhaseState } from './roadmap.js';
+import { type DeletedLinks, type PhaseState, syncedPhaseStatus } from './roadmap.js';
 import { iso, parse, reorder } from './util.js';
 
 type LogRow = typeof changeLog.$inferSelect;
@@ -26,8 +26,14 @@ const num = (v: unknown): number | null => (typeof v === 'number' ? v : null);
 /**
  * What a change touched and what it needs to still exist (D74). Two changes
  * conflict when a later one touches a key of an earlier one, or deleted
- * something the earlier one needs. Keys: `task:<id>`, `phase:<id>`,
- * `material:<id>`, `status:<project>`, `next:<project>`.
+ * something the earlier one needs. Side effects count as touches, so a revert
+ * never overwrites a later change (verification A9):
+ * - `task:<id>`, `phase:<id>`, `material:<id>`: the item itself;
+ * - `order:<phase>`: the task order of a phase (task create, move, delete; phase create, delete);
+ * - `phases:<project>`: the phase order (phase create, move, delete);
+ * - `pstatus:<phase>`: the stored phase status, when a change moved it;
+ * - `status:<project>`, `next:<project>`: project status and next-step override.
+ * `set_next_task` also touches the tasks it points from and to.
  */
 export function keysOf(
   r: Pick<LogRow, 'entity' | 'entityId' | 'action' | 'before' | 'after' | 'projectId'>,
@@ -36,31 +42,66 @@ export function keysOf(
   needs: string[];
 } {
   const b = obj(r.before);
+  const a = obj(r.after);
+  const touches: string[] = [];
+  const needs: string[] = [];
+  // Phases whose stored status the change moved.
+  const before = new Map(phaseStatesOf(b.phaseStates).map((p) => [p.id, p]));
+  for (const p of phaseStatesOf(a.phaseStates)) {
+    const was = before.get(p.id);
+    if (!was || was.status !== p.status || was.completedAt !== p.completedAt) {
+      touches.push(`pstatus:${p.id}`);
+    }
+  }
   switch (r.entity) {
     case 'task': {
-      const touches = [`task:${r.entityId}`];
-      if (r.action === 'delete') return { touches, needs: [`phase:${num(obj(b.task).phaseId)}`] };
-      if (r.action === 'move') return { touches, needs: [`phase:${num(b.phaseId)}`] };
-      return { touches, needs: [] };
+      touches.push(`task:${r.entityId}`);
+      if (r.action === 'create') touches.push(`order:${num(a.phaseId)}`);
+      if (r.action === 'delete') {
+        const phaseId = num(obj(b.task).phaseId);
+        touches.push(`order:${phaseId}`);
+        needs.push(`phase:${phaseId}`);
+        if (num(b.override) !== null) touches.push(`next:${r.projectId}`);
+      }
+      if (r.action === 'move') {
+        touches.push(`order:${num(b.phaseId)}`, `order:${num(a.phaseId)}`);
+        needs.push(`phase:${num(b.phaseId)}`);
+      }
+      if (r.action === 'complete' && b.wasOverride === true) touches.push(`next:${r.projectId}`);
+      break;
     }
     case 'phase': {
-      const touches = [`phase:${r.entityId}`];
-      if (r.action === 'delete' && Array.isArray(b.tasks)) {
-        for (const t of b.tasks) touches.push(`task:${num(obj(t).id)}`);
+      touches.push(`phase:${r.entityId}`);
+      if (r.action === 'create' || r.action === 'delete') {
+        touches.push(`order:${r.entityId}`, `pstatus:${r.entityId}`, `phases:${r.projectId}`);
       }
-      return { touches, needs: [] };
+      if (r.action === 'move') touches.push(`phases:${r.projectId}`);
+      if (r.action === 'update' && 'status' in a) touches.push(`pstatus:${r.entityId}`);
+      if (r.action === 'delete') {
+        for (const t of Array.isArray(b.tasks) ? b.tasks : [])
+          touches.push(`task:${num(obj(t).id)}`);
+        for (const m of Array.isArray(b.materialIds) ? b.materialIds : [])
+          touches.push(`material:${m}`);
+        if (num(b.override) !== null) touches.push(`next:${r.projectId}`);
+      }
+      break;
     }
     case 'material':
-      return { touches: [`material:${r.entityId}`], needs: [] };
+      touches.push(`material:${r.entityId}`);
+      break;
     case 'project':
       if (r.action === 'set_status' || r.action === 'test_outcome') {
-        return { touches: [`status:${r.projectId}`], needs: [] };
+        touches.push(`status:${r.projectId}`);
       }
-      if (r.action === 'set_next_task') return { touches: [`next:${r.projectId}`], needs: [] };
-      return { touches: [], needs: [] };
-    default:
-      return { touches: [], needs: [] };
+      if (r.action === 'set_next_task') {
+        touches.push(`next:${r.projectId}`);
+        for (const id of [num(b.nextTaskOverrideId), num(a.nextTaskOverrideId)]) {
+          if (id !== null) touches.push(`task:${id}`);
+        }
+      }
+      break;
   }
+  return { touches, needs };
 }
 
 /** English one-line summary of a change (diary body of a revert, MCP list). */
@@ -128,6 +169,7 @@ export class RevertService {
           ne(changeLog.entity, 'change'),
           or(isNull(changeLog.groupId), eq(changeLog.groupId, changeLog.id)),
           q.before !== undefined ? lt(changeLog.id, q.before) : undefined,
+          q.revertible ? eq(changeLog.revertible, true) : undefined,
         ),
       )
       .orderBy(desc(changeLog.id))
@@ -460,10 +502,23 @@ export class RevertService {
     });
   }
 
+  /**
+   * The recorded state is put back only if it still agrees with the phase's tasks
+   * (verification A9: never a done phase with open tasks); otherwise the phase is re-synced.
+   */
+  private consistent(state: PhaseState): boolean {
+    const ts = this.d.db
+      .select({ done: tasks.done })
+      .from(tasks)
+      .where(eq(tasks.phaseId, state.id))
+      .all();
+    return syncedPhaseStatus(state.status, ts) === state.status;
+  }
+
   private restorePhaseStates(list: { state: PhaseState; exact: boolean }[]): void {
     for (const { state, exact } of list) {
       if (!this.phaseExists(state.id)) continue;
-      if (exact) {
+      if (exact && this.consistent(state)) {
         this.d.db
           .update(phases)
           .set({ status: state.status, completedAt: state.completedAt })

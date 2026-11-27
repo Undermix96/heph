@@ -5,7 +5,7 @@
     {
       "name": "heph",
       "source": "./plugin",
-      "description": "Hephaestus (heph) integration for Claude Code: briefing, live sessions, auto-diary."
+      "description": "Hephaestus (heph) integration for Claude Code: briefing, live sessions, auto-diary, DECISIONS.md sync and a new-project skill."
     }
   ]
 }

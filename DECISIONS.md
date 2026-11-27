@@ -594,3 +594,12 @@ Alternatives rejected:
 - Existing tools only (dates written in the text): history ordered by import time, one event per old task.
 - An `import_project` tool taking a whole document: import-specific code, against §13.
 - Backdating any write (phases, materials): not needed to keep work state; more surface.
+
+## D66 — Legacy file tracking marker, honoured by the session-start text (2026-11-27)
+
+Decision: A project that keeps its own file-based work tracking says so in its `CLAUDE.md` with a line starting `Work state: legacy` (written by the `heph:migrate-project` skill, with the file and the date chosen). In sessions whose repo is not linked to a Heph project, the SessionStart text starts with that escape: if the marker is there, Claude follows the project's `CLAUDE.md`, ignores Heph's text and rules, and proposes nothing. Otherwise it proposes the migration skill when the repo tracks work in files, or registering it. The same hint is in `get_briefing`'s error for an unlinked repo. Linked projects are unchanged.
+Why: Owner decision of 2026-11-27. Before this, every unlinked repo was told "track work state in Heph, not in repo files" and "propose registering", which contradicts a project that chose to keep its files. A marker in the repo needs no new data in Heph, travels with the repo and is read by Claude anyway.
+Alternatives rejected:
+
+- An ignore list in Heph settings: more code and UI for a choice that belongs to the repo.
+- A `.heph-ignore` file read by the plugin script: logic in the script (D58 keeps it a forwarder).

@@ -55,7 +55,9 @@ export class BriefingService {
       } catch {
         throw new DomainError(
           'not_found',
-          `No project is linked to repo "${repo}". Ask the user whether to register it ` +
+          `No project is linked to repo "${repo}". If the repo's CLAUDE.md says "Work state: legacy", ` +
+            'it is tracked in its own files: do not use Heph for it. Otherwise ask the user whether to ' +
+            'migrate it (heph:migrate-project skill, when it tracks work in files) or register it ' +
             `(create_project with repos: ["${repo}"], or link_repo to an existing project).`,
         );
       }

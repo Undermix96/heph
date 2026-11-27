@@ -41,6 +41,8 @@ export class HooksService {
     const out = [
       '# Heph session start',
       '',
+      LEGACY_TEXT,
+      '',
       unlinkedText(facts.remote ?? null, repoOf(facts.remote)),
     ];
     out.push(
@@ -137,10 +139,27 @@ export function gitBlobSha(content: Buffer): string {
   return crypto.createHash('sha1').update(`blob ${content.length}\0`).update(content).digest('hex');
 }
 
+/**
+ * The marker a project's CLAUDE.md carries when the owner chose to keep
+ * file-based work tracking instead of Heph (D66). Written by the
+ * heph:migrate-project skill. "Do not break": keep this text in sync with
+ * plugin/skills/migrate-project/SKILL.md and the owner's global CLAUDE.md.
+ */
+export const LEGACY_MARKER = 'Work state: legacy';
+
+/** Shown first in unlinked sessions: legacy projects skip everything Heph says below (D66). */
+const LEGACY_TEXT =
+  `If this repo's CLAUDE.md contains the line \`${LEGACY_MARKER}\`, the owner chose to keep ` +
+  'tracking this project in its own files: follow that CLAUDE.md, ignore the rest of this Heph ' +
+  'text and the rules below, and do not propose registering or migrating it.';
+
 function unlinkedText(remote: string | null, repo: string | null): string {
   if (repo) {
     return (
-      `The repo \`${repo}\` is not linked to any Heph project. Propose to the user to register it: ` +
+      `Otherwise: the repo \`${repo}\` is not linked to any Heph project. ` +
+      'If it tracks its work state in files (PROGRESS.md, ROADMAP.md, a HANDOFF or plan file), ' +
+      'propose the heph:migrate-project skill: the user chooses between moving the work state ' +
+      'to Heph and keeping the files. If it has no such files, propose to register it: ' +
       `create_project with repos: ["${repo}"] (suggest macro-phases from what the repo is), ` +
       'or link_repo to an existing project (list_projects shows them). ' +
       'Once linked, this session is attached to the project automatically.'
@@ -148,13 +167,13 @@ function unlinkedText(remote: string | null, repo: string | null): string {
   }
   if (remote) {
     return (
-      `This repo's remote (\`${withoutCredentials(remote).slice(0, 200)}\`) is not on GitHub, so Heph cannot link it. ` +
+      `Otherwise: this repo's remote (\`${withoutCredentials(remote).slice(0, 200)}\`) is not on GitHub, so Heph cannot link it. ` +
       'Ask the user which Heph project this work belongs to, if any (list_projects), ' +
       'and pass that project explicitly to the Heph tools.'
     );
   }
   return (
-    'This folder has no git remote, so Heph cannot tell which project it belongs to. ' +
+    'Otherwise: this folder has no git remote, so Heph cannot tell which project it belongs to. ' +
     'Ask the user which Heph project this work belongs to, if any (list_projects), ' +
     'and pass that project explicitly to the Heph tools.'
   );

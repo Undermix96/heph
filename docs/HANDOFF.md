@@ -265,5 +265,5 @@ Same domain operations as MCP, consumed by the UI. Plus:
 
 ## 13. Open items
 
-- Project import strategy: postponed; the API/MCP must be sufficient so no import-specific code is needed. Store `origin` on imported entities.
+- Project import strategy: decided (2026-11-27). Existing projects choose per project: migrate to Heph with the `heph:migrate-project` skill (inventory, reconciliation report, two independent verifier passes, D67), or keep file-based tracking with the `Work state: legacy` marker in their `CLAUDE.md`, which the SessionStart text honours (D66). The generic MCP parameters `origin`, `occurred_at` and done tasks in `create_project` carry the history (D65); no import-specific endpoint.
 - Exact thresholds and defaults (activity, session expiry, diary trigger) to tune after real use.

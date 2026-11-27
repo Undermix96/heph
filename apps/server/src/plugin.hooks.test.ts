@@ -144,6 +144,9 @@ describe.skipIf(BASH === null)(
         },
       );
       expect(unlinked.stdout).toContain('`example/other` is not linked');
+      // D66: the legacy escape reaches Claude through the real script.
+      expect(unlinked.stdout).toContain('`Work state: legacy`');
+      expect(unlinked.stdout).toContain('heph:migrate-project');
       const plain = await run(
         'session-start',
         { session_id: 's2' },

@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { HOOK_CONTEXT_MAX_CHARS } from './briefing.js';
 import { UI } from './context.js';
-import { gitBlobSha } from './hooks.js';
+import { gitBlobSha, LEGACY_MARKER } from './hooks.js';
 import type { HookFacts } from './sessions.js';
 import { expectDomainError, seedProject } from './test/fixtures.js';
 import { makeDomain, type TestDomain } from './test/helpers.js';
@@ -56,6 +56,31 @@ describe('SessionStart', () => {
     expect(text).toContain('## Rules');
     expect(text).toContain('Pass session_id "s2"');
     expect(d.sessions.projectFor('s2')).toBeNull();
+  });
+
+  it('unlinked sessions first tell Claude to honour the legacy marker, then offer migration (D66)', () => {
+    const { d, p } = setup();
+    for (const remote of [
+      'git@github.com:example/other.git',
+      'https://gitlab.example.com/a/b',
+      null,
+    ]) {
+      const text = d.hooks.sessionStart(`legacy-${remote}`, { remote });
+      const marker = text.indexOf(`\`${LEGACY_MARKER}\``);
+      expect(marker).toBeGreaterThan(0);
+      // The legacy escape comes before any proposal and before the rules it overrides.
+      expect(marker).toBeLessThan(text.indexOf('Otherwise'));
+      expect(marker).toBeLessThan(text.indexOf('## Rules'));
+      expect(text).toContain('do not propose registering or migrating it');
+    }
+    const gh = d.hooks.sessionStart('mig', { remote: 'git@github.com:example/other.git' });
+    expect(gh).toContain('heph:migrate-project');
+    // Linked projects get the normal briefing, without the legacy escape.
+    const linked = d.hooks.sessionStart('linked', {
+      remote: 'git@github.com:example/spot-welder.git',
+    });
+    expect(linked).toContain(`# Briefing: ${p.name}`);
+    expect(linked).not.toContain(LEGACY_MARKER);
   });
 
   it('non-GitHub remote and no remote ask the user which project, without leaking credentials', () => {

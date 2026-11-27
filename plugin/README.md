@@ -37,12 +37,13 @@ the installed version is the commit (no `version` field, D57).
 
 ## What it contains
 
-| Part              | File                   | Does                                                                                                                      |
-| ----------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| MCP server        | `.mcp.json`            | Heph's tools over Streamable HTTP, URL and token from the plugin options                                                  |
-| Hooks             | `hooks/hooks.json`     | SessionStart, Stop, Pre/PostToolUse (Bash, PowerShell), SessionEnd                                                        |
-| Hook script       | `scripts/heph-hook.sh` | forwards each hook to `/hooks/v1/*` and prints the answer                                                                 |
-| New-project skill | `skills/new-project/`  | `/heph:new-project` or "start a new project…": repo files, first commit, GitHub repo via `gh`, registration in Heph (D64) |
+| Part                  | File                      | Does                                                                                                                                                                                                                               |
+| --------------------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| MCP server            | `.mcp.json`               | Heph's tools over Streamable HTTP, URL and token from the plugin options                                                                                                                                                           |
+| Hooks                 | `hooks/hooks.json`        | SessionStart, Stop, Pre/PostToolUse (Bash, PowerShell), SessionEnd                                                                                                                                                                 |
+| Hook script           | `scripts/heph-hook.sh`    | forwards each hook to `/hooks/v1/*` and prints the answer                                                                                                                                                                          |
+| New-project skill     | `skills/new-project/`     | `/heph:new-project` or "start a new project…": repo files, first commit, GitHub repo via `gh`, registration in Heph (D64)                                                                                                          |
+| Migrate-project skill | `skills/migrate-project/` | `/heph:migrate-project` or "migrate this project to Heph": moves an existing project's file-based work state into Heph with a reconciliation report and two verifier passes, or records the `Work state: legacy` choice (D66, D67) |
 
 The scripts need only `bash`, `git` and `curl` (Git Bash on Windows); the new-project skill uses `gh` when it is installed and signed in. The hook script never
 blocks a session: if Heph is not configured, refuses the token or is unreachable, the session

@@ -603,3 +603,13 @@ Alternatives rejected:
 
 - An ignore list in Heph settings: more code and UI for a choice that belongs to the repo.
 - A `.heph-ignore` file read by the plugin script: logic in the script (D58 keeps it a forwarder).
+
+## D67 — Migration procedure as a plugin skill (2026-11-27)
+
+Decision: `plugin/skills/migrate-project/` (`/heph:migrate-project`, or proposed by the session-start text for unlinked repos) is the one procedure for existing projects. The user first chooses: keep legacy (the skill writes the `Work state: legacy …` line in the project's `CLAUDE.md`, D66) or migrate. A migration records the pre-migration commit, splits every tracking and decision source into numbered items, maps each to one target (Heph phase/task/diary/status, `DECISIONS.md`, or unchanged in the repo; `TBD` when nothing fits) in a reconciliation report, has a fresh verifier subagent check the report against the sources before anything is written, waits for the user's approval, writes to Heph with the D65 parameters and `origin`, commits the repo changes (decisions kept or added, tracking files deleted, `CLAUDE.md` and README pointing to Heph), then has a second fresh verifier compare the original files with Heph and the repo item by item. The report is uploaded to the final diary note. Open questions become one diary note; existing decision files in other formats (ADR folders) are kept unless the user asks otherwise. Claude-driven, no script. Refinements of D65 from verification A8: the import shapes of the MCP tools are strict (a camelCase `doneAt` / `occurredAt` is an error, not silently dropped), a backdated note is stored as a plain note outside the current session, and the future-time error explains that a plain date means 12:00 UTC (omit the time for today). For unlinked repos without a GitHub remote the session-start text also offers the migration skill.
+Why: Owner decisions of 2026-11-27: migration standardised for every project, subagents to verify nothing is lost, old tracking files deleted with history in git (as D47), open questions as diary notes. The sources differ per project (ROADMAP, HANDOFF in `private/`, plan files, ADR folders, Italian docs), so a deterministic script could not parse them; the item manifest and two independent checks make the result verifiable instead.
+Alternatives rejected:
+
+- A migration script: the sources have no common format.
+- Keeping the old files with a "superseded" banner: stale copies next to the live state.
+- One verifier pass after writing only: a gap found then needs append-only corrections in the diary; checking the report first avoids most of them.

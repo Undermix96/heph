@@ -5,7 +5,7 @@ description: Move an existing project's work state (roadmap, tasks, next step, p
 
 # Migrate a project to Heph
 
-Standard procedure for existing projects (spec §13, D65–D67). Two outcomes, chosen by the
+Standard procedure for existing projects (spec §13, D65–D69). Two outcomes, chosen by the
 user: **migrate** (work state into Heph, decisions in `DECISIONS.md`) or **keep legacy**
 (the project keeps its files and says so in its `CLAUDE.md`). Follow the steps in order.
 Write repo files in English; talk to the user in their language.
@@ -47,7 +47,10 @@ user that Heph will leave this repo alone and that they can migrate later by del
 - GitHub remote: `owner/name` from `git remote get-url origin`. Without one there is no
   `repos` / `link_repo` yet: decisions still go in the repo's `DECISIONS.md` and Heph's
   internal docs stay empty, so linking the repo once it is on GitHub switches Heph to it
-  (D68, D69).
+  (D68, D69). If decisions are kept in another file (e.g. an ADR index), tell the user to pass
+  `docs_path` when the repo is linked later. If an existing Heph project already has internal
+  docs, linking will not switch it: ask the user whether to move those docs into the repo's
+  `DECISIONS.md` so decisions stay in one place.
 - `list_projects`: if a project already exists for this repo or name, ask whether to fill
   that one or create a new one.
 - Record `SHA=$(git rev-parse --short HEAD)`: the pre-migration commit. Later reads of

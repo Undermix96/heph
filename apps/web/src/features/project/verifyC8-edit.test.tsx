@@ -64,6 +64,8 @@ describe('C8: edit page after the first repo is linked (D68)', () => {
     await screen.findByText('example/forno');
     await user.click(screen.getByRole('button', { name: 'Salva' }));
     await waitFor(() => expect(patches).toHaveLength(1));
-    expect((patches[0] as { docsSource?: string }).docsSource).toBe('repo');
+    // D69 (verification D8): the form sends no docs source unless the user picked one, so the
+    // server keeps the repo docs it switched to. The invariant: the save never reverts it.
+    expect((patches[0] as { docsSource?: string }).docsSource).not.toBe('internal');
   });
 });

@@ -70,7 +70,8 @@ function EditForm({ p }: { p: ProjectDetail }) {
         .map((x) => x.trim())
         .filter(Boolean),
       links: links.filter((l) => l.label.trim() || l.url.trim()),
-      docsSource,
+      // Sent only when the user picked it (D69): a stale cache must not undo a server switch.
+      ...(docsChoice !== null ? { docsSource: docsChoice } : {}),
     });
     if (!parsed.success) {
       const field = String(parsed.error.issues[0]?.path[0] ?? 'form');

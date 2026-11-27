@@ -183,7 +183,7 @@ Read:
 Write (free):
 
 - `create_project(name, description?, tags?, repos?, phases?, origin?)` — phase tasks are titles or `{title, notes?, done?, done_at?}` (imports, D65)
-- `link_repo(project, owner/name)`
+- `link_repo(project, owner/name, docs_path?, show_commits?)` — on a repo the project already has, updates its docs path (D68)
 - `log_progress(project, body, session_id?, file_ids?, occurred_at?, origin?)` — `occurred_at` backdates imported history, never in the future (D65)
 - `add_phase(project, title, description?, position?)`, `add_task(phase, title, notes?, position?)`
 - `complete_task(task)` → returns the new next task

@@ -8,6 +8,7 @@ import {
   type Gated,
   LIFECYCLE_STATUSES,
   MATERIAL_STATUSES,
+  normalizeRepo,
   PHASE_STATUSES,
   PROPOSAL_STATES,
   type RestructureOp,
@@ -60,7 +61,10 @@ const idArg = (what: string) => z.number().int().positive().describe(`${what} id
 const position = z.number().int().min(1).describe('1-based position (1 = first)');
 const openStatus = z.enum(['in_development', 'awaiting_manual_test', 'on_hold']);
 
-const linkArg = z.object({ label: z.string().min(1).max(200), url: z.string().url().max(2000) });
+const linkArg = z.strictObject({
+  label: z.string().min(1).max(200),
+  url: z.string().url().max(2000),
+});
 
 /** Restructure ops as exposed to the agent: same as the domain's, but positions are 1-based. */
 const phaseRefArg = z
@@ -564,10 +568,13 @@ export function createHephMcpServer(domain: Domain, opts: McpServerOptions): Mcp
         { fullName: a.repo, docsPath: a.docs_path, showCommits: a.show_commits },
         ctx(a),
       );
+      const linked = p.repoDetails.find(
+        (r) => r.fullName.toLowerCase() === normalizeRepo(a.repo).toLowerCase(),
+      );
       const docs =
         p.docsSource === 'internal'
-          ? ' Docs stay internal (the project already has internal docs; the user can switch in the UI).'
-          : ` Docs path: ${p.repoDetails.find((r) => r.fullName.toLowerCase() === a.repo.toLowerCase())?.docsPath ?? 'DECISIONS.md'}.`;
+          ? ' Docs stay internal (Heph docs edited with update_docs; the user can switch in the UI).'
+          : ` Docs path: ${linked?.docsPath ?? 'DECISIONS.md'}.`;
       return `Linked ${a.repo} to #${p.id} \`${p.slug}\`. Repos: ${p.repos.join(', ')}.${docs}`;
     },
   );

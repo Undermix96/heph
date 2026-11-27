@@ -622,3 +622,11 @@ Alternatives rejected:
 
 - A new `update_repo` MCP tool: one more tool for what `link_repo` can express.
 - Always switching to repo docs on link: would hide internal decisions written by hand.
+
+## D69 — Decisions of a local repo not on GitHub stay in its DECISIONS.md (2026-11-27)
+
+Decision: A project whose code is in a repo without a GitHub remote keeps its decisions in the repo's `DECISIONS.md`, like every other repo; its Heph internal docs stay empty until the repo is on GitHub and linked, which switches the project to repo docs (D68). The injected rule for internal-docs projects says so ("with update_docs; if this project's code is in a local repo not on GitHub yet, in that repo's DECISIONS.md instead"); the migrate-project skill follows it. Projects with no repo at all (DIY) keep using `update_docs`. Also from verification C8: only the first repo of a project switches empty internal docs (a later one leaves the user's choice), a plain relink changes nothing, the switch is in the change log, the link reply resolves URLs before showing the docs path, MCP links are strict, and the web edit form sends the docs source only when the user changes it.
+Why: Owner decision of 2026-11-27. Decisions belong with the code (D15) and stay versioned even before GitHub exists; new-project already writes `DECISIONS.md` for local-only repos (D64).
+Alternatives rejected:
+
+- Heph internal docs until GitHub exists: decisions not versioned with the code, and a move later.

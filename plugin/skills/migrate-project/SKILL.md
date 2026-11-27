@@ -24,7 +24,7 @@ Rules for the whole procedure:
 
 Ask: migrate to Heph, or keep the current files?
 
-**Keep legacy:** add this line near the top of the project's `CLAUDE.md` (create a minimal
+**Keep legacy:** check that tracked files are clean (as in step 1), then add this line near the top of the project's `CLAUDE.md` (create a minimal
 one if missing), with the tracking file(s) and today's date:
 
 ```
@@ -39,29 +39,34 @@ user that Heph will leave this repo alone and that they can migrate later by del
 
 ## 1. Preconditions
 
-- Git tree clean (`git status --porcelain` empty); otherwise ask the user to commit first.
+- Tracked files clean (`git status --porcelain --untracked-files=no` empty); otherwise ask the
+  user to commit first. Untracked sources are handled in step 2.
 - Heph reachable (`list_projects` works). The Heph server must take `origin`,
   `occurred_at` and done tasks in `create_project` (D65); if a call refuses these
   parameters, stop and tell the user to update Heph.
 - GitHub remote: `owner/name` from `git remote get-url origin`. Without one there is no
-  `link_repo`; where its decisions go is an open owner decision (TBD, see D67): ask the user.
+  `repos` / `link_repo` yet: decisions still go in the repo's `DECISIONS.md` and Heph's
+  internal docs stay empty, so linking the repo once it is on GitHub switches Heph to it
+  (D68, D69).
 - `list_projects`: if a project already exists for this repo or name, ask whether to fill
   that one or create a new one.
 - Record `SHA=$(git rev-parse --short HEAD)`: the pre-migration commit. Later reads of
   tracked sources use `git show $SHA:<path>`.
-- Sources git does not track (gitignored `private/`, untracked files) have no history: copy
-  each one to the scratchpad now (`migration-<slug>-sources/<path>`) and use those copies as
-  their pre-migration version.
 
 ## 2. Inventory → manifest
 
 1. Find the sources: tracking files (`PROGRESS.md`, `ROADMAP.md`, `TODO.md`, `HANDOFF*`,
    `*plan*.md`, roadmap chapters of design docs), decision files (`DECISIONS.md`,
    `docs/adr/`, decision sections inside other docs), `CLAUDE.md`, `README.md`. Search the
-   whole repo, not only the root: tracked files (`git ls-files`) and untracked or ignored ones
-   (`git ls-files --others --ignored --exclude-standard`, `private/`), including non-Markdown
-   tracking files (`TODO.txt`, `ROADMAP` without extension). Show the list, with tracked or
-   untracked for each, and let the user add or remove files.
+   whole repo, not only the root: tracked files (`git ls-files`), untracked ones
+   (`git ls-files --others --exclude-standard`) and ignored folders
+   (`git ls-files --others --ignored --exclude-standard --directory`; look inside only
+   `private/` and doc-like folders, never `node_modules`, build output or data files), including
+   non-Markdown tracking files (`TODO.txt`, `ROADMAP` without extension). Show the list, with
+   tracked or untracked for each, and let the user add or remove files.
+   Once the user confirms the list: sources git does not track have no history, so copy each
+   one to the scratchpad (`migration-<slug>-sources/<path>`) and use those copies as their
+   pre-migration version from now on.
 2. Read every source fully. Split it into numbered items `S1…Sn`, one per statement that
    carries information: a phase or milestone (with its verification criterion and outcome),
    a task (done or open, with any date), the next step, the status (testing, waiting for…),
@@ -79,7 +84,7 @@ Give every item exactly one target:
 | Phase done in the source with no tasks | Heph phase, then `update_phase status: done` after creation; source date in its description (the completion time will be today) |
 | Task | Task in its phase: `{title, notes, done, done_at}`; long text (over 300 characters) in `notes` |
 | Done task without a date | `done: true` without `done_at`, and the notes say "completion date unknown, imported YYYY-MM-DD"; mark it `done (date unknown)` in the report |
-| Next step | `set_next_task` (only if it differs from the computed one); if it is not a task yet, add it as a task first |
+| Next step | `set_next_task` (only if it differs from the computed one); if it is not a task yet, add it as a task of the current (first open) phase, or ask the user where |
 | Status, what to test, what we wait for | `set_status` with a note. A source status of completed or abandoned: tell the user; it becomes a proposal they approve in Heph |
 | Dated progress entry, incident, reminder | `log_progress` with `occurred_at` (source date) and `origin` |
 | Undated progress text | one diary note "Imported notes", `origin` set |
@@ -91,7 +96,8 @@ Give every item exactly one target:
 Decisions: if the repo already has a decision file in another format (e.g. an ADR folder),
 ask whether to keep it as is or to add a `DECISIONS.md`. Heph shows one docs file per repo:
 to keep an ADR folder, point Heph at its index (`link_repo` with `docs_path`, which also
-updates a repo that is already linked, D68) and tell the user that only that file is shown.
+updates a repo that is already linked, D68; check the reply's docs path). Tell the user that
+Heph shows only the index, so every new ADR must also be added to the index.
 Never rewrite or renumber existing decisions.
 
 Limits: 50 phases, 200 tasks per phase, titles up to 300 characters, `origin` up to 200.
@@ -125,11 +131,13 @@ without a clear yes.
 ## 5. Write to Heph
 
 1. `create_project` with `name`, `description`, `tags`, `repos` (if on GitHub), `origin`,
-   and `phases` with their tasks in order (done ones as `{title, done: true, done_at}`). Or,
+   and `phases` with their tasks in order (done ones as `{title, done: true}`, plus `done_at`
+   when the source gives a date). Or,
    for an existing project: compare with its phases first and ask how to merge duplicates;
    then `add_phase` / `add_task` and `complete_task`. These take no `origin` and completions
-   get today's date, so write `imported from <origin>, done <date>` in the task notes and
-   tell the user.
+   get today's date and each one writes a completion event in the diary, so write
+   `imported from <origin>, done <date>` in the task notes and tell the user how many
+   completion events to expect.
 2. Diary notes in chronological order with `log_progress` (`occurred_at`, `origin`), then the
    "Open questions" and "Imported notes" notes.
 3. `set_status` and `set_next_task` if the report says so.

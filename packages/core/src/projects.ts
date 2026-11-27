@@ -479,18 +479,23 @@ export class ProjectsService {
       .where(eq(projectRepos.fullName, repo.fullName.toLowerCase()))
       .get();
     if (existing && existing.projectId === row.id) {
-      return this.updateRepo(
-        existing.id,
-        {
-          docsPath: 'docsPath' in repo ? repo.docsPath : undefined,
-          showCommits: 'showCommits' in repo ? repo.showCommits : undefined,
-        },
-        ctx,
-      );
+      const docsPath = 'docsPath' in repo ? repo.docsPath : undefined;
+      const showCommits = 'showCommits' in repo ? repo.showCommits : undefined;
+      // A plain relink changes nothing (verification C8).
+      if (docsPath === undefined && showCommits === undefined) return this.get(row.id);
+      return this.updateRepo(existing.id, { docsPath, showCommits }, ctx);
     }
+    const firstRepo =
+      this.d.db
+        .select({ id: projectRepos.id })
+        .from(projectRepos)
+        .where(eq(projectRepos.projectId, row.id))
+        .get() === undefined;
+    // Only the first repo switches empty internal docs (D68): a later repo leaves the user's choice.
+    const switchDocs = firstRepo && row.docsSource === 'internal' && row.internalDocs.trim() === '';
     this.d.tx(() => {
       this.insertRepo(row.id, repo);
-      if (row.docsSource === 'internal' && row.internalDocs.trim() === '') {
+      if (switchDocs) {
         this.d.db
           .update(projects)
           .set({ docsSource: 'repo', updatedAt: this.d.now() })
@@ -502,7 +507,8 @@ export class ProjectsService {
         entity: 'repo',
         entityId: null,
         action: 'link',
-        after: repo,
+        before: switchDocs ? { docsSource: 'internal' } : undefined,
+        after: switchDocs ? { ...repo, docsSource: 'repo' } : repo,
       });
     });
     return this.get(row.id);

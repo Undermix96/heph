@@ -273,7 +273,8 @@ function quote(text: string): string {
 
 function docsRule(p: ProjectDetail): string {
   return p.docsSource === 'internal'
-    ? 'with update_docs'
+    ? // D69: a local repo not on GitHub yet keeps its decisions in the repo.
+      "with update_docs; if this project's code is in a local repo not on GitHub yet, in that repo's DECISIONS.md instead, in English"
     : `in ${p.repoDetails[0]?.docsPath ?? 'DECISIONS.md'} in the repo, in English`;
 }
 

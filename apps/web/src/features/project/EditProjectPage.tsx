@@ -46,7 +46,11 @@ function EditForm({ p }: { p: ProjectDetail }) {
   const [description, setDescription] = useState(p.description);
   const [tags, setTags] = useState(p.tags.join(', '));
   const [links, setLinks] = useState(p.links.map((l) => ({ label: l.label, url: l.url })));
-  const [docsSource, setDocsSource] = useState(p.docsSource);
+  // null until the user picks one, so the field follows the server: linking the first repo
+  // switches it to repo docs (D68), and saving must not send back the value the page opened
+  // with (verification C8).
+  const [docsChoice, setDocsSource] = useState<typeof p.docsSource | null>(null);
+  const docsSource = docsChoice ?? p.docsSource;
   const [error, setError] = useState<MessageKey | null>(null);
   const save = useApiMutation((input: UpdateProjectInput) => api.updateProject(p.slug, input), {
     invalidate: () => [keys.project(p.slug), ['docs', p.slug]],

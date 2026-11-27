@@ -408,6 +408,10 @@ export class RevertService {
           .set({ ...set, updatedAt: this.d.now() })
           .where(eq(phases.id, id))
           .run();
+        // The old status must still agree with the tasks as they are now (verification B9).
+        if (set.status && !this.consistent({ id, status: set.status, completedAt: null })) {
+          this.d.roadmap.syncPhase(id);
+        }
         return;
       }
       case 'phase/move':
@@ -668,8 +672,10 @@ export class RevertService {
   private labelOf(r: LogRow, b: Obj, a: Obj): string | null {
     const str = (v: unknown) => (typeof v === 'string' && v ? v : null);
     if (r.entity === 'project' && r.action === 'set_next_task') {
+      // The title recorded with the change, else the task as it is now, else its id (B9).
       const tid = num(a.nextTaskOverrideId);
-      return tid === null ? null : this.taskTitle(tid);
+      if (tid === null) return null;
+      return (typeof a.title === 'string' && a.title) || this.taskTitle(tid) || `#${tid}`;
     }
     const stored =
       str(a.title) ??

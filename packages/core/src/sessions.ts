@@ -1,11 +1,20 @@
-import { type LiveSessionView, RepoFullName } from '@heph/schema';
-import { and, eq, gt, inArray, isNull, lte } from 'drizzle-orm';
+import {
+  type ClaudeQueueView,
+  type LiveSessionView,
+  type QueueItemView,
+  QueueQuery,
+  RepoFullName,
+} from '@heph/schema';
+import { and, desc, eq, gt, gte, inArray, isNotNull, isNull, lte, or } from 'drizzle-orm';
 import { diaryDue, isTestCommand } from './autodiary.js';
-import { claudeSessions, projectRepos, projects } from './db/schema.js';
+import { claudeSessions, diaryEntries, projectRepos, projects } from './db/schema.js';
 import type { Domain } from './domain.js';
-import { iso } from './util.js';
+import { iso, parse } from './util.js';
 
 type SessionRow = typeof claudeSessions.$inferSelect;
+
+/** Most ended sessions listed in Claude's queue. */
+export const QUEUE_ENDED_MAX = 20;
 
 /** What a hook script reports from the machine Claude Code runs on (§9). */
 export interface HookFacts {
@@ -64,6 +73,67 @@ export class SessionsService {
       ]);
     }
     return out;
+  }
+
+  /**
+   * Claude's queue on the dashboard (D76): sessions linked to a project that are
+   * running, and those that ended (or went silent) since `since` — the start of
+   * the viewer's local day — when they wrote at least one diary entry.
+   */
+  queue(query: unknown): ClaudeQueueView {
+    const { since } = parse(QueueQuery, query);
+    const cutoff = this.d.now() - this.d.settings.get().sessionExpiryMinutes * 60_000;
+    const rows = this.d.db
+      .select({ s: claudeSessions, slug: projects.slug, name: projects.name })
+      .from(claudeSessions)
+      .innerJoin(projects, eq(projects.id, claudeSessions.projectId))
+      .where(
+        or(
+          isNull(claudeSessions.endedAt),
+          and(isNotNull(claudeSessions.endedAt), gte(claudeSessions.endedAt, since)),
+        ),
+      )
+      .all();
+    const running: QueueItemView[] = [];
+    const ended: QueueItemView[] = [];
+    for (const { s, slug, name } of rows) {
+      const live = s.endedAt === null && s.lastHeartbeatAt > cutoff;
+      const endedAt = live ? null : (s.endedAt ?? s.lastHeartbeatAt);
+      if (endedAt !== null && endedAt < since) continue;
+      const last = this.lastEntry(s.sessionId);
+      if (!live && last === null) continue;
+      const item: QueueItemView = {
+        sessionId: s.sessionId,
+        projectId: s.projectId as number,
+        projectSlug: slug,
+        projectName: name,
+        state: live ? (s.isTesting ? 'testing' : 'working') : 'ended',
+        startedAt: iso(s.startedAt),
+        endedAt: iso(endedAt),
+        lastEntry: last,
+      };
+      (live ? running : ended).push(item);
+    }
+    running.sort((a, b) => b.startedAt.localeCompare(a.startedAt));
+    ended.sort((a, b) => (b.endedAt ?? '').localeCompare(a.endedAt ?? ''));
+    return { running, ended: ended.slice(0, QUEUE_ENDED_MAX) };
+  }
+
+  /** The session's newest diary entry, cut to 300 characters (D76). */
+  private lastEntry(sessionId: string): QueueItemView['lastEntry'] {
+    const e = this.d.db
+      .select({ body: diaryEntries.body, occurredAt: diaryEntries.occurredAt })
+      .from(diaryEntries)
+      .where(eq(diaryEntries.sessionId, sessionId))
+      .orderBy(desc(diaryEntries.occurredAt), desc(diaryEntries.id))
+      .limit(1)
+      .get();
+    if (!e) return null;
+    const body = e.body.trim();
+    return {
+      body: body.length > 300 ? `${body.slice(0, 299)}…` : body,
+      occurredAt: iso(e.occurredAt),
+    };
   }
 
   /** Project a Claude Code session is linked to (set by the hooks). */

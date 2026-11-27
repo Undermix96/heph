@@ -60,7 +60,10 @@ const log = async (request: Request) => {
   } catch {}
   calls.push({ method: request.method, path: u.pathname, body });
 };
-const server = setupServer();
+// Claude's queue (D76) is empty unless a test says otherwise.
+const server = setupServer(
+  http.get('/api/claude-queue', () => HttpResponse.json({ running: [], ended: [] })),
+);
 beforeAll(() => server.listen());
 afterEach(() => {
   cleanup();
@@ -142,12 +145,31 @@ describe('verifyD: phone dashboard actions', () => {
     expect(pick.getAttribute('href')).toBe('/p/banco');
   });
 
-  it('Claude at work with one project uses a singular sentence', async () => {
-    server.use(http.get('/api/proposals', () => HttpResponse.json([])));
+  // The "Claude at work" sentence was replaced by Claude's queue (D76).
+  it("Claude at work shows Claude's queue with the session", async () => {
+    server.use(
+      http.get('/api/proposals', () => HttpResponse.json([])),
+      http.get('/api/claude-queue', () =>
+        HttpResponse.json({
+          running: [
+            {
+              sessionId: 's1',
+              projectId: 1,
+              projectSlug: 'banco',
+              projectName: 'Banco da lavoro',
+              state: 'working',
+              startedAt: '2026-11-25T08:00:00.000Z',
+              endedAt: null,
+              lastEntry: null,
+            },
+          ],
+          ended: [],
+        }),
+      ),
+    );
     renderApp(<MobileDashboard projects={[summary({ activityState: 'claude_working' })]} />);
-    const title = await screen.findByRole('heading', { name: /Claude al lavoro/ });
-    // "su 1 progetti" is ungrammatical.
-    expect(title.textContent).not.toMatch(/\b1 progetti\b/);
+    const title = await screen.findByRole('heading', { name: /Coda di Claude/ });
+    expect(title.textContent).toContain('1 in corso · 0 oggi');
   });
 
   it('a very long project name stays inside its row (wraps, no fixed width)', async () => {

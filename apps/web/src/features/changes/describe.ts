@@ -68,6 +68,9 @@ export function changeText(c: ChangeView, t: T): string {
   if (kind === 'project/set_next_task' && c.label === null) {
     return t('changes.project.set_next_task.cleared');
   }
+  if (kind === 'roadmap/restructure' && c.operations === 1) {
+    return t('changes.roadmap.restructure.one');
+  }
   return t(`changes.${c.entity}.${c.action}` as MessageKey, {
     label,
     fields,

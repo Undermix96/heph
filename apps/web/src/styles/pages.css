@@ -1622,3 +1622,85 @@ fieldset.m-chips {
     align-items: center;
   }
 }
+
+/* Claude's queue (mockup 01, D76) */
+.claude-queue {
+  position: fixed;
+  right: var(--space-5);
+  bottom: var(--space-5);
+  width: 330px;
+  max-width: calc(100vw - 2 * var(--space-5));
+  background: var(--bg-canvas);
+  border: 1px solid var(--ai-border);
+  border-radius: var(--radius-box);
+  box-shadow: var(--shadow-overlay);
+  z-index: 20;
+}
+.claude-queue-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--ai-subtle);
+  border-bottom: 1px solid var(--ai-border);
+  border-radius: var(--radius-box) var(--radius-box) 0 0;
+  color: var(--ai-fg);
+}
+.claude-queue-head h2 {
+  margin: 0;
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  color: var(--fg-default);
+}
+.claude-queue-toggle {
+  margin-left: auto;
+  min-width: 44px;
+  min-height: 44px;
+  margin-block: calc(-1 * var(--space-2));
+  background: transparent;
+  border: 0;
+  color: var(--fg-muted);
+  cursor: pointer;
+}
+.claude-queue-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+.claude-queue-item {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--border-muted);
+}
+.claude-queue-item:last-child {
+  border-bottom: 0;
+}
+.claude-queue-line {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font-size: var(--text-md);
+}
+.claude-queue-line a {
+  font-weight: var(--weight-semibold);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.claude-queue-state {
+  flex: none;
+  font-size: var(--text-sm);
+  color: var(--ai-fg);
+}
+.claude-queue-ended .claude-queue-state {
+  color: var(--success-fg);
+}
+.claude-queue-text {
+  margin: var(--space-1) 0 0;
+  font-size: var(--text-sm);
+  color: var(--fg-default);
+  overflow-wrap: anywhere;
+}
+.m-claude .claude-queue-item {
+  padding-inline: 0;
+}

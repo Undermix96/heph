@@ -113,8 +113,6 @@ export const en: Record<MessageKey, string> = {
   'dash.noMatch.title': 'No project matches the filters',
   'dash.noMatch.text': 'Change the filters or the search text.',
   'dash.clearFilters': 'Clear filters',
-  'dash.queue.title': "Claude's queue",
-  'dash.queue.soon': "Claude's job queue comes with the Claude Code plugin (phase 5).",
   'dash.col.name': 'Project',
   'dash.col.status': 'Status',
   'dash.col.next': 'Next step',
@@ -536,7 +534,6 @@ export const en: Record<MessageKey, string> = {
   'nav.more': 'More actions',
   'm.attention': 'Needs attention',
   'm.stalled': 'Idle for a while: choose how to restart',
-  'm.claudeWorking': 'Claude is working on {n} projects',
   'm.all': 'All',
   'm.test': 'Test',
   'm.proposal': 'Proposal',
@@ -616,6 +613,20 @@ export const en: Record<MessageKey, string> = {
   'changes.field.slug': 'slug',
   'proposals.kind.revert_change': 'Undo a change',
   'proposals.revertOf': 'Undo change #{id}: {what}',
+  'queue.title': "Claude's queue",
+  'queue.counts': '{running} running · {ended} today',
+  'queue.collapse': "Collapse Claude's queue",
+  'queue.expand': "Open Claude's queue",
+  'queue.state.working': 'working',
+  'queue.state.testing': 'running tests',
+  'queue.state.ended': 'ended',
+  'queue.noEntry': 'No diary note yet',
+  'changes.error.blockedFinal':
+    'A later change that cannot be undone touched the same item (#{id}, “{what}”, highlighted in the list): this change can no longer be undone.',
+  'changes.roadmap.restructure.one': 'Roadmap reorganized (1 operation)',
+  'proposals.error.blocked':
+    "Cannot approve: a later change touched the same item (#{id}, “{what}”). Undo it first in the project's Changes tab, or reject the proposal.",
+  'proposals.error.blockedFinal':
+    'Cannot approve: a later change that cannot be undone touched the same item (#{id}, “{what}”). Reject the proposal.',
   'm.notePlaceholder': 'Write a note…',
-  'm.claudeWorkingOne': 'Claude is working on 1 project',
 };

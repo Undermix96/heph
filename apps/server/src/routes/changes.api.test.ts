@@ -125,3 +125,23 @@ describe('changes MCP (D75)', () => {
     expect(m.d.proposals.list(s.id)).toHaveLength(0);
   });
 });
+
+describe("Claude's queue REST (D76)", () => {
+  it('returns running sessions; `since` is required', async () => {
+    t = await startApi();
+    const p = await t.seed();
+    t.insertLiveSession(p.id, 'sess-q', true);
+    const since = new Date(t.clock.now - 3_600_000).toISOString();
+    const r = await t.uiReq('GET', `/api/claude-queue?since=${encodeURIComponent(since)}`);
+    expect(r.status).toBe(200);
+    expect(r.data).toMatchObject({
+      running: [{ sessionId: 'sess-q', projectSlug: p.slug, state: 'testing', lastEntry: null }],
+      ended: [],
+    });
+    expect((await t.uiReq('GET', '/api/claude-queue')).status).toBe(400);
+    // The token reads it too (same data as the dashboard).
+    expect(
+      (await t.agentReq('GET', `/api/claude-queue?since=${encodeURIComponent(since)}`)).status,
+    ).toBe(200);
+  });
+});

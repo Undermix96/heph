@@ -1,5 +1,5 @@
 import type { ChangeView } from '@heph/schema';
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { ApiError, api } from '../../api/client.js';
 import { keys, useApiMutation } from '../../api/queries.js';
@@ -17,6 +17,7 @@ import {
 } from '../../components/ui.js';
 import { useT } from '../../i18n/index.js';
 import { errorKey } from '../../lib/errors.js';
+import { BlockedText } from './Blocked.js';
 import { changeText, refusalOf } from './describe.js';
 
 const PAGE = 50;
@@ -41,6 +42,8 @@ export function ChangesTab({ projectRef }: { projectRef: string }) {
       }),
     initialPageParam: undefined as number | undefined,
     getNextPageParam: (last) => (last.length < PAGE ? undefined : last.at(-1)?.id),
+    // Keep the list (and an open dialog) while another filter loads.
+    placeholderData: (prev) => prev,
   });
 
   const head = (
@@ -140,7 +143,12 @@ export function ChangesTab({ projectRef }: { projectRef: string }) {
         <ConfirmRevert
           change={confirm}
           projectRef={projectRef}
-          onBlocked={setBlocked}
+          onBlocked={(id) => {
+            setBlocked(id);
+            // The later change may be one that cannot be reverted: show every change
+            // so it is in the list and highlighted (verification B9).
+            if (id !== null) setFilter('all');
+          }}
           onClose={() => setConfirm(null)}
         />
       )}
@@ -189,11 +197,6 @@ function ConfirmRevert({
     });
   };
   const refusal = error instanceof ApiError ? refusalOf(error.details) : null;
-  const blocker = useQuery({
-    queryKey: ['change', refusal?.kind === 'blocked' ? refusal.blockedBy : 0],
-    queryFn: () => api.change((refusal as { blockedBy: number }).blockedBy),
-    enabled: refusal?.kind === 'blocked',
-  });
 
   return (
     <Dialog
@@ -214,18 +217,17 @@ function ConfirmRevert({
       <p className="muted">{t('changes.confirmText')}</p>
       {error !== null && (
         <Alert tone={refusal?.kind === 'blocked' ? 'attention' : 'danger'}>
-          {refusal?.kind === 'blocked'
-            ? t('changes.error.blocked', {
-                what: blocker.data ? changeText(blocker.data, t) : `#${refusal.blockedBy}`,
-                id: refusal.blockedBy,
-              })
-            : refusal?.kind === 'already'
-              ? t('changes.error.already')
-              : refusal?.kind === 'gone'
-                ? t('changes.error.gone')
-                : refusal?.kind === 'not_revertible'
-                  ? t('changes.error.notRevertible')
-                  : t(errorKey(error))}
+          {refusal?.kind === 'blocked' ? (
+            <BlockedText blockedBy={refusal.blockedBy} where="changes" />
+          ) : refusal?.kind === 'already' ? (
+            t('changes.error.already')
+          ) : refusal?.kind === 'gone' ? (
+            t('changes.error.gone')
+          ) : refusal?.kind === 'not_revertible' ? (
+            t('changes.error.notRevertible')
+          ) : (
+            t(errorKey(error))
+          )}
         </Alert>
       )}
     </Dialog>

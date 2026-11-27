@@ -274,6 +274,10 @@ export function apiRoutes(domain: Domain, github?: GitHubClients) {
     return c.body(null, 204);
   });
 
+  // ------------------------------------------------------------ Claude's queue (D76)
+
+  r.get('/claude-queue', (c) => c.json(domain.sessions.queue(queryObject(c))));
+
   // ------------------------------------------------------------ changes (D74)
 
   r.get('/projects/:ref/changes', (c) => c.json(domain.revert.list(ref(c), queryObject(c))));

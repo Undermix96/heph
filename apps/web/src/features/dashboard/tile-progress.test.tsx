@@ -8,7 +8,10 @@ import { afterAll, afterEach, beforeAll, expect, it } from 'vitest';
 import { renderApp, summary } from '../../test/render.js';
 import { DashboardPage } from './DashboardPage.js';
 
-const server = setupServer();
+// Claude's queue (D76) is empty unless a test says otherwise.
+const server = setupServer(
+  http.get('/api/claude-queue', () => HttpResponse.json({ running: [], ended: [] })),
+);
 beforeAll(() => server.listen({ onUnhandledFrame: 'error' }));
 afterEach(() => {
   cleanup();

@@ -1,6 +1,7 @@
 import type {
   AddTaskInput,
   ChangeView,
+  ClaudeQueueView,
   CreateProjectInput,
   DiaryEntryView,
   DiaryType,
@@ -268,6 +269,10 @@ export const api = {
   rejectProposal: (id: number, note?: string) =>
     request<ProposalView>('POST', `/proposals/${id}/reject`, { note }),
   proposals: (state = 'pending') => request<ProposalView[]>('GET', `/proposals?state=${state}`),
+
+  // Claude's queue (D76): `since` = start of the viewer's local day
+  claudeQueue: (since: string) =>
+    request<ClaudeQueueView>('GET', `/claude-queue?since=${encodeURIComponent(since)}`),
 
   // changes (D74)
   changes: (ref: string | number, q: { before?: number; limit?: number; revertible?: boolean }) => {

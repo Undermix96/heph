@@ -7,6 +7,7 @@ import { useNotices } from '../../app/notices.js';
 import { ProgressBar, RelativeTime, StatusLabel } from '../../components/ui.js';
 import { type MessageKey, useI18n, useT } from '../../i18n/index.js';
 import { changesOf } from '../proposals/changes.js';
+import { QueueRow, queueIsEmpty, useClaudeQueue } from './ClaudeQueue.js';
 import {
   applyFilters,
   CLOSED,
@@ -35,9 +36,7 @@ export function MobileDashboard({ projects }: { projects: ProjectSummary[] }) {
       (p.badge.kind === 'no_next_step' || p.badge.kind === 'inactive'),
   );
   const pending = proposals.data ?? [];
-  const working = open.filter(
-    (p) => p.activityState === 'claude_working' || p.activityState === 'claude_testing',
-  );
+  const queue = useClaudeQueue();
   const attention = testing.length + pending.length + stuck.length;
   const shown = sortProjects(applyFilters(projects, f), 'attention', lang);
 
@@ -95,22 +94,26 @@ export function MobileDashboard({ projects }: { projects: ProjectSummary[] }) {
         </section>
       )}
 
-      {working.length > 0 && (
-        <section className="box box-ai m-claude">
+      {!queueIsEmpty(queue.data) && queue.data && (
+        <section className="box box-ai m-claude" aria-label={t('queue.title')}>
           <div className="box-body">
             <h2 className="m-claude-title">
-              <span className="dot dot-live" aria-hidden="true" />{' '}
-              {t(working.length === 1 ? 'm.claudeWorkingOne' : 'm.claudeWorking', {
-                n: working.length,
-              })}
+              {queue.data.running.length > 0 && (
+                <span className="dot dot-live" aria-hidden="true" />
+              )}
+              {t('queue.title')}{' '}
+              <span className="meta">
+                {t('queue.counts', {
+                  running: queue.data.running.length,
+                  ended: queue.data.ended.length,
+                })}
+              </span>
             </h2>
-            {working.map((p) => (
-              <p key={p.id} className="m-text">
-                <Link to={`/p/${p.slug}`}>{p.name}</Link> ·{' '}
-                {t(`activity.${p.activityState}` as MessageKey)} ·{' '}
-                <RelativeTime iso={p.lastActivityAt} />
-              </p>
-            ))}
+            <ul className="claude-queue-list">
+              {[...queue.data.running, ...queue.data.ended].map((item) => (
+                <QueueRow key={item.sessionId} item={item} />
+              ))}
+            </ul>
           </div>
         </section>
       )}

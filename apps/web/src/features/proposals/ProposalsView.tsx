@@ -2,7 +2,7 @@ import type { ProposalState, ProposalView } from '@heph/schema';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { Link } from 'react-router';
-import { api } from '../../api/client.js';
+import { ApiError, api } from '../../api/client.js';
 import { keys, useApiMutation, useProjects } from '../../api/queries.js';
 import { useNotices } from '../../app/notices.js';
 import {
@@ -18,7 +18,8 @@ import {
 } from '../../components/ui.js';
 import { type MessageKey, useT } from '../../i18n/index.js';
 import { errorKey } from '../../lib/errors.js';
-import { changeText } from '../changes/describe.js';
+import { BlockedText } from '../changes/Blocked.js';
+import { changeText, refusalOf } from '../changes/describe.js';
 import { changesOf } from './changes.js';
 
 /**
@@ -86,10 +87,22 @@ function ProposalBox({
         keys.proposals,
         ...(projectName ? [keys.project(projectName.slug)] : []),
       ],
-      onSuccess: (_r, approve) =>
-        notices.info(approve ? 'proposals.approved' : 'proposals.rejected'),
+      // A revert proposal explains its own refusals in place (verification B9).
+      quietErrors: p.kind === 'revert_change',
+      onSuccess: (_r, approve) => {
+        setRefused(null);
+        notices.info(approve ? 'proposals.approved' : 'proposals.rejected');
+      },
     },
   );
+  const [refused, setRefused] = useState<unknown>(null);
+  const run = (approve: boolean) =>
+    decide.mutate(approve, {
+      onError: (e) => {
+        if (p.kind === 'revert_change') setRefused(e);
+      },
+    });
+  const refusal = refused instanceof ApiError ? refusalOf(refused.details) : null;
   const c = changesOf(p);
   return (
     <Box
@@ -152,19 +165,20 @@ function ProposalBox({
               onChange={(e) => setNote(e.target.value)}
             />
           </Field>
+          {refused !== null && (
+            <Alert tone={refusal?.kind === 'blocked' ? 'attention' : 'danger'}>
+              {refusal?.kind === 'blocked' ? (
+                <BlockedText blockedBy={refusal.blockedBy} where="proposal" />
+              ) : (
+                t(errorKey(refused))
+              )}
+            </Alert>
+          )}
           <div className="row">
-            <Button
-              variant="primary"
-              disabled={decide.isPending}
-              onClick={() => decide.mutate(true)}
-            >
+            <Button variant="primary" disabled={decide.isPending} onClick={() => run(true)}>
               {t('proposals.approve')}
             </Button>
-            <Button
-              variant="danger"
-              disabled={decide.isPending}
-              onClick={() => decide.mutate(false)}
-            >
+            <Button variant="danger" disabled={decide.isPending} onClick={() => run(false)}>
               {t('proposals.reject')}
             </Button>
           </div>

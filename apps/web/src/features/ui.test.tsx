@@ -12,7 +12,10 @@ import { RoadmapBoard } from './roadmap/RoadmapBoard.js';
 
 // Fake API built on the @heph/schema view types; invented data only.
 const calls: { method: string; path: string; body: unknown }[] = [];
-const server = setupServer();
+// Claude's queue (D76) is empty unless a test says otherwise.
+const server = setupServer(
+  http.get('/api/claude-queue', () => HttpResponse.json({ running: [], ended: [] })),
+);
 const record =
   (status = 200, reply: unknown = {}) =>
   async ({ request }: { request: Request }) => {

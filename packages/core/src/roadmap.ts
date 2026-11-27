@@ -579,7 +579,8 @@ export class RoadmapService {
         entityId: project.id,
         action: 'set_next_task',
         before: { nextTaskOverrideId: project.nextTaskOverrideId },
-        after: { nextTaskOverrideId: taskId },
+        // The title keeps the change readable after the task is deleted (D74).
+        after: { nextTaskOverrideId: taskId, title: after?.id === taskId ? after.title : null },
       });
       return after;
     });

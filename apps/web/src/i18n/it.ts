@@ -115,8 +115,6 @@ export const it = {
   'dash.noMatch.title': 'Nessun progetto corrisponde ai filtri',
   'dash.noMatch.text': 'Cambia i filtri o il testo cercato.',
   'dash.clearFilters': 'Azzera i filtri',
-  'dash.queue.title': 'Coda di Claude',
-  'dash.queue.soon': 'La coda dei lavori di Claude arriva con il plugin di Claude Code (fase 5).',
   'dash.col.name': 'Progetto',
   'dash.col.status': 'Stato',
   'dash.col.next': 'Prossimo passo',
@@ -545,7 +543,6 @@ export const it = {
   'nav.more': 'Altre azioni',
   'm.attention': 'Richiede attenzione',
   'm.stalled': 'Fermo da tempo: scegli come ripartire',
-  'm.claudeWorking': 'Claude al lavoro su {n} progetti',
   'm.all': 'Tutti',
   'm.test': 'Test',
   'm.proposal': 'Proposta',
@@ -626,8 +623,22 @@ export const it = {
   'changes.field.slug': 'slug',
   'proposals.kind.revert_change': 'Annullare una modifica',
   'proposals.revertOf': 'Annulla la modifica #{id}: {what}',
+  'queue.title': 'Coda di Claude',
+  'queue.counts': '{running} in corso · {ended} oggi',
+  'queue.collapse': 'Riduci la coda di Claude',
+  'queue.expand': 'Apri la coda di Claude',
+  'queue.state.working': 'al lavoro',
+  'queue.state.testing': 'esegue test',
+  'queue.state.ended': 'finita',
+  'queue.noEntry': 'Ancora nessuna nota nel diario',
+  'changes.error.blockedFinal':
+    "Una modifica successiva, che non si può annullare, ha cambiato lo stesso elemento (#{id}, «{what}», evidenziata nell'elenco): questa modifica non si può più annullare.",
+  'changes.roadmap.restructure.one': 'Roadmap riorganizzata (1 operazione)',
+  'proposals.error.blocked':
+    'Non si può approvare: una modifica successiva ha cambiato lo stesso elemento (#{id}, «{what}»). Annulla prima quella nella scheda Modifiche del progetto, oppure rifiuta la proposta.',
+  'proposals.error.blockedFinal':
+    'Non si può approvare: una modifica successiva, che non si può annullare, ha cambiato lo stesso elemento (#{id}, «{what}»). Rifiuta la proposta.',
   'm.notePlaceholder': 'Scrivi una nota…',
-  'm.claudeWorkingOne': 'Claude al lavoro su 1 progetto',
 } as const;
 
 export type MessageKey = keyof typeof it;

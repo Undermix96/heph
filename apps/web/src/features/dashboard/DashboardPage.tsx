@@ -36,6 +36,7 @@ import { PHONE, useMedia } from '../../lib/media.js';
 import { DiaryView } from '../diary/DiaryView.js';
 import { GitHubAlert } from '../github/GitHub.js';
 import { ProposalsView } from '../proposals/ProposalsView.js';
+import { ClaudeQueue } from './ClaudeQueue.js';
 import {
   applyFilters,
   CLOSED,
@@ -121,7 +122,10 @@ export function DashboardPage({ tab }: { tab: 'projects' | 'tests' | 'diary' | '
       ) : phoneLayout ? (
         <MobileDashboard projects={all} />
       ) : (
-        <ProjectsTab projects={all} />
+        <>
+          <ProjectsTab projects={all} />
+          <ClaudeQueue />
+        </>
       )}
     </main>
   );
@@ -239,9 +243,6 @@ function ProjectsTab({ projects }: { projects: ProjectSummary[] }) {
               onToggle={(v) => setF({ ...f, tags: toggle(f.tags, v) })}
             />
           )}
-          <Box className="queue-placeholder" title={t('dash.queue.title')}>
-            <p className="muted small">{t('dash.queue.soon')}</p>
-          </Box>
         </div>
       </aside>
       <section className="content">

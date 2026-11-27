@@ -655,3 +655,11 @@ Alternatives rejected:
 
 - Keeping it as a later item: the owner does not want it implemented.
 - A connector with a fixed request header instead of OAuth: it still needs a public MCP endpoint (checked 2026-11-27, claude.com/docs/connectors/custom/remote-mcp).
+
+## D73 — No notifications (2026-11-27)
+
+Decision: Notifications are removed from the plan. The spec no longer lists them (§12.8) and the roadmap task was removed.
+Why: Owner decision of 2026-11-27.
+Alternatives rejected:
+
+- Keeping them as a later item: the owner does not want them in the plan.

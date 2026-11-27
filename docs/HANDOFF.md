@@ -259,7 +259,7 @@ Same domain operations as MCP, consumed by the UI. Plus:
 5. **Claude Code plugin** — hooks, injected rules, live sessions, testing detection, auto-diary, docs upload, "Connect Claude Code" page.
 6. **GitHub integration** — polling, events, docs fetch.
 7. **Bootstrap skill** — new project flow.
-8. **Later** — project import (done, D65–D70), notifications. No OAuth (D72), no mobile app / PWA (D71).
+8. **Later** — project import (done, D65–D70). No notifications (D73), no OAuth (D72), no mobile app / PWA (D71).
 
 ---
 

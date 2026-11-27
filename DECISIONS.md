@@ -630,3 +630,11 @@ Why: Owner decision of 2026-11-27. Decisions belong with the code (D15) and stay
 Alternatives rejected:
 
 - Heph internal docs until GitHub exists: decisions not versioned with the code, and a move later.
+
+## D70 — Migration skill fixes from the first pilot (2026-11-27)
+
+Decision: The migrate-project skill (D67) gets a mapping row for durable rules, constraints and conventions found in a tracking file: a `DECISIONS.md` entry when it is the why of a choice, otherwise a rule in the project's `CLAUDE.md`, never only in task notes or the diary; step 6 writes them, both verifiers check them, and "nothing is lost" lists `CLAUDE.md` as a target. Line references in the manifest are read from the files (`grep -n`, `cat -n`), the report's totals are counted from its target column (`awk`, summing to the number of items), and the pre-migration commit is written into commands instead of a shell variable.
+Why: In the owner's first migration (Mattinale, 2026-11-27) verifier #1 needed three rounds: a wrong count, two wrong line references, and a durable rule that would have survived only in a task's notes after the tracking file was deleted.
+Alternatives rejected:
+
+- Relying on the verifiers to catch them: each miss costs a full verifier round.

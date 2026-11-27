@@ -16,6 +16,18 @@ describe('plugin skills', () => {
     expect(m![1]).toMatch(/^description: .{40,}$/m);
   });
 
+  it('migrate-project maps durable rules and takes line refs and totals from the files (D70)', () => {
+    const text = skill('migrate-project');
+    const row = text
+      .split('\n')
+      .find((l) =>
+        l.startsWith('| Durable rule, constraint or convention found in a tracking file |'),
+      );
+    expect(row).toContain('never only in task notes');
+    expect(text).toContain('never estimated');
+    expect(text).toContain('never written by hand');
+  });
+
   it('migrate-project writes the exact marker the session-start text looks for', () => {
     const text = skill('migrate-project');
     expect(text).toContain(`\n${LEGACY_MARKER} (<file(s)>), not tracked in Heph`);

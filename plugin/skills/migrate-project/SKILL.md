@@ -12,8 +12,8 @@ Write repo files in English; talk to the user in their language.
 
 Rules for the whole procedure:
 
-- Nothing is lost: every source item ends in Heph, in `DECISIONS.md`, or stays in the repo
-  unchanged. Anything that fits nowhere is flagged `TBD` for the user, never dropped.
+- Nothing is lost: every source item ends in Heph, in `DECISIONS.md` or the project's
+  `CLAUDE.md`, or stays in the repo unchanged. Anything that fits nowhere is flagged `TBD` for the user, never dropped.
 - Never invent data: no made-up dates, done states or decisions. Unknown stays unknown.
 - Nothing is written to Heph or the repo before the user approves the reconciliation report.
 - In `private/` read docs only, never real-data files (spreadsheets, exports, databases).
@@ -53,8 +53,9 @@ user that Heph will leave this repo alone and that they can migrate later by del
   `DECISIONS.md` so decisions stay in one place.
 - `list_projects`: if a project already exists for this repo or name, ask whether to fill
   that one or create a new one.
-- Record `SHA=$(git rev-parse --short HEAD)`: the pre-migration commit. Later reads of
-  tracked sources use `git show $SHA:<path>`.
+- Note the pre-migration commit (`git rev-parse --short HEAD`) and write it into every later
+  command as `<SHA>` (shell variables do not survive between tool calls). Later reads of
+  tracked sources use `git show "<SHA>:<path>"` (`| cat -n` for numbered lines).
 
 ## 2. Inventory → manifest
 
@@ -74,7 +75,9 @@ user that Heph will leave this repo alone and that they can migrate later by del
    carries information: a phase or milestone (with its verification criterion and outcome),
    a task (done or open, with any date), the next step, the status (testing, waiting for…),
    an open question (open or answered), a decision, a deviation, an incident, a risk, a dated
-   progress entry, a reminder, anything else. Keep the source file and line range per item.
+   progress entry, a rule or constraint that holds for the whole project, a reminder, anything
+   else. Keep the source file and line range per item, read from the file itself
+   (`git show <SHA>:<path> | grep -n …`, or `cat -n` on the scratchpad copies), never estimated.
    The same fact stated in two sources is two items; the second gets the target "same as Sx".
 
 ## 3. Mapping → reconciliation report
@@ -93,6 +96,7 @@ Give every item exactly one target:
 | Undated progress text | one diary note "Imported notes", `origin` set |
 | Open questions | one diary note "Open questions": open ones as `- [ ]`, answered ones as `- [x] answer (date)` |
 | Decision, deviation (the "why") | `DECISIONS.md` entry; existing entries kept as they are |
+| Durable rule, constraint or convention found in a tracking file | `DECISIONS.md` entry if it is the why of a choice, else a rule in the project's `CLAUDE.md`; never only in task notes or the diary (the tracking file is deleted) |
 | Spec, design, risk register, other durable docs | stay in the repo, unchanged |
 | Fits nowhere | `TBD`: ask the user |
 
@@ -112,7 +116,10 @@ the snake_case names exactly. For something dated today, omit them (a plain date
 refused before 12:00 UTC).
 
 Write the report to the scratchpad as `migration-<slug>.md`: header (project, SHA, sources),
-then a table `Sx | source file:lines | summary | target | details` and totals per target.
+then a table `Sx | source file:lines | summary | target | details` and totals per target,
+counted from the table's target column, never written by hand; the totals sum to the number
+of `Sx` rows. Keep only the target category in that column (specifics go in details), then:
+`awk -F'|' '/^\| S[0-9]+ /{t=$5; gsub(/^ +| +$/,"",t); print t}' <report> | sort | uniq -c`
 Show the report (or its totals and every `TBD`) to the user.
 
 ## 4. Verifier #1 (before writing)
@@ -125,6 +132,8 @@ file. Ask it to:
   and check that every statement is covered by
   an item, and every item has one target;
 - check that nothing is altered: dates, done/open states, numbers, names, decision wording;
+- check that every target follows the mapping table (e.g. no durable rule targeted only at
+  task notes or the diary);
 - report gaps and changes with file and line, and nothing else. It does not write anything.
 
 Fix the report and rerun with a fresh subagent until it reports no gaps (at most 3 rounds in
@@ -157,7 +166,8 @@ without a clear yes.
   one-line pointer to Heph.
 - `CLAUDE.md`: sources-of-truth table with a `Heph project <slug>` row (roadmap, next step,
   diary; read at session start, injected by the heph plugin) and the `DECISIONS.md` row, like
-  the `new-project` template; remove rules that point to the deleted files.
+  the `new-project` template; add the durable rules, constraints and conventions the report
+  maps to `CLAUDE.md`, keeping their wording; remove rules that point to the deleted files.
 - `README.md`: fix the docs index.
 - Commit `Docs: move work state to Heph`, push if there is a remote. Record the new commit hash.
 
@@ -170,6 +180,8 @@ migration commit. Ask it to compare, item by item:
 - each `Sx` against Heph (`get_project`, `get_diary`, `get_docs`, `search`) or the repo at the
   migration commit, as the report says;
 - that the deleted files contain nothing that is missing from Heph or the repo;
+- that every rule the report maps to `CLAUDE.md` or `DECISIONS.md` is there at the migration
+  commit, not only in task notes or the diary;
 - that the repo's `CLAUDE.md` and `README.md` no longer point to deleted files.
 
 It reports missing or changed items by `Sx` id and writes nothing. Fix what it finds (repo:

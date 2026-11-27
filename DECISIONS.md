@@ -708,3 +708,12 @@ Alternatives rejected:
 
 - Allowing out-of-order reverts and repairing afterwards: cannot restore the order or status exactly.
 - Newest-first only for the whole project: blocks unrelated reverts.
+
+## D78 — Claude's queue on the phone sits where mockup 60 puts "Claude at work" (2026-11-27)
+
+Decision: On the phone, Claude's queue (D76) replaces the "Claude at work" block of mockup 60 in the same place, after "Needs attention", instead of on top of the dashboard as D76 says. On the phone the Changes tab (D74) shows each change as stacked rows so the "Undo change" button stays on screen.
+Why: The design wins over a layout detail of a decision (global rule: reproduce mockups faithfully); the first e2e screenshot at 390 px showed the table pushing the button off screen.
+Alternatives rejected:
+
+- A second Claude block on top: two blocks with the same information.
+- A horizontally scrolling table: the action is hidden.

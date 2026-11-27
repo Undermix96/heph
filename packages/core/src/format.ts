@@ -64,5 +64,6 @@ export function diaryLine(e: DiaryEntryView, max = 280): string {
   const kind = e.type === 'event' ? (e.eventKind ?? 'event') : e.type;
   const files = e.files.length ? ` [${e.files.length} file${e.files.length === 1 ? '' : 's'}]` : '';
   const session = e.sessionId ? ` (session ${e.sessionId.slice(0, 8)})` : '';
-  return `- ${isoTimestamp(e.occurredAt)} · ${SOURCE_LABEL[e.source]}${session} · ${kind} #${e.id}: ${oneLine(e.body, max)}${files}`;
+  const origin = e.origin ? ` · imported (${oneLine(e.origin, 80)})` : '';
+  return `- ${isoTimestamp(e.occurredAt)} · ${SOURCE_LABEL[e.source]}${session}${origin} · ${kind} #${e.id}: ${oneLine(e.body, max)}${files}`;
 }

@@ -60,10 +60,40 @@ export const RepoInput = z.object({
 });
 export type RepoInput = z.infer<typeof RepoInput>;
 
+/** Free-form marker of where imported data came from (spec §13, D65). */
+export const Origin = z.string().trim().min(1).max(200);
+
+/**
+ * A time for imported history (D65): ISO date-time (offset allowed) or a plain
+ * date `YYYY-MM-DD`, read as 12:00 UTC so it stays on the same day in Europe.
+ * Parsed to epoch ms; the domain refuses times in the future.
+ */
+export const ImportTime = z
+  .union([z.iso.datetime({ offset: true }), z.iso.date()])
+  .transform((v) => Date.parse(v.length === 10 ? `${v}T12:00:00Z` : v));
+
+/** A task of an initial phase: a title, or a task that may already be done (imports, D65). */
+export const InitialTaskInput = z.union([
+  title,
+  z
+    .object({
+      title,
+      notes: md().optional(),
+      done: z.boolean().optional(),
+      /** When it was done; only with done: true. Defaults to now. */
+      doneAt: ImportTime.optional(),
+    })
+    .refine((t) => t.doneAt === undefined || t.done === true, {
+      message: 'doneAt needs done: true',
+      path: ['doneAt'],
+    }),
+]);
+export type InitialTaskInput = z.infer<typeof InitialTaskInput>;
+
 export const InitialPhaseInput = z.object({
   title,
   description: md().optional(),
-  tasks: z.array(title).max(200).optional(),
+  tasks: z.array(InitialTaskInput).max(200).optional(),
 });
 
 /** Statuses a project can be created with or set to without confirmation. */
@@ -83,7 +113,7 @@ export const CreateProjectInput = z.object({
   lifecycleStatus: OpenLifecycleStatus.optional(),
   statusNote: md(20_000).optional(),
   docsSource: DocsSource.optional(),
-  origin: z.string().max(200).optional(),
+  origin: Origin.optional(),
 });
 export type CreateProjectInput = z.infer<typeof CreateProjectInput>;
 
@@ -162,6 +192,9 @@ export type MoveTaskInput = z.infer<typeof MoveTaskInput>;
 export const AddNoteInput = z.object({
   body: md().refine((s) => s.trim().length > 0, 'Body is required'),
   fileIds: z.array(Id).max(50).optional(),
+  /** Backdates the entry for imported history (D65); never in the future. */
+  occurredAt: ImportTime.optional(),
+  origin: Origin.optional(),
 });
 export type AddNoteInput = z.infer<typeof AddNoteInput>;
 

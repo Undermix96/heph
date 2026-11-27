@@ -42,6 +42,15 @@ const confirmedArg = z
   .describe(
     'true ONLY if the user explicitly confirmed this change in the conversation; otherwise a proposal is created',
   );
+/** Imported history (D65): validated by the domain (ISO date-time or YYYY-MM-DD, not in the future). */
+const importTime = z.string().max(40);
+const originArg = z
+  .string()
+  .max(200)
+  .optional()
+  .describe(
+    'Marks imported data with where it came from, e.g. "migration 2026-11-27: docs/ROADMAP.md@abc1234" (§13)',
+  );
 const reasonArg = z
   .string()
   .max(20_000)
@@ -448,12 +457,30 @@ export function createHephMcpServer(domain: Domain, opts: McpServerOptions): Mcp
             z.object({
               title: z.string().min(1).max(300),
               description: z.string().optional(),
-              tasks: z.array(z.string().min(1).max(300)).optional(),
+              tasks: z
+                .array(
+                  z.union([
+                    z.string().min(1).max(300),
+                    z.object({
+                      title: z.string().min(1).max(300),
+                      notes: z.string().optional(),
+                      done: z.boolean().optional(),
+                      done_at: importTime
+                        .optional()
+                        .describe('When it was done (only with done: true); default now'),
+                    }),
+                  ]),
+                )
+                .optional()
+                .describe(
+                  'Titles, or {title, notes, done, done_at} to import tasks already done (no completion events)',
+                ),
             }),
           )
           .optional(),
         status: openStatus.optional(),
         status_note: z.string().optional(),
+        origin: originArg,
         session_id: sessionArg,
       }),
       annotations: additive,
@@ -466,9 +493,18 @@ export function createHephMcpServer(domain: Domain, opts: McpServerOptions): Mcp
           tags: a.tags,
           repos: a.repos,
           links: a.links,
-          phases: a.phases,
+          phases: a.phases?.map((ph) => ({
+            title: ph.title,
+            description: ph.description,
+            tasks: ph.tasks?.map((t) =>
+              typeof t === 'string'
+                ? t
+                : { title: t.title, notes: t.notes, done: t.done, doneAt: t.done_at },
+            ),
+          })),
           lifecycleStatus: a.status,
           statusNote: a.status_note,
+          origin: a.origin,
         },
         ctx(a),
       );
@@ -541,12 +577,20 @@ export function createHephMcpServer(domain: Domain, opts: McpServerOptions): Mcp
         project: projectArg,
         body: z.string().min(1).max(200_000),
         file_ids: z.array(z.number().int().positive()).optional(),
+        occurred_at: importTime
+          .optional()
+          .describe('Backdates an imported entry (never in the future); default now'),
+        origin: originArg,
         session_id: sessionArg,
       }),
       annotations: additive,
     },
     (a) => {
-      const e = domain.diary.addNote(a.project, { body: a.body, fileIds: a.file_ids }, ctx(a));
+      const e = domain.diary.addNote(
+        a.project,
+        { body: a.body, fileIds: a.file_ids, occurredAt: a.occurred_at, origin: a.origin },
+        ctx(a),
+      );
       return `Diary entry #${e.id} saved (${e.type}${e.files.length ? `, ${e.files.length} file(s)` : ''}).`;
     },
   );

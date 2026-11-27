@@ -38,10 +38,20 @@ export class DiaryService {
   addNote(projectRef: ProjectRef, input: unknown, ctx: Ctx): DiaryEntryView {
     const data = parse(AddNoteInput, input);
     const project = this.d.projects.writable(projectRef, ctx);
+    // Imported history (D65): a backdated note, never in the future.
+    if (data.occurredAt !== undefined && data.occurredAt > this.d.now()) {
+      throw new DomainError('validation', 'occurredAt is in the future');
+    }
     const type: DiaryType = ctx.source === 'claude_code' && ctx.sessionId ? 'session' : 'note';
     const row = this.append(
       project.id,
-      { type, body: data.body.trim(), fileIds: data.fileIds },
+      {
+        type,
+        body: data.body.trim(),
+        fileIds: data.fileIds,
+        occurredAt: data.occurredAt,
+        origin: data.origin,
+      },
       ctx,
     );
     return this.get(row.id);
@@ -195,6 +205,7 @@ export class DiaryService {
       source: r.source,
       sessionId: r.sessionId,
       occurredAt: iso(r.occurredAt),
+      origin: r.origin,
       files: fileRows.filter((f) => f.diaryEntryId === r.id).map((f) => this.d.files.toView(f)),
     }));
   }

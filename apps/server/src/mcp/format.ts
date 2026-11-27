@@ -106,6 +106,7 @@ export function projectDetail(
   if (p.links.length)
     out.push(`Links: ${p.links.map((l) => `[${l.label}](${l.url})`).join(' · ')}`);
   out.push(`Docs: ${p.docsSource}${p.claudeWriteEnabled ? '' : ' · Claude write access DISABLED'}`);
+  if (p.origin) out.push(`Imported: ${oneLine(p.origin, 200)}`);
   if (p.description.trim()) out.push('', p.description.trim());
   if (p.statusNote.trim()) out.push('', `**Status note:** ${p.statusNote.trim()}`);
   out.push(

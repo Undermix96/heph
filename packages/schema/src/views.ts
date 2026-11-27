@@ -202,6 +202,8 @@ export interface DiaryEntryView {
   source: Source;
   sessionId: string | null;
   occurredAt: IsoTime;
+  /** Set on imported entries (spec §13, D65). Optional so older payloads and fixtures stay valid. */
+  origin?: string | null;
   files: FileView[];
 }
 

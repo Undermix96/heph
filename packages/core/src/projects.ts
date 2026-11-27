@@ -21,6 +21,7 @@ import type { Ctx } from './context.js';
 import {
   files,
   isoForStorage,
+  phases,
   projectLinks,
   projectRepos,
   projects,
@@ -245,7 +246,33 @@ export class ProjectsService {
           { title: ph.title, description: ph.description },
           ctx,
         );
-        for (const t of ph.tasks ?? []) this.d.roadmap.addTask(phase.id, { title: t }, ctx);
+        let lastDoneAt: number | null = null;
+        for (const t of ph.tasks ?? []) {
+          if (typeof t === 'string') {
+            this.d.roadmap.addTask(phase.id, { title: t }, ctx);
+            continue;
+          }
+          // Imported history (D65): done tasks keep their completion time.
+          const doneAt = t.done ? (t.doneAt ?? now) : undefined;
+          if (doneAt !== undefined && doneAt > now) {
+            throw new DomainError('validation', `Task "${t.title}": doneAt is in the future`);
+          }
+          this.d.roadmap.addTask(
+            phase.id,
+            { title: t.title, notes: t.notes },
+            ctx,
+            doneAt !== undefined ? { done: true, doneAt } : undefined,
+          );
+          if (doneAt !== undefined) lastDoneAt = Math.max(lastDoneAt ?? doneAt, doneAt);
+        }
+        // A phase done at import completed when its last task did, not now.
+        if (lastDoneAt !== null) {
+          this.d.db
+            .update(phases)
+            .set({ completedAt: lastDoneAt })
+            .where(and(eq(phases.id, phase.id), eq(phases.status, 'done')))
+            .run();
+        }
       }
       this.d.diary.event(row.id, 'project_created', `Project created: ${row.name}`, {}, ctx);
       return row.id;

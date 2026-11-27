@@ -297,7 +297,16 @@ export class RoadmapService {
 
   // ------------------------------------------------------------ tasks
 
-  addTask(phaseId: number, input: unknown, ctx: Ctx): TaskView {
+  /**
+   * `seed` creates the task already done (imported history, D65): no
+   * task_completed event, since the completion happened before the import.
+   */
+  addTask(
+    phaseId: number,
+    input: unknown,
+    ctx: Ctx,
+    seed?: { done: true; doneAt: number },
+  ): TaskView {
     const data = parse(AddTaskInput, input);
     const phase = this.getPhase(phaseId);
     this.d.projects.writable(phase.projectId, ctx);
@@ -313,6 +322,8 @@ export class RoadmapService {
           notes: data.notes ?? '',
           link: data.link ?? null,
           position: siblings.length,
+          done: seed?.done ?? false,
+          doneAt: seed?.doneAt ?? null,
           createdAt: now,
           updatedAt: now,
         })

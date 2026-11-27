@@ -584,3 +584,13 @@ Alternatives rejected:
 
 - Letting Claude write every file freehand: different results each time, untestable.
 - A separate CLI or package: one more thing to install; the plugin is already installed.
+
+## D65 — Import through generic MCP parameters (2026-11-27)
+
+Decision: Imported history goes through the normal tools (§13): `create_project` takes `origin` and phase tasks as titles or `{title, notes, done, done_at}`; `log_progress` takes `occurred_at` and `origin`. Times are ISO date-times (offset allowed) or `YYYY-MM-DD`, read as 12:00 UTC so the day is the same in Europe; times in the future are refused. Tasks created done write no `task_completed` event, and a phase done at creation gets the time of its last task as completion time. A backdated note never moves the project's last activity backwards. `origin` is stored on the project and on diary entries, shown by `get_project` ("Imported: …") and `get_diary` ("imported (…)"). REST accepts the same fields (camelCase) through the shared schemas.
+Why: §13 asks for no import-specific code and an origin on imported entities; owner decision of 2026-11-27 ("small generic MCP extension"). Without these parameters a migration would stamp every past completion and note with today's date and flood the diary with completion events.
+Alternatives rejected:
+
+- Existing tools only (dates written in the text): history ordered by import time, one event per old task.
+- An `import_project` tool taking a whole document: import-specific code, against §13.
+- Backdating any write (phases, materials): not needed to keep work state; more surface.

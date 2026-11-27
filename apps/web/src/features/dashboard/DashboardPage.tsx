@@ -376,10 +376,12 @@ function ProjectTile({ p }: { p: ProjectSummary }) {
         ) : (
           <ProgressBar progress={p.progress} />
         )}
-        <span className="meta">
-          {p.currentPhase ? `${p.currentPhase.title} · ` : ''}
-          {pct}%
-        </span>
+        {p.currentPhase && (
+          <span className="meta tile-phase" title={p.currentPhase.title}>
+            {p.currentPhase.title} ·
+          </span>
+        )}
+        <span className="meta tile-pct">{pct}%</span>
       </div>
       {p.tags.length > 0 && (
         <div className="tags">

@@ -25,6 +25,11 @@
   min-width: 0;
   flex-wrap: wrap;
 }
+/* A long single word (e.g. a phase title) wraps instead of widening the page (verification F8). */
+.box-title > * {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
 .box-title h2 {
   font-size: var(--text-base);
 }

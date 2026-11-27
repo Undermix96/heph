@@ -27,6 +27,9 @@
 }
 .crumbs a {
   color: var(--fg-default);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .topbar-spacer {
   flex: 1;
@@ -112,6 +115,8 @@
 .filters,
 .project-list {
   flex: 0 0 var(--sidebar-w);
+  /* Without it a long project name widens the sidebar past --sidebar-w (owner report 2026-11-27). */
+  min-width: 0;
   max-width: 100%;
   display: flex;
   flex-direction: column;
@@ -184,8 +189,22 @@
   width: 100px;
   vertical-align: middle;
 }
+/* The bar keeps at least 40% of the row; a long phase title is cut with an ellipsis
+   (full text in its title attribute) instead of pushing the bar out (owner report 2026-11-27). */
+.tile-progress > :first-child {
+  flex: 1 1 40%;
+  min-width: 40%;
+}
 .tile-progress .meta {
   white-space: nowrap;
+}
+.tile-progress .tile-phase {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tile-progress .tile-pct {
+  flex: none;
 }
 .tile-foot {
   display: flex;
@@ -1370,6 +1389,7 @@
   .m-path-title {
     flex: 1;
     min-width: 0;
+    overflow-wrap: anywhere; /* long single-word phase titles (verification F8) */
     display: flex;
     flex-direction: column;
     font-weight: var(--weight-semibold);

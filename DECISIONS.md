@@ -646,3 +646,12 @@ Why: Owner decision of 2026-11-27: removed from this project for good.
 Alternatives rejected:
 
 - Keeping it as a later item: the owner does not want it in the plan.
+
+## D72 — No OAuth (2026-11-27)
+
+Decision: Hephaestus will not implement OAuth, so it is not offered as a custom connector to the Claude apps (claude.ai, desktop chat, mobile, Cowork). The MCP port stays LAN-only (§4) and the static token (D6) stays the only agent credential. The spec no longer lists OAuth (§1, §12.8) and the roadmap task was removed. This closes the "deferred" OAuth alternatives of D5 and D6.
+Why: Owner decision of 2026-11-27. OAuth was only needed for the Claude app connectors, which would also require exposing the MCP endpoint to the internet.
+Alternatives rejected:
+
+- Keeping it as a later item: the owner does not want it implemented.
+- A connector with a fixed request header instead of OAuth: it still needs a public MCP endpoint (checked 2026-11-27, claude.com/docs/connectors/custom/remote-mcp).

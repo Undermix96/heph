@@ -40,9 +40,15 @@ export class DiaryService {
     const project = this.d.projects.writable(projectRef, ctx);
     // Imported history (D65): a backdated note, never in the future.
     if (data.occurredAt !== undefined && data.occurredAt > this.d.now()) {
-      throw new DomainError('validation', 'occurredAt is in the future');
+      throw new DomainError(
+        'validation',
+        'occurredAt is in the future (a plain date means 12:00 UTC of that day; for something that happened today, omit it)',
+      );
     }
-    const type: DiaryType = ctx.source === 'claude_code' && ctx.sessionId ? 'session' : 'note';
+    // A backdated note is imported history, not part of the current session (verification A8).
+    const imported = data.occurredAt !== undefined;
+    const type: DiaryType =
+      ctx.source === 'claude_code' && ctx.sessionId && !imported ? 'session' : 'note';
     const row = this.append(
       project.id,
       {
@@ -52,7 +58,7 @@ export class DiaryService {
         occurredAt: data.occurredAt,
         origin: data.origin,
       },
-      ctx,
+      imported ? { ...ctx, sessionId: undefined } : ctx,
     );
     return this.get(row.id);
   }

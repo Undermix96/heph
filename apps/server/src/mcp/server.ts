@@ -461,7 +461,8 @@ export function createHephMcpServer(domain: Domain, opts: McpServerOptions): Mcp
                 .array(
                   z.union([
                     z.string().min(1).max(300),
-                    z.object({
+                    // Strict: a camelCase doneAt must fail, not be dropped silently (verification A8).
+                    z.strictObject({
                       title: z.string().min(1).max(300),
                       notes: z.string().optional(),
                       done: z.boolean().optional(),
@@ -573,7 +574,8 @@ export function createHephMcpServer(domain: Domain, opts: McpServerOptions): Mcp
       description:
         'Adds a diary entry (Markdown) in the content language from the briefing: what was done, where you stopped, ' +
         'what is next. Attach uploaded files with file_ids.',
-      input: z.object({
+      // Strict: a camelCase occurredAt must fail, not be dropped silently (verification A8).
+      input: z.strictObject({
         project: projectArg,
         body: z.string().min(1).max(200_000),
         file_ids: z.array(z.number().int().positive()).optional(),

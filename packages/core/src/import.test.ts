@@ -150,6 +150,15 @@ describe('log_progress with imported history', () => {
     );
   });
 
+  it('a backdated note from a session is imported history, not part of the session', () => {
+    const { d } = setup();
+    const p = d.projects.create({ name: 'Sess' }, UI);
+    const old = d.diary.addNote(p.id, { body: 'old', occurredAt: '2025-01-02' }, CLAUDE);
+    const now = d.diary.addNote(p.id, { body: 'now' }, CLAUDE);
+    expect([old.type, old.sessionId, old.source]).toEqual(['note', null, 'claude_code']);
+    expect([now.type, now.sessionId]).toEqual(['session', 'sess-1']);
+  });
+
   it('refuses a note in the future', () => {
     const { d, clock } = setup();
     const p = d.projects.create({ name: 'F' }, UI);

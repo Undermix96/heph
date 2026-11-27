@@ -153,29 +153,28 @@ const LEGACY_TEXT =
   'tracking this project in its own files: follow that CLAUDE.md, ignore the rest of this Heph ' +
   'text and the rules below, and do not propose registering or migrating it.';
 
+/** For unlinked repos (D66): projects tracked in files are offered the migration skill. */
+const MIGRATE_HINT =
+  'If it tracks its work state in files (PROGRESS.md, ROADMAP.md, a HANDOFF or plan file), ' +
+  'propose the heph:migrate-project skill: the user chooses between moving the work state ' +
+  'to Heph and keeping the files.';
+
 function unlinkedText(remote: string | null, repo: string | null): string {
   if (repo) {
     return (
-      `Otherwise: the repo \`${repo}\` is not linked to any Heph project. ` +
-      'If it tracks its work state in files (PROGRESS.md, ROADMAP.md, a HANDOFF or plan file), ' +
-      'propose the heph:migrate-project skill: the user chooses between moving the work state ' +
-      'to Heph and keeping the files. If it has no such files, propose to register it: ' +
+      `Otherwise: the repo \`${repo}\` is not linked to any Heph project. ${MIGRATE_HINT} ` +
+      'If it has no such files, propose to register it: ' +
       `create_project with repos: ["${repo}"] (suggest macro-phases from what the repo is), ` +
       'or link_repo to an existing project (list_projects shows them). ' +
       'Once linked, this session is attached to the project automatically.'
     );
   }
-  if (remote) {
-    return (
-      `Otherwise: this repo's remote (\`${withoutCredentials(remote).slice(0, 200)}\`) is not on GitHub, so Heph cannot link it. ` +
-      'Ask the user which Heph project this work belongs to, if any (list_projects), ' +
-      'and pass that project explicitly to the Heph tools.'
-    );
-  }
+  const where = remote
+    ? `this repo's remote (\`${withoutCredentials(remote).slice(0, 200)}\`) is not on GitHub, so Heph cannot link it`
+    : 'this folder has no git remote, so Heph cannot tell which project it belongs to';
   return (
-    'Otherwise: this folder has no git remote, so Heph cannot tell which project it belongs to. ' +
-    'Ask the user which Heph project this work belongs to, if any (list_projects), ' +
-    'and pass that project explicitly to the Heph tools.'
+    `Otherwise: ${where}. ${MIGRATE_HINT} If not, ask the user which Heph project this work ` +
+    'belongs to, if any (list_projects), and pass that project explicitly to the Heph tools.'
   );
 }
 

@@ -255,7 +255,10 @@ export class ProjectsService {
           // Imported history (D65): done tasks keep their completion time.
           const doneAt = t.done ? (t.doneAt ?? now) : undefined;
           if (doneAt !== undefined && doneAt > now) {
-            throw new DomainError('validation', `Task "${t.title}": doneAt is in the future`);
+            throw new DomainError(
+              'validation',
+              `Task "${t.title}": doneAt is in the future (a plain date means 12:00 UTC; for today, omit doneAt)`,
+            );
           }
           this.d.roadmap.addTask(
             phase.id,

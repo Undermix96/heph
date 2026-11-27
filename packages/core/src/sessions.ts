@@ -98,7 +98,13 @@ export class SessionsService {
     const ended: QueueItemView[] = [];
     for (const { s, slug, name } of rows) {
       const live = s.endedAt === null && s.lastHeartbeatAt > cutoff;
-      const endedAt = live ? null : (s.endedAt ?? s.lastHeartbeatAt);
+      // A session closed by expireStale() ended at its last heartbeat, not when the
+      // housekeeping ran (verification C9).
+      const endedAt = live
+        ? null
+        : s.endedAt === null || s.endReason === 'expired'
+          ? s.lastHeartbeatAt
+          : s.endedAt;
       if (endedAt !== null && endedAt < since) continue;
       const last = this.lastEntry(s.sessionId);
       if (!live && last === null) continue;
@@ -129,9 +135,10 @@ export class SessionsService {
       .limit(1)
       .get();
     if (!e) return null;
-    const body = e.body.trim();
+    // Cut by code points, so a character outside the BMP is never split (C9).
+    const chars = Array.from(e.body.trim());
     return {
-      body: body.length > 300 ? `${body.slice(0, 299)}…` : body,
+      body: chars.length > 300 ? `${chars.slice(0, 299).join('')}…` : chars.join(''),
       occurredAt: iso(e.occurredAt),
     };
   }

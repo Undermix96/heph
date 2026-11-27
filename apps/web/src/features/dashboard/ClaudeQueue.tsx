@@ -17,10 +17,12 @@ export function startOfLocalDay(now = new Date()): string {
 
 /** First line of a diary entry as plain text: no heading, list or emphasis markers. */
 export function firstLine(body: string): string {
-  const line = body.split('\n').find((l) => l.trim() !== '') ?? '';
+  // Code fences are skipped: their first line is a language name, not text (C9).
+  const line = body.split('\n').find((l) => l.trim() !== '' && !/^\s*(```|~~~)/.test(l)) ?? '';
   return line
     .trim()
     .replace(/^(#{1,6}\s+|[-*+]\s+(\[[ xX]\]\s+)?|>\s*|\d+[.)]\s+)/, '')
+    .replace(/!?\[([^\]]*)\]\([^)]*\)/g, '$1')
     .replace(/\*\*|__|`/g, '')
     .trim();
 }
@@ -76,7 +78,7 @@ export function ClaudeQueue() {
           type="button"
           className="claude-queue-toggle"
           aria-expanded={!collapsed}
-          aria-controls="claude-queue-list"
+          aria-controls={collapsed ? undefined : 'claude-queue-list'}
           aria-label={t(collapsed ? 'queue.expand' : 'queue.collapse')}
           onClick={toggle}
         >

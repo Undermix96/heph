@@ -638,3 +638,11 @@ Why: In the owner's first migration (Mattinale, 2026-11-27) verifier #1 needed t
 Alternatives rejected:
 
 - Relying on the verifiers to catch them: each miss costs a full verifier round.
+
+## D71 — No mobile app or PWA (2026-11-27)
+
+Decision: Hephaestus will have no mobile app and no PWA. The phone is served by the responsive web UI (phone layout of phase 4, mockups 60–62). The spec no longer lists them (§1, §12.8) and the roadmap task was removed.
+Why: Owner decision of 2026-11-27: removed from this project for good.
+Alternatives rejected:
+
+- Keeping it as a later item: the owner does not want it in the plan.

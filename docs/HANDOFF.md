@@ -20,7 +20,7 @@ Goals:
 - Claude Code can read and update everything through an MCP server.
 - Starting a new project (git repo, GitHub repo, scaffolding, tracker registration) is automated.
 
-Non-goals for v1: mobile app (phase 2, UI is responsive but desktop-first), OAuth, multi-user, due dates/priorities/estimates, embedded LLM, project import (to be designed later).
+Non-goals for v1: OAuth, multi-user, due dates/priorities/estimates, embedded LLM, project import (to be designed later). Not planned at all: a mobile app or PWA (D71); the web UI is responsive and works on phones.
 
 ---
 
@@ -259,7 +259,7 @@ Same domain operations as MCP, consumed by the UI. Plus:
 5. **Claude Code plugin** — hooks, injected rules, live sessions, testing detection, auto-diary, docs upload, "Connect Claude Code" page.
 6. **GitHub integration** — polling, events, docs fetch.
 7. **Bootstrap skill** — new project flow.
-8. **Later** — project import (design TBD), mobile app / PWA, OAuth (for Claude app connectors), notifications.
+8. **Later** — project import (done, D65–D70), OAuth (for Claude app connectors), notifications. No mobile app / PWA (D71).
 
 ---
 

@@ -465,11 +465,38 @@ export class ProjectsService {
 
   // ------------------------------------------------------------ repos
 
+  /**
+   * Links a repo. Linking a repo the project already has updates its docs
+   * path / showCommits instead (D68), and the first repo of a project whose
+   * internal docs are empty switches it to repo docs (D68).
+   */
   linkRepo(ref: ProjectRef, input: unknown, ctx: Ctx): ProjectDetail {
     const repo = parse(z_repo, input);
     const row = this.writable(ref, ctx);
+    const existing = this.d.db
+      .select()
+      .from(projectRepos)
+      .where(eq(projectRepos.fullName, repo.fullName.toLowerCase()))
+      .get();
+    if (existing && existing.projectId === row.id) {
+      return this.updateRepo(
+        existing.id,
+        {
+          docsPath: 'docsPath' in repo ? repo.docsPath : undefined,
+          showCommits: 'showCommits' in repo ? repo.showCommits : undefined,
+        },
+        ctx,
+      );
+    }
     this.d.tx(() => {
       this.insertRepo(row.id, repo);
+      if (row.docsSource === 'internal' && row.internalDocs.trim() === '') {
+        this.d.db
+          .update(projects)
+          .set({ docsSource: 'repo', updatedAt: this.d.now() })
+          .where(eq(projects.id, row.id))
+          .run();
+      }
       this.d.audit.record(ctx, {
         projectId: row.id,
         entity: 'repo',

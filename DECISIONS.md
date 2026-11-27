@@ -613,3 +613,12 @@ Alternatives rejected:
 - A migration script: the sources have no common format.
 - Keeping the old files with a "superseded" banner: stale copies next to the live state.
 - One verifier pass after writing only: a gap found then needs append-only corrections in the diary; checking the report first avoids most of them.
+
+## D68 — link_repo sets the docs path of a linked repo; first repo switches empty internal docs (2026-11-27)
+
+Decision: `link_repo` (domain `linkRepo`, also used by the web UI) on a repo the project already has updates its docs path and `show_commits` instead of doing nothing. Linking a repo to a project that uses internal docs switches it to repo docs when the internal docs are empty; internal docs with content are kept and the reply says so. `create_project` and its phase objects are strict over MCP, like the import task shapes (D65): a misspelled key is an error.
+Why: Verification B8 (2026-11-27): MCP had no way to set the docs path of an already-linked repo, which the migration skill needs to keep an ADR folder (D67), and a project registered before its GitHub repo existed never showed its `DECISIONS.md`. Silent drops of misspelled keys defeated imports.
+Alternatives rejected:
+
+- A new `update_repo` MCP tool: one more tool for what `link_repo` can express.
+- Always switching to repo docs on link: would hide internal decisions written by hand.

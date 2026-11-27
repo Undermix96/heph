@@ -121,7 +121,9 @@ describe('link_repo', () => {
       docs_path: 'docs/DECISIONS.md',
       show_commits: false,
     });
-    expect(text).toBe(`Linked me/alpha to #${a.id} \`${a.slug}\`. Repos: me/alpha.`);
+    expect(text).toBe(
+      `Linked me/alpha to #${a.id} \`${a.slug}\`. Repos: me/alpha. Docs path: docs/DECISIONS.md.`,
+    );
     const repo = m.d.projects.get(a.id).repoDetails[0]!;
     expect(repo.docsPath).toBe('docs/DECISIONS.md');
     expect(repo.showCommits).toBe(false);

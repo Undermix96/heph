@@ -32,8 +32,8 @@ Work state: legacy (<file(s)>), not tracked in Heph — chosen YYYY-MM-DD.
 ```
 
 The line must start exactly with `Work state: legacy`: Heph's session-start text looks for it
-(D66). Commit `Docs: keep file-based work tracking`, push, tell the user that Heph will
-leave this repo alone and that they can migrate later by deleting the line. Stop.
+(D66). Commit `Docs: keep file-based work tracking`, push if there is a remote, tell the
+user that Heph will leave this repo alone and that they can migrate later by deleting the line. Stop.
 
 **Migrate:** continue.
 
@@ -43,25 +43,31 @@ leave this repo alone and that they can migrate later by deleting the line. Stop
 - Heph reachable (`list_projects` works). The Heph server must take `origin`,
   `occurred_at` and done tasks in `create_project` (D65); if a call refuses these
   parameters, stop and tell the user to update Heph.
-- GitHub remote: `owner/name` from `git remote get-url origin`. Without one the project gets
-  internal docs (`update_docs`) and no `link_repo`.
+- GitHub remote: `owner/name` from `git remote get-url origin`. Without one there is no
+  `link_repo`; where its decisions go is an open owner decision (TBD, see D67): ask the user.
 - `list_projects`: if a project already exists for this repo or name, ask whether to fill
   that one or create a new one.
-- Record `SHA=$(git rev-parse --short HEAD)`: the pre-migration commit. All later reads of
-  the sources use `git show $SHA:<path>`.
+- Record `SHA=$(git rev-parse --short HEAD)`: the pre-migration commit. Later reads of
+  tracked sources use `git show $SHA:<path>`.
+- Sources git does not track (gitignored `private/`, untracked files) have no history: copy
+  each one to the scratchpad now (`migration-<slug>-sources/<path>`) and use those copies as
+  their pre-migration version.
 
 ## 2. Inventory → manifest
 
 1. Find the sources: tracking files (`PROGRESS.md`, `ROADMAP.md`, `TODO.md`, `HANDOFF*`,
    `*plan*.md`, roadmap chapters of design docs), decision files (`DECISIONS.md`,
    `docs/adr/`, decision sections inside other docs), `CLAUDE.md`, `README.md`. Search the
-   whole repo (`git ls-files '*.md'`), not only the root. Show the list and let the user add
-   or remove files.
+   whole repo, not only the root: tracked files (`git ls-files`) and untracked or ignored ones
+   (`git ls-files --others --ignored --exclude-standard`, `private/`), including non-Markdown
+   tracking files (`TODO.txt`, `ROADMAP` without extension). Show the list, with tracked or
+   untracked for each, and let the user add or remove files.
 2. Read every source fully. Split it into numbered items `S1…Sn`, one per statement that
    carries information: a phase or milestone (with its verification criterion and outcome),
    a task (done or open, with any date), the next step, the status (testing, waiting for…),
    an open question (open or answered), a decision, a deviation, an incident, a risk, a dated
    progress entry, a reminder, anything else. Keep the source file and line range per item.
+   The same fact stated in two sources is two items; the second gets the target "same as Sx".
 
 ## 3. Mapping → reconciliation report
 
@@ -69,10 +75,12 @@ Give every item exactly one target:
 
 | Source item | Target |
 | --- | --- |
-| Phase / milestone | Heph phase; verification criterion and outcome in its description |
-| Task | Task in its phase: `{title, notes, done, done_at}`; `done_at` only when the source gives a date |
-| Next step | `set_next_task` (only if it differs from the computed one) |
-| Status, what to test, what we wait for | `set_status` with a note |
+| Phase / milestone | Heph phase; verification criterion, outcome, dates and any other attribute in its description |
+| Phase done in the source with no tasks | Heph phase, then `update_phase status: done` after creation; source date in its description (the completion time will be today) |
+| Task | Task in its phase: `{title, notes, done, done_at}`; long text (over 300 characters) in `notes` |
+| Done task without a date | `done: true` without `done_at`, and the notes say "completion date unknown, imported YYYY-MM-DD"; mark it `done (date unknown)` in the report |
+| Next step | `set_next_task` (only if it differs from the computed one); if it is not a task yet, add it as a task first |
+| Status, what to test, what we wait for | `set_status` with a note. A source status of completed or abandoned: tell the user; it becomes a proposal they approve in Heph |
 | Dated progress entry, incident, reminder | `log_progress` with `occurred_at` (source date) and `origin` |
 | Undated progress text | one diary note "Imported notes", `origin` set |
 | Open questions | one diary note "Open questions": open ones as `- [ ]`, answered ones as `- [x] answer (date)` |
@@ -81,8 +89,12 @@ Give every item exactly one target:
 | Fits nowhere | `TBD`: ask the user |
 
 Decisions: if the repo already has a decision file in another format (e.g. an ADR folder),
-ask whether to keep it as is (then `link_repo` with `docs_path` pointing to its index or main
-file) or to add a `DECISIONS.md`. Never rewrite or renumber existing decisions.
+ask whether to keep it as is or to add a `DECISIONS.md`. Heph shows one docs file per repo:
+to keep an ADR folder, point Heph at its index (`link_repo` with `docs_path`, which also
+updates a repo that is already linked, D68) and tell the user that only that file is shown.
+Never rewrite or renumber existing decisions.
+
+Limits: 50 phases, 200 tasks per phase, titles up to 300 characters, `origin` up to 200.
 
 `origin` for everything imported: `migration YYYY-MM-DD: <source path>@<SHA>`.
 
@@ -97,23 +109,27 @@ Show the report (or its totals and every `TBD`) to the user.
 ## 4. Verifier #1 (before writing)
 
 Start a fresh subagent that has not seen your reasoning. Give it only: the repo path, the
-SHA, the list of source paths, and the report file. Ask it to:
+SHA, the list of source paths (with the scratchpad copies of untracked ones), and the report
+file. Ask it to:
 
-- read every source with `git show <SHA>:<path>` and check that every statement is covered by
+- read every tracked source with `git show <SHA>:<path>` (untracked ones from their copies)
+  and check that every statement is covered by
   an item, and every item has one target;
 - check that nothing is altered: dates, done/open states, numbers, names, decision wording;
 - report gaps and changes with file and line, and nothing else. It does not write anything.
 
-Fix the report and repeat until it reports no gaps (at most 2 more rounds; then show the
-remaining findings to the user). Then ask the user to approve the report. Do not continue
+Fix the report and rerun with a fresh subagent until it reports no gaps (at most 3 rounds in
+total; then show the remaining findings to the user). Then ask the user to approve the report. Do not continue
 without a clear yes.
 
 ## 5. Write to Heph
 
 1. `create_project` with `name`, `description`, `tags`, `repos` (if on GitHub), `origin`,
    and `phases` with their tasks in order (done ones as `{title, done: true, done_at}`). Or,
-   for an existing project, `add_phase` / `add_task` and `complete_task` (tell the user that
-   completions then get today's date).
+   for an existing project: compare with its phases first and ask how to merge duplicates;
+   then `add_phase` / `add_task` and `complete_task`. These take no `origin` and completions
+   get today's date, so write `imported from <origin>, done <date>` in the task notes and
+   tell the user.
 2. Diary notes in chronological order with `log_progress` (`occurred_at`, `origin`), then the
    "Open questions" and "Imported notes" notes.
 3. `set_status` and `set_next_task` if the report says so.
@@ -124,19 +140,21 @@ without a clear yes.
 - `DECISIONS.md`: create it if missing (format of the user's global rules) or keep it;
   move decisions found in the tracking files into new entries; add the entry
   "Work state moved to Heph" citing `SHA` and the Heph project slug.
-- Delete the tracking files that are now fully in Heph (`git rm`). Files that also hold
+- Delete the tracked tracking files that are now fully in Heph (`git rm`). Never delete a
+  file git does not track (no history would keep it): leave it, or ask the user to archive it. Files that also hold
   durable content (spec, design) stay; only their work-state sections are removed, with a
   one-line pointer to Heph.
 - `CLAUDE.md`: sources-of-truth table with a `Heph project <slug>` row (roadmap, next step,
   diary; read at session start, injected by the heph plugin) and the `DECISIONS.md` row, like
   the `new-project` template; remove rules that point to the deleted files.
 - `README.md`: fix the docs index.
-- Commit `Docs: move work state to Heph`, push. Record the new commit hash.
+- Commit `Docs: move work state to Heph`, push if there is a remote. Record the new commit hash.
 
 ## 7. Verifier #2 (after writing)
 
-Start another fresh subagent. Give it only: the repo path, the SHA, the source list, the
-report file, the Heph project slug and the migration commit. Ask it to compare, item by item:
+Start another fresh subagent. Give it only: the repo path, the SHA, the source list (with the
+scratchpad copies of untracked ones), the report file, the Heph project slug and the
+migration commit. Ask it to compare, item by item:
 
 - each `Sx` against Heph (`get_project`, `get_diary`, `get_docs`, `search`) or the repo at the
   migration commit, as the report says;

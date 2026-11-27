@@ -446,7 +446,8 @@ export function createHephMcpServer(domain: Domain, opts: McpServerOptions): Mcp
       title: 'Create a project',
       description:
         'Registers a new project, optionally with repos, tags and initial phases/tasks. Returns the briefing.',
-      input: z.object({
+      // Strict (verification B8): misspelled keys fail instead of being dropped.
+      input: z.strictObject({
         name: z.string().trim().min(1).max(300),
         description: z.string().optional(),
         tags: z.array(z.string().min(1).max(50)).optional(),
@@ -454,7 +455,7 @@ export function createHephMcpServer(domain: Domain, opts: McpServerOptions): Mcp
         links: z.array(linkArg).optional(),
         phases: z
           .array(
-            z.object({
+            z.strictObject({
               title: z.string().min(1).max(300),
               description: z.string().optional(),
               tasks: z
@@ -563,7 +564,11 @@ export function createHephMcpServer(domain: Domain, opts: McpServerOptions): Mcp
         { fullName: a.repo, docsPath: a.docs_path, showCommits: a.show_commits },
         ctx(a),
       );
-      return `Linked ${a.repo} to #${p.id} \`${p.slug}\`. Repos: ${p.repos.join(', ')}.`;
+      const docs =
+        p.docsSource === 'internal'
+          ? ' Docs stay internal (the project already has internal docs; the user can switch in the UI).'
+          : ` Docs path: ${p.repoDetails.find((r) => r.fullName.toLowerCase() === a.repo.toLowerCase())?.docsPath ?? 'DECISIONS.md'}.`;
+      return `Linked ${a.repo} to #${p.id} \`${p.slug}\`. Repos: ${p.repos.join(', ')}.${docs}`;
     },
   );
 

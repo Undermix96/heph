@@ -663,3 +663,38 @@ Why: Owner decision of 2026-11-27.
 Alternatives rejected:
 
 - Keeping them as a later item: the owner does not want them in the plan.
+
+## D74 — Revert of recorded changes (2026-11-27)
+
+Decision: Implements the revert of D31 and closes the open question of D51.
+- Revertible: task complete, reopen, update, move and delete; phase update, move and delete; a whole roadmap restructure; project status (`set_status`); the next-step override; material update and delete. Creating a task, phase or material alone is not revertible (delete it instead); inside a restructure it is.
+- Not revertible: deleted files and projects (gone from disk), settings, tokens and passwords, repo links, project fields, proposal decisions, test outcomes, GitHub events, and every change recorded before this release (`change_log.revertible` is false for old rows).
+- A restructure is one change: a head row (`roadmap/restructure`) groups its operations (`change_log.group_id`); reverting it undoes them all, newest first.
+- Deleting a task or phase also records the files and materials attached to it and a cleared next-step override; the revert puts back the rows with their old ids and re-attaches the files and materials still at project level.
+- Conflicts: a change cannot be reverted while a later, not reverted change touches the same task, phase, material, project status or next step, or deleted the phase it needs. The refusal names that later change, so the user reverts it first. A revert never overwrites.
+- Only the user reverts, from the new "Changes" tab of the project page. A revert is not itself revertible. It marks the rows `reverted_at`, writes a `reverted` diary event and one `change/revert` change-log row.
+- Positions are restored by reversing each move or delete exactly, so the order of the other items comes back too.
+Why: Owner decisions of 2026-11-27 on the plan for tasks #25 and #48 (the recommended options).
+Alternatives rejected:
+
+- Revert from diary entries: text edits and materials have no diary entry.
+- Overwriting on conflict: silently loses a later change.
+- Snapshot-and-replace of the whole roadmap for restructures: would also undo later unrelated changes.
+
+## D75 — Claude can propose a revert, the user confirms in the UI (2026-11-27)
+
+Decision: MCP gets `list_changes` (the project's change list with ids and whether each is revertible) and `propose_revert`. `propose_revert` always creates a `revert_change` proposal, also with `confirmed: true`; approving it in the UI performs the revert as the user.
+Why: Owner decision of 2026-11-27 (exception to the recommended "user only").
+Alternatives rejected:
+
+- Revert directly from MCP with `confirmed: true`: the owner wants every revert confirmed in the UI.
+- No revert through MCP: Claude could not undo its own mistakes even with approval.
+
+## D76 — Claude's queue on the dashboard (2026-11-27)
+
+Decision: The live "Claude queue" of mockup 01 (task #48, postponed by D60) shows, per Claude Code session linked to a project: the project, the state (working, testing, ended and when) and the session's last diary entry, cut to 300 characters by the server. No progress bars (no data for them). Running sessions are those `liveFor` counts; sessions that ended (or stopped sending heartbeats) since the start of the viewer's local day are listed only when they wrote at least one diary entry. `GET /api/claude-queue?since=<ISO>`; the client sends the start of its local day. Desktop: a collapsible floating box bottom right (collapsed state kept in the browser), replacing the sidebar placeholder; phone: a compact block on top of the dashboard. With nothing to show, the box does not appear.
+Why: Owner decisions of 2026-11-27 (recommended options); the design is in `docs/design/` (mockup 01, DESIGN.md "Coda di Claude").
+Alternatives rejected:
+
+- Every ended session: the box fills with sessions that did nothing.
+- Desktop only: the phone dashboard would lose the information.

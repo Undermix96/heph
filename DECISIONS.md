@@ -667,6 +667,7 @@ Alternatives rejected:
 ## D74 — Revert of recorded changes (2026-11-27)
 
 Decision: Implements the revert of D31 and closes the open question of D51.
+
 - Revertible: task complete, reopen, update, move and delete; phase update, move and delete; a whole roadmap restructure; project status (`set_status`); the next-step override; material update and delete. Creating a task, phase or material alone is not revertible (delete it instead); inside a restructure it is.
 - Not revertible: deleted files and projects (gone from disk), settings, tokens and passwords, repo links, project fields, proposal decisions, test outcomes, GitHub events, and every change recorded before this release (`change_log.revertible` is false for old rows).
 - A restructure is one change: a head row (`roadmap/restructure`) groups its operations (`change_log.group_id`); reverting it undoes them all, newest first.
@@ -674,8 +675,8 @@ Decision: Implements the revert of D31 and closes the open question of D51.
 - Conflicts: a change cannot be reverted while a later, not reverted change touches the same task, phase, material, project status or next step, or deleted the phase it needs. The refusal names that later change, so the user reverts it first. A revert never overwrites.
 - Only the user reverts, from the new "Changes" tab of the project page. A revert is not itself revertible. It marks the rows `reverted_at`, writes a `reverted` diary event and one `change/revert` change-log row.
 - Positions are restored by reversing each move or delete exactly, so the order of the other items comes back too.
-Why: Owner decisions of 2026-11-27 on the plan for tasks #25 and #48 (the recommended options).
-Alternatives rejected:
+  Why: Owner decisions of 2026-11-27 on the plan for tasks #25 and #48 (the recommended options).
+  Alternatives rejected:
 
 - Revert from diary entries: text edits and materials have no diary entry.
 - Overwriting on conflict: silently loses a later change.

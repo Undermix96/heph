@@ -449,10 +449,15 @@ export const changeLog = sqliteTable(
     /** The agent's call carried confirmed: true (it says the user confirmed in chat). */
     confirmed: bool('confirmed').notNull().default(false),
     revertedAt: isoTime('reverted_at'),
+    /** Head row of the group this row belongs to (a restructure, D74); the head points to itself. */
+    groupId: integer('group_id'),
+    /** The change can be reverted (D74); false for every row written before revert existed. */
+    revertible: bool('revertible').notNull().default(false),
     createdAt: createdAt(),
   },
   (t) => [
     index('change_log_project_idx').on(t.projectId, t.createdAt),
     index('change_log_entity_idx').on(t.entity, t.entityId),
+    index('change_log_group_idx').on(t.groupId),
   ],
 );

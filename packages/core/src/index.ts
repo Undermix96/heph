@@ -15,6 +15,7 @@ export type { GitHubStatus, RepoSyncResult, SyncRun } from './github-sync.js';
 export { type DocsTarget, gitBlobSha, LEGACY_MARKER, type StopBlock } from './hooks.js';
 export type { ProjectRef } from './projects.js';
 export { outline, type RestructurePayload } from './restructure.js';
+export { keysOf, summaryOf } from './revert.js';
 export { computeNextTask, confirmedFlag, syncedPhaseStatus } from './roadmap.js';
 export { toFtsQuery } from './search.js';
 export { type HookFacts, repoOf } from './sessions.js';

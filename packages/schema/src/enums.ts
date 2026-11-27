@@ -74,6 +74,7 @@ export const PROPOSAL_KINDS = [
   'delete_phase',
   'delete_task',
   'restructure_roadmap',
+  'revert_change',
 ] as const;
 export const ProposalKind = z.enum(PROPOSAL_KINDS);
 export type ProposalKind = z.infer<typeof ProposalKind>;

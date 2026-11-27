@@ -282,3 +282,50 @@ export interface ProjectExportJson {
   files: (FileView & { exportPath: string | null })[];
   proposals: ProposalView[];
 }
+
+/**
+ * One entry of a project's change list (D74): a single change, or a restructure
+ * shown as one change. `label` names the item it touched (task, phase or material
+ * title), when known.
+ */
+export interface ChangeView {
+  id: number;
+  projectId: number;
+  entity: string;
+  entityId: number | null;
+  action: string;
+  label: string | null;
+  /** Fields changed by an `update`. */
+  fields: string[];
+  /** Status change (`set_status`): from and to. */
+  status: { from: LifecycleStatus; to: LifecycleStatus } | null;
+  /** Number of operations of a restructure. */
+  operations: number | null;
+  source: Source;
+  sessionId: string | null;
+  createdAt: IsoTime;
+  /** Can be reverted now (revertible kind, not reverted). Conflicts are checked on revert. */
+  revertible: boolean;
+  revertedAt: IsoTime | null;
+  /** One-line English summary, as used in the diary. */
+  summary: string;
+}
+
+/** A Claude Code session in the dashboard queue (D76). */
+export interface QueueItemView {
+  sessionId: string;
+  projectId: number;
+  projectSlug: string;
+  projectName: string;
+  state: 'working' | 'testing' | 'ended';
+  startedAt: IsoTime;
+  /** When it ended, or its last heartbeat for a session that went silent. */
+  endedAt: IsoTime | null;
+  /** The session's last diary entry, cut to 300 characters. */
+  lastEntry: { body: string; occurredAt: IsoTime } | null;
+}
+
+export interface ClaudeQueueView {
+  running: QueueItemView[];
+  ended: QueueItemView[];
+}

@@ -5,6 +5,7 @@ import {
   RestructureInput,
   type RestructureOp,
 } from '@heph/schema';
+import { GROUP_HEAD } from './audit.js';
 import type { Ctx } from './context.js';
 import type { Domain } from './domain.js';
 import { DomainError } from './errors.js';
@@ -86,7 +87,19 @@ export class RestructureService {
   apply(projectId: number, operations: RestructureOp[], ctx: Ctx): PhaseView[] {
     return this.d.tx(() => {
       const before = outline(this.d.roadmap.phasesOf(projectId));
-      this.run(projectId, operations, ctx);
+      // One revertible change for the whole batch (D74).
+      this.d.audit.grouped(
+        ctx,
+        {
+          projectId,
+          entity: GROUP_HEAD.entity,
+          entityId: projectId,
+          action: GROUP_HEAD.action,
+          before: { outline: before },
+          after: { operations: operations.length },
+        },
+        () => this.run(projectId, operations, ctx),
+      );
       const after = outline(this.d.roadmap.phasesOf(projectId));
       this.d.diary.event(
         projectId,

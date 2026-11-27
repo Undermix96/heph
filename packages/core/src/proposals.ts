@@ -129,6 +129,10 @@ export class ProposalsService {
           throw e;
         }
         return;
+      case 'revert_change':
+        // D75: approving performs the revert as the user; a conflict keeps the proposal pending.
+        this.d.revert.revert(Number(payload.changeId), ctx);
+        return;
     }
   }
 

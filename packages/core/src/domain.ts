@@ -11,6 +11,7 @@ import { MaterialsService } from './materials.js';
 import { ProjectsService } from './projects.js';
 import { ProposalsService } from './proposals.js';
 import { RestructureService } from './restructure.js';
+import { RevertService } from './revert.js';
 import { RoadmapService } from './roadmap.js';
 import { SearchService } from './search.js';
 import { SessionsService } from './sessions.js';
@@ -50,6 +51,7 @@ export class Domain {
   readonly status: StatusService;
   readonly search: SearchService;
   readonly restructure: RestructureService;
+  readonly revert: RevertService;
   readonly briefing: BriefingService;
   readonly export: ExportService;
   readonly hooks: HooksService;
@@ -73,6 +75,7 @@ export class Domain {
     this.status = new StatusService(this);
     this.search = new SearchService(this);
     this.restructure = new RestructureService(this);
+    this.revert = new RevertService(this);
     this.briefing = new BriefingService(this);
     this.export = new ExportService(this);
     this.hooks = new HooksService(this);

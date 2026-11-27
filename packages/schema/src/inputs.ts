@@ -212,6 +212,19 @@ export const DiaryQuery = z.object({
 });
 export type DiaryQuery = z.infer<typeof DiaryQuery>;
 
+/** Change list of a project (D74), newest first; `before` is the id of the last change received. */
+export const ChangesQuery = z.object({
+  before: z.coerce.number().int().positive().optional(),
+  limit: z.coerce.number().int().min(1).max(200).default(50),
+});
+export type ChangesQuery = z.infer<typeof ChangesQuery>;
+
+/** Claude's queue (D76): `since` is the start of the viewer's local day. */
+export const QueueQuery = z.object({
+  since: z.iso.datetime().transform((v) => Date.parse(v)),
+});
+export type QueueQuery = z.infer<typeof QueueQuery>;
+
 export const MaterialInput = z.object({
   name: title,
   quantity: z.number().positive().max(1e9).optional(),

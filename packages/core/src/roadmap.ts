@@ -11,15 +11,30 @@ import {
   UpdatePhaseInput,
   UpdateTaskInput,
 } from '@heph/schema';
-import { and, asc, eq, inArray } from 'drizzle-orm';
+import { and, asc, eq, inArray, or } from 'drizzle-orm';
 import type { Ctx } from './context.js';
-import { phases, projects, tasks } from './db/schema.js';
+import { files, materials, phases, projects, tasks } from './db/schema.js';
 import type { Domain } from './domain.js';
 import { DomainError, notFound } from './errors.js';
 import { iso, parse, reorder } from './util.js';
 
 type PhaseRow = typeof phases.$inferSelect;
 type TaskRow = typeof tasks.$inferSelect;
+
+/** A phase's stored status, as recorded around a task change (D74). */
+export interface PhaseState {
+  id: number;
+  status: PhaseStatus;
+  completedAt: number | null;
+}
+
+/** Recorded with a deleted phase or task so a revert can re-attach them (D74). */
+export interface DeletedLinks {
+  files: { id: number; phaseId: number | null; taskId: number | null }[];
+  materialIds: number[];
+  /** The next-step override, when it pointed to a deleted task. */
+  override: number | null;
+}
 
 export function progressOf(items: { done: boolean }[]): Progress {
   const total = items.length;
@@ -278,6 +293,8 @@ export class RoadmapService {
   removePhase(id: number, ctx: Ctx): TaskRow[] {
     const phase = this.getPhase(id);
     const ts = this.taskRowsOfPhase(id);
+    // What the revert needs to put back (D74): attached files, materials, the override.
+    const links = this.linksOf(phase.projectId, { phaseId: id, taskIds: ts.map((t) => t.id) });
     this.clearOverrideIfIn(
       phase.projectId,
       ts.map((t) => t.id),
@@ -290,7 +307,7 @@ export class RoadmapService {
       entity: 'phase',
       entityId: id,
       action: 'delete',
-      before: { phase, tasks: ts },
+      before: { phase, tasks: ts, ...links },
     });
     return ts;
   }
@@ -313,6 +330,7 @@ export class RoadmapService {
     return this.d.tx(() => {
       const now = this.d.now();
       const siblings = this.taskRowsOfPhase(phaseId);
+      const phaseBefore = this.phaseStates([phaseId]);
       const row = this.d.db
         .insert(tasks)
         .values({
@@ -338,7 +356,8 @@ export class RoadmapService {
         entity: 'task',
         entityId: row.id,
         action: 'create',
-        after: row,
+        before: { phaseStates: phaseBefore },
+        after: { ...row, phaseStates: this.phaseStates([phaseId]) },
       });
       return this.getTask(row.id);
     });
@@ -387,6 +406,8 @@ export class RoadmapService {
       }
     }
     return this.d.tx(() => {
+      const touched = [...new Set([task.phaseId, targetPhaseId])];
+      const phaseBefore = this.phaseStates(touched);
       if (targetPhaseId !== task.phaseId) {
         this.d.db
           .update(tasks)
@@ -405,8 +426,8 @@ export class RoadmapService {
         entity: 'task',
         entityId: id,
         action: 'move',
-        before: { phaseId: task.phaseId, position: task.position },
-        after: { phaseId: targetPhaseId, position },
+        before: { phaseId: task.phaseId, position: task.position, phaseStates: phaseBefore },
+        after: { phaseId: targetPhaseId, position, phaseStates: this.phaseStates(touched) },
       });
       return this.phasesOf(task.projectId);
     });
@@ -419,6 +440,7 @@ export class RoadmapService {
     return this.d.tx(() => {
       if (!task.done) {
         const now = this.d.now();
+        const phaseBefore = this.phaseStates([task.phaseId]);
         this.d.db
           .update(tasks)
           .set({ done: true, doneAt: now, updatedAt: now })
@@ -439,8 +461,12 @@ export class RoadmapService {
           entity: 'task',
           entityId: id,
           action: 'complete',
-          before: { done: false, wasOverride: project.nextTaskOverrideId === id },
-          after: { done: true },
+          before: {
+            done: false,
+            wasOverride: project.nextTaskOverrideId === id,
+            phaseStates: phaseBefore,
+          },
+          after: { done: true, phaseStates: this.phaseStates([task.phaseId]) },
         });
       }
       return { task: this.getTask(id), nextTask: this.nextTaskOf(project.id) };
@@ -452,6 +478,7 @@ export class RoadmapService {
     this.d.projects.writable(task.projectId, ctx);
     return this.d.tx(() => {
       if (task.done) {
+        const phaseBefore = this.phaseStates([task.phaseId]);
         this.d.db
           .update(tasks)
           .set({ done: false, doneAt: null, updatedAt: this.d.now() })
@@ -470,7 +497,8 @@ export class RoadmapService {
           entity: 'task',
           entityId: id,
           action: 'reopen',
-          before: { done: true, doneAt: task.doneAt },
+          before: { done: true, doneAt: task.doneAt, phaseStates: phaseBefore },
+          after: { done: false, phaseStates: this.phaseStates([task.phaseId]) },
         });
       }
       return this.getTask(id);
@@ -506,6 +534,8 @@ export class RoadmapService {
   /** Deletes a task without gating or diary event (its files move to project level). */
   removeTask(id: number, ctx: Ctx): void {
     const task = this.taskRow(id);
+    const links = this.linksOf(task.projectId, { taskIds: [id] });
+    const phaseBefore = this.phaseStates([task.phaseId]);
     this.clearOverrideIfIn(task.projectId, [id]);
     this.d.files.detachToProject({ taskIds: [id] });
     this.d.db.delete(tasks).where(eq(tasks.id, id)).run();
@@ -516,7 +546,8 @@ export class RoadmapService {
       entity: 'task',
       entityId: id,
       action: 'delete',
-      before: task,
+      before: { task, ...links, phaseStates: phaseBefore },
+      after: { phaseStates: this.phaseStates([task.phaseId]) },
     });
   }
 
@@ -555,6 +586,39 @@ export class RoadmapService {
   }
 
   // ------------------------------------------------------------ internals
+
+  /** Files, materials and next-step override tied to a phase and/or tasks about to be deleted. */
+  private linksOf(projectId: number, t: { phaseId?: number; taskIds: number[] }): DeletedLinks {
+    const fileRows = this.d.db
+      .select({ id: files.id, phaseId: files.phaseId, taskId: files.taskId })
+      .from(files)
+      .where(
+        or(
+          t.phaseId !== undefined ? eq(files.phaseId, t.phaseId) : undefined,
+          t.taskIds.length ? inArray(files.taskId, t.taskIds) : undefined,
+        ),
+      )
+      .all();
+    const materialIds =
+      t.phaseId === undefined
+        ? []
+        : this.d.db
+            .select({ id: materials.id })
+            .from(materials)
+            .where(eq(materials.phaseId, t.phaseId))
+            .all()
+            .map((m) => m.id);
+    const o = this.d.db
+      .select({ o: projects.nextTaskOverrideId })
+      .from(projects)
+      .where(eq(projects.id, projectId))
+      .get()?.o;
+    return {
+      files: t.phaseId === undefined && !t.taskIds.length ? [] : fileRows,
+      materialIds,
+      override: o != null && t.taskIds.includes(o) ? o : null,
+    };
+  }
 
   private phaseView(id: number): PhaseView {
     const p = this.getPhase(id);
@@ -599,6 +663,16 @@ export class RoadmapService {
       if (t.position !== i)
         this.d.db.update(tasks).set({ position: i }).where(eq(tasks.id, t.id)).run();
     });
+  }
+
+  /** Stored status of phases, recorded around task changes so a revert can restore it (D74). */
+  phaseStates(ids: number[]): PhaseState[] {
+    if (ids.length === 0) return [];
+    return this.d.db
+      .select({ id: phases.id, status: phases.status, completedAt: phases.completedAt })
+      .from(phases)
+      .where(inArray(phases.id, ids))
+      .all();
   }
 
   /** Keeps the stored phase status consistent with its tasks. */

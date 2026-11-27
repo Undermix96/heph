@@ -44,11 +44,16 @@ export default async function globalSetup() {
   });
   await post(`/api/projects/${welder.id}/diary`, { body: 'Sessione: ho iniziato lo schema.' });
   await post(`/api/projects/${welder.id}/diary`, { body: 'Sessione: schema quasi pronto.' });
-  await post(`/api/projects/${welder.id}/materials`, {
+  const cap = await post(`/api/projects/${welder.id}/materials`, {
     name: 'Condensatore 1000 µF',
     quantity: 2,
     price: 1.2,
   });
+  // A revertible change for the Changes tab screens (D74).
+  const edit = await agent.patch(`/api/materials/${cap.id}`, {
+    data: { notes: 'Da 25 V (inventato).' },
+  });
+  if (!edit.ok()) throw new Error(`material edit: ${edit.status()}`);
 
   await ui.post('/api/auth/login', { data: USER });
   await ui.storageState({ path: E2E.stateFile });

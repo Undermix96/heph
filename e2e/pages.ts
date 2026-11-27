@@ -10,6 +10,7 @@ export const PAGES: { name: string; path: string }[] = [
   { name: '13-docs', path: '/p/1/docs' },
   { name: '14-materials', path: '/p/1/materials' },
   { name: '15-files', path: '/p/1/files' },
+  { name: '16-changes', path: '/p/1/changes' },
   { name: '20-new-project', path: '/new' },
   { name: '21-edit-project', path: '/p/1/edit' },
   { name: '30-search', path: '/search?q=schema' },

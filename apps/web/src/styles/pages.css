@@ -1704,3 +1704,34 @@ fieldset.m-chips {
 .m-claude .claude-queue-item {
   padding-inline: 0;
 }
+
+/* Changes tab on the phone: each change is a stacked row, the action stays on screen. */
+@media (max-width: 599px) {
+  .changes-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+  .changes-table tr {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) 0;
+    border-bottom: 1px solid var(--border-muted);
+  }
+  .changes-table td {
+    display: block;
+    padding: 0;
+    border-bottom: 0;
+  }
+  .changes-table td:first-child {
+    grid-column: 1 / -1;
+  }
+  .changes-table .button,
+  .changes-table button {
+    min-height: 44px;
+  }
+}
